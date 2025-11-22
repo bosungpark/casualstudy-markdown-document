@@ -19,16 +19,6 @@
 # 예: ./new-study.sh "Redis 최적화" "database"
 ```
 
-## 📂 카테고리
-
-- `ai/` - AI/ML 관련
-- `database/` - 데이터베이스, 캐시
-- `infra/` - AWS, 인프라
-- `network/` - 네트워크, gRPC
-- `programming_language/` - Go, Java, Python
-- `system_design/` - 시스템 설계, 아키텍처
-- `etc/` - 기타
-
 ## 🤖 AI 활용
 
 `.github/AI_PROMPT_GUIDE.md` 참고
