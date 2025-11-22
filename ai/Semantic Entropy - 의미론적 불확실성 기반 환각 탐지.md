@@ -1,5 +1,8 @@
 # Semantic Entropy - 의미론적 불확실성 기반 환각 탐지
 
+## 링크
+https://www.nature.com/articles/s41586-024-07421-0
+
 ## AI 요약
 **Semantic Entropy (SE)**는 LLM의 토큰 확률이 아닌 **의미론적 불확실성(semantic uncertainty)**을 측정하여 환각을 탐지하는 방법입니다. "Paris", "It's Paris", "The capital is Paris"처럼 표현은 다르지만 같은 의미를 가진 생성들을 클러스터링하여 불확실성을 계산합니다. **Nature 2024 논문 (687회 인용)**으로 발표된 이후, **Semantic Entropy Probes (SEPs)**를 통해 단일 생성으로 SE를 근사하여 **10배 비용 절감**을 달성했습니다.
 
