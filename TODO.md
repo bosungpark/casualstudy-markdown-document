@@ -1,4 +1,3 @@
-- Safeguarding Large Language Models: A Survey: https://arxiv.org/abs/2406.02622
 - The need for guardrails with large language models in high-risk contexts: https://www.nature.com/articles/s41598-025-09138-0
 - NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications with Programmable Rails: https://arxiv.org/abs/2310.10501
 - Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations: https://arxiv.org/pdf/2312.06674
