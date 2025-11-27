@@ -1,3 +1,10 @@
 - The need for guardrails with large language models in high-risk contexts: https://www.nature.com/articles/s41598-025-09138-0
-- NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications with Programmable Rails: https://arxiv.org/abs/2310.10501
 - Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations: https://arxiv.org/pdf/2312.06674
+- Beyond Linear Probes: Dynamic Safety Monitoring for Language Models: https://arxiv.org/abs/2509.26238
+- Evaluation-Driven Development and Operations of LLM Agents (EDDOps): https://arxiv.org/html/2411.13768v3
+- Architecting software monitors for control-flow anomaly detection through large language models and conformance checking: https://arxiv.org/abs/2511.10876
+- Safeguarding Large Language Models: A Survey: https://arxiv.org/abs/2406.02622
+- SoK: Evaluating Jailbreak Guardrails for Large Language Models: https://arxiv.org/abs/2506.10597
+- GuardReasoner: Towards Reasoning-based LLM Safeguards: https://arxiv.org/abs/2501.18492
+- MoJE: Mixture of Jailbreak Experts, Naive Tabular Classifiers as Guard for Prompt Attacks: https://arxiv.org/abs/2409.17699
+- Why LLM Safety Guardrails Collapse After Fine-tuning: https://www.arxiv.org/pdf/2506.05346
