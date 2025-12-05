@@ -7,7 +7,6 @@
 - SoK: Evaluating Jailbreak Guardrails for Large Language Models: https://arxiv.org/abs/2506.10597
 - GuardReasoner: Towards Reasoning-based LLM Safeguards: https://arxiv.org/abs/2501.18492
 - MoJE: Mixture of Jailbreak Experts, Naive Tabular Classifiers as Guard for Prompt Attacks: https://arxiv.org/abs/2409.17699
-- Why LLM Safety Guardrails Collapse After Fine-tuning: https://www.arxiv.org/pdf/2506.05346
 - Effective Concurrency Testing for Go via Directional Primitive-constrained Interleaving Exploration: https://chao-peng.github.io/publication/ase23/?utm_source=chatgpt.com
 - A Study of Real-World Data Races in Golang: https://arxiv.org/abs/2204.00764?utm_source=chatgpt.com
 - An Empirical Study of Messaging Passing Concurrency in Go Projects: https://kar.kent.ac.uk/71491/?utm_source=chatgpt.com
