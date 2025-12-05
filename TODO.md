@@ -10,3 +10,5 @@
 - Effective Concurrency Testing for Go via Directional Primitive-constrained Interleaving Exploration: https://chao-peng.github.io/publication/ase23/?utm_source=chatgpt.com
 - A Study of Real-World Data Races in Golang: https://arxiv.org/abs/2204.00764?utm_source=chatgpt.com
 - An Empirical Study of Messaging Passing Concurrency in Go Projects: https://kar.kent.ac.uk/71491/?utm_source=chatgpt.com
+- Hero: On the Chaos When PATH Meets Modules: https://arxiv.org/abs/2102.12105?utm_source=chatgpt.com
+  
