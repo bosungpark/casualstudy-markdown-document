@@ -15,4 +15,5 @@
 - Light-Weight Hallucination Detection using Contrastive Learning — (ACL SRW, 2025): https://aclanthology.org/2025.acl-srw.44.pdf?utm_source=chatgpt.com
 - Can a Small Model Learn to Look Before It Leaps? Dynamic Learning and Proactive Correction for Hallucination Detection — (arXiv, 2025): https://arxiv.org/abs/2511.05854?utm_source=chatgpt.com
 - LLM-Check / Studies on Using Multiple Evaluators (LLMs) as Judges — (OpenReview / 2024–2025): https://openreview.net/pdf?id=LYx4w3CAgy&utm_source=chatgpt.com
+- Impact of Protocol Selection on Performance and Scalability in Microservices: A Comparison of gRPC, REST and GraphQL (예비연구, 2025): https://www.researchgate.net/publication/392507557_Impact_of_Protocol_Selection_on_Performance_and_Scalability_in_Microservices_A_Comparison_of_gRPC_REST_and_GraphQL
   
