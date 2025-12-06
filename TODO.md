@@ -11,4 +11,8 @@
 - A Study of Real-World Data Races in Golang: https://arxiv.org/abs/2204.00764?utm_source=chatgpt.com
 - An Empirical Study of Messaging Passing Concurrency in Go Projects: https://kar.kent.ac.uk/71491/?utm_source=chatgpt.com
 - Hero: On the Chaos When PATH Meets Modules: https://arxiv.org/abs/2102.12105?utm_source=chatgpt.com
+- Small Agent Can Also Rock! Empowering Small Language Models as Hallucination Detector (HaluAgent) — (EMNLP/arXiv, 2024): https://arxiv.org/abs/2406.11277?utm_source=chatgpt.com
+- Light-Weight Hallucination Detection using Contrastive Learning — (ACL SRW, 2025): https://aclanthology.org/2025.acl-srw.44.pdf?utm_source=chatgpt.com
+- Can a Small Model Learn to Look Before It Leaps? Dynamic Learning and Proactive Correction for Hallucination Detection — (arXiv, 2025): https://arxiv.org/abs/2511.05854?utm_source=chatgpt.com
+- LLM-Check / Studies on Using Multiple Evaluators (LLMs) as Judges — (OpenReview / 2024–2025): https://openreview.net/pdf?id=LYx4w3CAgy&utm_source=chatgpt.com
   
