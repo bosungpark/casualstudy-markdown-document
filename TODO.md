@@ -18,7 +18,6 @@
 - Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web — (Karger et al., 1997): https://people.csail.mit.edu/karger/Papers/web.pdf?utm_source=chatgpt.com
 - Web Caching with Consistent Hashing — (Karger, Sherman et al.): https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html?utm_source=chatgpt.com
 - Consistent, highly throughput and space scalable distributed architecture for layered NoSQL data store — (2025): https://www.nature.com/articles/s41598-025-03755-5?utm_source=chatgpt.com
-- The Serverless Computing Survey: A Technical Primer for Design Architecture — (Li et al., 2021): https://arxiv.org/abs/2112.12921?utm_source=chatgpt.com
 - DHT-based Communications Survey: Architectures and Use Cases — (Hassanzadeh-Nazarabadi et al., 2021): https://arxiv.org/abs/2109.10787?utm_source=chatgpt.com
 - Odysseus/DFS: Integration of DBMS and Distributed File System for Transaction Processing of Big Data — (Kim et al., 2014): https://arxiv.org/abs/1406.0435?utm_source=chatgpt.com
 - Consistency models in distributed systems: A survey on definitions, disciplines, challenges and applications — (Sharif Aldin et al., 2019): https://arxiv.org/abs/1902.03305?utm_source=chatgpt.com
@@ -32,4 +31,6 @@
 - The Log: What Every Software Engineer Should Know About Real-time Data's Unifying Abstraction — (Kreps et al., LinkedIn): https://engineering.linkedin.com/sites/default/files/papers/the-log-what-every-software-engineer-should-know-about-real-time-data-unifying-abstraction-2011.pdf
 - Chubby: The Lock Service for Loosely-Coupled Distributed Systems: https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf
 - The Tail at Scale — (Dean & Barroso, Google): https://www.usenix.org/legacy/event/hotpar09/tech/full_papers/Dean.pdf
+- Breaking Type Safety in Go: An Empirical Study on the Usage of the unsafe Package: https://arxiv.org/abs/2006.09973?utm_source=chatgpt.com
+- A Dictionary-Passing Translation of Featherweight Go: https://arxiv.org/abs/2106.14586?utm_source=chatgpt.com
   
