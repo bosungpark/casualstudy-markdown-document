@@ -15,5 +15,12 @@
 - Light-Weight Hallucination Detection using Contrastive Learning — (ACL SRW, 2025): https://aclanthology.org/2025.acl-srw.44.pdf?utm_source=chatgpt.com
 - Can a Small Model Learn to Look Before It Leaps? Dynamic Learning and Proactive Correction for Hallucination Detection — (arXiv, 2025): https://arxiv.org/abs/2511.05854?utm_source=chatgpt.com
 - LLM-Check / Studies on Using Multiple Evaluators (LLMs) as Judges — (OpenReview / 2024–2025): https://openreview.net/pdf?id=LYx4w3CAgy&utm_source=chatgpt.com
-- Impact of Protocol Selection on Performance and Scalability in Microservices: A Comparison of gRPC, REST and GraphQL (예비연구, 2025): https://www.researchgate.net/publication/392507557_Impact_of_Protocol_Selection_on_Performance_and_Scalability_in_Microservices_A_Comparison_of_gRPC_REST_and_GraphQL
+- Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web — (Karger et al., 1997): https://people.csail.mit.edu/karger/Papers/web.pdf?utm_source=chatgpt.com
+- Web Caching with Consistent Hashing — (Karger, Sherman et al.): https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html?utm_source=chatgpt.com
+- A survey on NoSQL stores — (Davoudian et al., 2018): https://www.researchgate.net/publication/324640550_A_survey_on_NoSQL_stores?utm_source=chatgpt.com
+- Consistent, highly throughput and space scalable distributed architecture for layered NoSQL data store — (2025): https://www.nature.com/articles/s41598-025-03755-5?utm_source=chatgpt.com
+- The Serverless Computing Survey: A Technical Primer for Design Architecture — (Li et al., 2021): https://arxiv.org/abs/2112.12921?utm_source=chatgpt.com
+- DHT-based Communications Survey: Architectures and Use Cases — (Hassanzadeh-Nazarabadi et al., 2021): https://arxiv.org/abs/2109.10787?utm_source=chatgpt.com
+- Odysseus/DFS: Integration of DBMS and Distributed File System for Transaction Processing of Big Data — (Kim et al., 2014): https://arxiv.org/abs/1406.0435?utm_source=chatgpt.com
+- Consistency models in distributed systems: A survey on definitions, disciplines, challenges and applications — (Sharif Aldin et al., 2019): https://arxiv.org/abs/1902.03305?utm_source=chatgpt.com
   
