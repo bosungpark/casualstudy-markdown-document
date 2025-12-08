@@ -17,10 +17,19 @@
 - LLM-Check / Studies on Using Multiple Evaluators (LLMs) as Judges — (OpenReview / 2024–2025): https://openreview.net/pdf?id=LYx4w3CAgy&utm_source=chatgpt.com
 - Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web — (Karger et al., 1997): https://people.csail.mit.edu/karger/Papers/web.pdf?utm_source=chatgpt.com
 - Web Caching with Consistent Hashing — (Karger, Sherman et al.): https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html?utm_source=chatgpt.com
-- A survey on NoSQL stores — (Davoudian et al., 2018): https://www.researchgate.net/publication/324640550_A_survey_on_NoSQL_stores?utm_source=chatgpt.com
 - Consistent, highly throughput and space scalable distributed architecture for layered NoSQL data store — (2025): https://www.nature.com/articles/s41598-025-03755-5?utm_source=chatgpt.com
 - The Serverless Computing Survey: A Technical Primer for Design Architecture — (Li et al., 2021): https://arxiv.org/abs/2112.12921?utm_source=chatgpt.com
 - DHT-based Communications Survey: Architectures and Use Cases — (Hassanzadeh-Nazarabadi et al., 2021): https://arxiv.org/abs/2109.10787?utm_source=chatgpt.com
 - Odysseus/DFS: Integration of DBMS and Distributed File System for Transaction Processing of Big Data — (Kim et al., 2014): https://arxiv.org/abs/1406.0435?utm_source=chatgpt.com
 - Consistency models in distributed systems: A survey on definitions, disciplines, challenges and applications — (Sharif Aldin et al., 2019): https://arxiv.org/abs/1902.03305?utm_source=chatgpt.com
+- MapReduce: Simplified Data Processing on Large Clusters — (Dean & Ghemawat): https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf
+- The Google File System (GFS): https://static.googleusercontent.com/media/research.google.com/ko//archive/gfs-sosp2003.pdf
+- Bigtable: A Distributed Storage System for Structured Data: https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf
+- Dynamo: Amazon's Highly Available Key-value Store: https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf
+- Spanner: Google's Globally-Distributed Database: https://static.googleusercontent.com/media/research.google.com/en//archive/spanner-osdi14.pdf
+- Raft: In Search of an Understandable Consensus Algorithm — (Ongaro & Ousterhout): https://raft.github.io/raft.pdf
+- Paxos Made Simple — (Lamport): https://lamport.azurewebsites.net/pubs/paxos-simple.pdf
+- The Log: What Every Software Engineer Should Know About Real-time Data's Unifying Abstraction — (Kreps et al., LinkedIn): https://engineering.linkedin.com/sites/default/files/papers/the-log-what-every-software-engineer-should-know-about-real-time-data-unifying-abstraction-2011.pdf
+- Chubby: The Lock Service for Loosely-Coupled Distributed Systems: https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf
+- The Tail at Scale — (Dean & Barroso, Google): https://www.usenix.org/legacy/event/hotpar09/tech/full_papers/Dean.pdf
   
