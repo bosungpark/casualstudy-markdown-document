@@ -2,7 +2,6 @@
 
 | 우선순위 | # | 제목 | 링크 | 핵심 주제 |
 | :--- | :--- | :--- | :--- | :--- |
-| **P1** | 1 | Raft: In Search of an Understandable Consensus Algorithm | `https://raft.github.io/raft.pdf` | **분산 합의 (Raft)** |
 | **P1** | 2 | Dapper, a Large-Scale Distributed Systems Tracing Infrastructure | *New Addition* | **분산 시스템 추적 (Observability)** |
 | **P2** | 3 | Paxos Made Simple | `https://lamport.azurewebsites.net/pubs/paxos-simple.pdf` | **분산 합의 (Paxos)** |
 | **P2** | 4 | ZooKeeper: Wait-Free Coordination for Internet-Scale Systems | *New Addition* | **분산 코디네이션 서비스** |
