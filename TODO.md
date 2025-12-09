@@ -14,7 +14,6 @@
 | **P3** | 11 | An Empirical Study of Messaging Passing Concurrency in Go Projects | `https://kar.kent.ac.uk/71491/?utm_source=chatgpt.com` | **Golang 메시지 전달 동시성** |
 | **P3** | 12 | Hero: On the Chaos When PATH Meets Modules | `https://arxiv.org/abs/2102.12105?utm_source=chatgpt.com` | **Golang 모듈/의존성 관리 문제** |
 | **P3** | 13 | Breaking Type Safety in Go: An Empirical Study on the Usage of the unsafe Package | `https://arxiv.org/abs/2006.09973?utm_source=chatgpt.com` | **Golang `unsafe` 패키지 분석** |
-| **P3** | 14 | A Dictionary-Passing Translation of Featherweight Go | `https://arxiv.org/abs/2106.14586?utm_source=chatgpt.com` | **Golang 언어 설계 심층 분석** |
 | **P2** | 15 | A Comparative Study of Programming Languages in Rosetta Code | `https://arxiv.org/abs/1409.0252?utm_source=chatgpt.com` | **프로그래밍 언어 비교 연구 (정량적 분석)** |
 | **P3** | 16 | Parsl: Pervasive Parallel Programming in Python | `https://arxiv.org/abs/1905.02158?utm_source=chatgpt.com` | **Python 병렬 프로그래밍 라이브러리** |
 | **P3** | 17 | Consistent, highly throughput and space scalable distributed architecture for layered NoSQL data store | `https://www.nature.com/articles/s41598-025-03755-5?utm_source=chatgpt.com` | **NoSQL 분산 아키텍처** |
