@@ -11,7 +11,6 @@
 | **P3** | 8 | Web Caching with Consistent Hashing | `https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html?utm_source=chatgpt.com` | **캐싱, 일관 해싱** (추가 분석) |
 | **P2** | 10 | A Study of Real-World Data Races in Golang | `https://arxiv.org/abs/2204.00764?utm_source=chatgpt.com` | **Golang 데이터 경쟁(Data Race)** |
 | **P3** | 11 | An Empirical Study of Messaging Passing Concurrency in Go Projects | `https://kar.kent.ac.uk/71491/?utm_source=chatgpt.com` | **Golang 메시지 전달 동시성** |
-| **P3** | 12 | Hero: On the Chaos When PATH Meets Modules | `https://arxiv.org/abs/2102.12105?utm_source=chatgpt.com` | **Golang 모듈/의존성 관리 문제** |
 | **P3** | 13 | Breaking Type Safety in Go: An Empirical Study on the Usage of the unsafe Package | `https://arxiv.org/abs/2006.09973?utm_source=chatgpt.com` | **Golang `unsafe` 패키지 분석** |
 | **P2** | 15 | A Comparative Study of Programming Languages in Rosetta Code | `https://arxiv.org/abs/1409.0252?utm_source=chatgpt.com` | **프로그래밍 언어 비교 연구 (정량적 분석)** |
 | **P3** | 16 | Parsl: Pervasive Parallel Programming in Python | `https://arxiv.org/abs/1905.02158?utm_source=chatgpt.com` | **Python 병렬 프로그래밍 라이브러리** |
