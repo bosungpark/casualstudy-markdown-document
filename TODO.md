@@ -9,7 +9,6 @@
 | **P1** | 6 | The Tail at Scale | `https://www.usenix.org/legacy/event/hotpar09/tech/full_papers/Dean.pdf` | **대규모 분산 시스템의 지연 시간(Latency)** |
 | **P2** | 7 | Consistent Hashing and Random Trees: Distributed Caching Protocols... | `https://people.csail.mit.edu/karger/Papers/web.pdf?utm_source=chatgpt.com` | **캐싱, 일관 해싱** |
 | **P3** | 8 | Web Caching with Consistent Hashing | `https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html?utm_source=chatgpt.com` | **캐싱, 일관 해싱** (추가 분석) |
-| **P1** | 9 | Effective Concurrency Testing for Go via Directional Primitive-constrained Interleaving Exploration | `https://chao-peng.github.io/publication/ase23/?utm_source=chatgpt.com` | **Golang 동시성 테스트** |
 | **P2** | 10 | A Study of Real-World Data Races in Golang | `https://arxiv.org/abs/2204.00764?utm_source=chatgpt.com` | **Golang 데이터 경쟁(Data Race)** |
 | **P3** | 11 | An Empirical Study of Messaging Passing Concurrency in Go Projects | `https://kar.kent.ac.uk/71491/?utm_source=chatgpt.com` | **Golang 메시지 전달 동시성** |
 | **P3** | 12 | Hero: On the Chaos When PATH Meets Modules | `https://arxiv.org/abs/2102.12105?utm_source=chatgpt.com` | **Golang 모듈/의존성 관리 문제** |
