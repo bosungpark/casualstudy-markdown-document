@@ -38,7 +38,6 @@
 
 | 우선순위 | # | 제목 | 링크 | 핵심 주제 |
 | :--- | :--- | :--- | :--- | :--- |
-| **P1** | 27 | Hidden Technical Debt in Machine Learning Systems | *New Addition* | **MLOps 아키텍처의 기술 부채 (Classic)** |
 | **P1** | 28 | TFX: A TensorFlow-Based Production Machine Learning Platform | *New Addition* | **MLOps 파이프라인 시스템 설계** |
 | **P2** | 29 | Evaluation-Driven Development and Operations of LLM Agents (EDDOps) | `https://arxiv.org/html/2411.13768v3` | **LLM 에이전트 개발 및 운영 (EDDOps)** |
 | **P2** | 30 | Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations | `https://arxiv.org/pdf/2312.06674` | **LLM 기반의 입출력 보호 (Llama Guard)** |
