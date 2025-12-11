@@ -1,51 +1,88 @@
-### I. 백엔드 / 인프라
+# I. AI / MLOps / LLM Safety
 
-| 우선순위 | # | 제목 | 링크 | 핵심 주제 |
-| :--- | :--- | :--- | :--- | :--- |
-| **P1** | 2 | Dapper, a Large-Scale Distributed Systems Tracing Infrastructure | *New Addition* | **분산 시스템 추적 (Observability)** |
-| **P2** | 3 | Paxos Made Simple | `https://lamport.azurewebsites.net/pubs/paxos-simple.pdf` | **분산 합의 (Paxos)** |
-| **P2** | 4 | ZooKeeper: Wait-Free Coordination for Internet-Scale Systems | *New Addition* | **분산 코디네이션 서비스** |
-| **P2** | 5 | Chubby: The Lock Service for Loosely-Coupled Distributed Systems | `https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf` | **분산 락 서비스** |
-| **P1** | 6 | The Tail at Scale | `https://www.usenix.org/legacy/event/hotpar09/tech/full_papers/Dean.pdf` | **대규모 분산 시스템의 지연 시간(Latency)** |
-| **P2** | 7 | Consistent Hashing and Random Trees: Distributed Caching Protocols... | `https://people.csail.mit.edu/karger/Papers/web.pdf?utm_source=chatgpt.com` | **캐싱, 일관 해싱** |
-| **P3** | 8 | Web Caching with Consistent Hashing | `https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html?utm_source=chatgpt.com` | **캐싱, 일관 해싱** (추가 분석) |
-| **P2** | 10 | A Study of Real-World Data Races in Golang | `https://arxiv.org/abs/2204.00764?utm_source=chatgpt.com` | **Golang 데이터 경쟁(Data Race)** |
-| **P3** | 11 | An Empirical Study of Messaging Passing Concurrency in Go Projects | `https://kar.kent.ac.uk/71491/?utm_source=chatgpt.com` | **Golang 메시지 전달 동시성** |
-| **P3** | 13 | Breaking Type Safety in Go: An Empirical Study on the Usage of the unsafe Package | `https://arxiv.org/abs/2006.09973?utm_source=chatgpt.com` | **Golang `unsafe` 패키지 분석** |
-| **P2** | 15 | A Comparative Study of Programming Languages in Rosetta Code | `https://arxiv.org/abs/1409.0252?utm_source=chatgpt.com` | **프로그래밍 언어 비교 연구 (정량적 분석)** |
-| **P3** | 16 | Parsl: Pervasive Parallel Programming in Python | `https://arxiv.org/abs/1905.02158?utm_source=chatgpt.com` | **Python 병렬 프로그래밍 라이브러리** |
-| **P3** | 17 | Consistent, highly throughput and space scalable distributed architecture for layered NoSQL data store | `https://www.nature.com/articles/s41598-025-03755-5?utm_source=chatgpt.com` | **NoSQL 분산 아키텍처** |
+| 우선순위 | 제목                                                           | 링크                                                                                                       | 핵심 주제                    |
+| ---- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------------ |
+| ★★★  | TFX: A TensorFlow-Based Production Machine Learning Platform | [https://www.tensorflow.org/tfx](https://www.tensorflow.org/tfx)                                         | MLOps 파이프라인              |
+| ★★☆  | EDDOps: Evaluation-Driven Dev & Ops of LLM Agents            | [https://arxiv.org/html/2411.13768v3](https://arxiv.org/html/2411.13768v3)                               | LLM 에이전트 운영              |
+| ★★☆  | Llama Guard                                                  | [https://arxiv.org/pdf/2312.06674](https://arxiv.org/pdf/2312.06674)                                     | LLM 입출력 보호               |
+| ★★☆  | SoK: Evaluating Jailbreak Guardrails                         | [https://arxiv.org/abs/2506.10597](https://arxiv.org/abs/2506.10597)                                     | LLM Jailbreak 평가         |
+| ★☆☆  | Need for Guardrails in High-Risk Contexts                    | [https://www.nature.com/articles/s41598-025-09138-0](https://www.nature.com/articles/s41598-025-09138-0) | 고위험 LLM                  |
+| ★☆☆  | Beyond Linear Probes                                         | [https://arxiv.org/abs/2509.26238](https://arxiv.org/abs/2509.26238)                                     | 동적 안전 모니터링               |
+| ★☆☆  | Lightweight Hallucination Detection                          | [https://aclanthology.org/2025.acl-srw.44.pdf](https://aclanthology.org/2025.acl-srw.44.pdf)             | 경량 환각 탐지                 |
+| ★☆☆  | Small Model Dynamic Hallucination Detection                  | [https://arxiv.org/abs/2511.05854](https://arxiv.org/abs/2511.05854)                                     | 소형 모델 기반 환각 교정           |
+| ★☆☆  | GuardReasoner                                                | [https://arxiv.org/abs/2501.18492](https://arxiv.org/abs/2501.18492)                                     | 추론 기반 가드                 |
+| ★☆☆  | MoJE                                                         | [https://arxiv.org/abs/2409.17699](https://arxiv.org/abs/2409.17699)                                     | Jailbreak Expert Mixture |
+| ★☆☆  | LLM-based Software Control-flow Monitoring                   | [https://arxiv.org/abs/2511.10876](https://arxiv.org/abs/2511.10876)                                     | LLM 기반 모니터링              |
 
 ---
 
-### II. 데이터
+# II. Architecture (System Design / Large-Scale Systems)
 
-| 우선순위 | # | 제목 | 링크 | 핵심 주제 |
-| :--- | :--- | :--- | :--- | :--- |
-| **P1** | 18 | The Google File System (GFS) | `https://static.googleusercontent.com/media/research.google.com/ko//archive/gfs-sosp2003.pdf` | **분산 파일 시스템** |
-| **P1** | 19 | Bigtable: A Distributed Storage System for Structured Data | `https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf` | **분산 키-값 저장소** |
-| **P1** | 20 | Spanner: Google's Globally-Distributed Database | `https://static.googleusercontent.com/media/research.google.com/en//archive/spanner-osdi14.pdf` | **글로벌 분산 데이터베이스** |
-| **P1** | 21 | The Log: What Every Software Engineer Should Know About Real-time Data's Unifying Abstraction | `https://engineering.linkedin.com/sites/default/files/papers/the-log-what-every-software-engineer-should-know-about-real-time-data-unifying-abstraction-2011.pdf` | **로그 기반 데이터 스트리밍** |
-| **P2** | 22 | Dataflow: A Unified Model for Stream and Batch Processing | *New Addition* | **통합 스트림/배치 처리 모델** |
-| **P2** | 23 | Consistency models in distributed systems: A survey on definitions, disciplines, challenges and applications | `https://arxiv.org/abs/1902.03305?utm_source=chatgpt.com` | **분산 시스템 일관성 모델 (Survey)** |
-| **P3** | 24 | MapReduce: Simplified Data Processing on Large Clusters | `https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf` | **데이터 처리 (MapReduce)** |
-| **P3** | 25 | DHT-based Communications Survey: Architectures and Use Cases | `https://arxiv.org/abs/2109.10787?utm_source=chatgpt.com` | **DHT(분산 해시 테이블) 아키텍처** |
-| **P3** | 26 | Odysseus/DFS: Integration of DBMS and Distributed File System for Transaction Processing of Big Data | `https://arxiv.org/abs/1406.0435?utm_source=chatgpt.com` | **DBMS와 분산 파일 시스템 통합** |
+| 우선순위 | 제목                                   | 링크                                                                                                                                                                                                 | 핵심 주제           |
+| ---- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| ★★★  | The Tail at Scale                    | [https://research.google/pubs/the-tail-at-scale/](https://research.google/pubs/the-tail-at-scale/)                                                                                                 | 대규모 시스템 Latency |
+| ★★★  | Dapper: Distributed Systems Tracing  | [https://research.google/pubs/dapper-a-large-scale-distributed-systems-tracing-infrastructure/](https://research.google/pubs/dapper-a-large-scale-distributed-systems-tracing-infrastructure/)     | Observability   |
+| ★★☆  | Chubby                               | [https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf](https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf)       | 분산 락            |
+| ★★☆  | ZooKeeper                            | [https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf)                                                   | 분산 코디네이션        |
+| ★☆☆  | MapReduce                            | [https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) | 분산 데이터 처리       |
+| ★☆☆  | The Datacenter as a Computer         | [https://www.morganclaypool.com/doi/abs/10.2200/S00293ED1V01Y200905CAC006](https://www.morganclaypool.com/doi/abs/10.2200/S00293ED1V01Y200905CAC006)                                               | 대규모 시스템 구조      |
+| ★☆☆  | Google Cluster Data (Borg Precursor) | [https://research.google/pubs/large-scale-cluster-management-at-google-with-borg/](https://research.google/pubs/large-scale-cluster-management-at-google-with-borg/)                               | 클러스터 스케줄링       |
 
 ---
 
-### III. AI / MLOps
+# III. Database (Storage / Consistency / Transactions)
 
-| 우선순위 | # | 제목 | 링크 | 핵심 주제 |
-| :--- | :--- | :--- | :--- | :--- |
-| **P1** | 28 | TFX: A TensorFlow-Based Production Machine Learning Platform | *New Addition* | **MLOps 파이프라인 시스템 설계** |
-| **P2** | 29 | Evaluation-Driven Development and Operations of LLM Agents (EDDOps) | `https://arxiv.org/html/2411.13768v3` | **LLM 에이전트 개발 및 운영 (EDDOps)** |
-| **P2** | 30 | Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations | `https://arxiv.org/pdf/2312.06674` | **LLM 기반의 입출력 보호 (Llama Guard)** |
-| **P2** | 31 | SoK: Evaluating Jailbreak Guardrails for Large Language Models | `https://arxiv.org/abs/2506.10597` | **LLM 탈옥(Jailbreak) 방어 전략 평가** |
-| **P3** | 32 | The need for guardrails with large language models in high-risk contexts | `https://www.nature.com/articles/s41598-025-09138-0` | **고위험 환경 LLM 가드레일 필요성** |
-| **P3** | 33 | Beyond Linear Probes: Dynamic Safety Monitoring for Language Models | `https://arxiv.org/abs/2509.26238` | **LLM 동적 안전 모니터링** |
-| **P3** | 34 | Architecting software monitors for control-flow anomaly detection through LLMs and conformance checking | `https://arxiv.org/abs/2511.10876` | **LLM을 통한 소프트웨어 모니터링 아키텍처** |
-| **P3** | 35 | GuardReasoner: Towards Reasoning-based LLM Safeguards | `https://arxiv.org/abs/2501.18492` | **추론 기반 LLM 안전장치** |
-| **P3** | 36 | MoJE: Mixture of Jailbreak Experts, Naive Tabular Classifiers as Guard for Prompt Attacks | `https://arxiv.org/abs/2409.17699` | **프롬프트 공격 방어를 위한 전문가 혼합 모델** |
-| **P3** | 37 | Light-Weight Hallucination Detection using Contrastive Learning | `https://aclanthology.org/2025.acl-srw.44.pdf?utm_source=chatgpt.com` | **대조 학습을 이용한 경량 환각 탐지** |
-| **P3** | 38 | Can a Small Model Learn to Look Before It Leaps? Dynamic Learning and Proactive Correction for Hallucination Detection | `https://arxiv.org/abs/2511.05854?utm_source=chatgpt.com` | **소형 모델을 이용한 동적 환각 탐지 및 교정** |
+| 우선순위 | 제목                                       | 링크                                                                                                                                                                                                                 | 핵심 주제       |
+| ---- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| ★★★  | Google File System (GFS)                 | [https://static.googleusercontent.com/media/research.google.com/ko//archive/gfs-sosp2003.pdf](https://static.googleusercontent.com/media/research.google.com/ko//archive/gfs-sosp2003.pdf)                         | 분산 파일 시스템   |
+| ★★★  | Bigtable                                 | [https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf)                   | 분산 저장소      |
+| ★★★  | Spanner                                  | [https://static.googleusercontent.com/media/research.google.com/en//archive/spanner-osdi14.pdf](https://static.googleusercontent.com/media/research.google.com/en//archive/spanner-osdi14.pdf)                     | 글로벌 DB      |
+| ★★★  | The Log: What Every Engineer Should Know | [https://www.linkedin.com/pulse/log-what-every-software-engineer-should-know-unifying-abstraction-kreps/](https://www.linkedin.com/pulse/log-what-every-software-engineer-should-know-unifying-abstraction-kreps/) | 로그 기반 아키텍처  |
+| ★★☆  | Dataflow                                 | [https://research.google/pubs/dataflow-a-unified-model-for-batch-and-stream-processing/](https://research.google/pubs/dataflow-a-unified-model-for-batch-and-stream-processing/)                                   | 스트림/배치      |
+| ★★☆  | Consistency Models Survey                | [https://arxiv.org/abs/1902.03305](https://arxiv.org/abs/1902.03305)                                                                                                                                               | 분산 일관성 모델   |
+| ★★☆  | Dynamo                                   | [https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf)                                                                     | 고가용성 NoSQL  |
+| ★☆☆  | Odysseus/DFS                             | [https://arxiv.org/abs/1406.0435](https://arxiv.org/abs/1406.0435)                                                                                                                                                 | DB + DFS 통합 |
+| ★☆☆  | CALM Theorem                             | [https://arxiv.org/abs/1901.01930](https://arxiv.org/abs/1901.01930)                                                                                                                                               | 분산 일관성 이론   |
+
+---
+
+# IV. Infra / Distributed Systems
+
+| 우선순위 | 제목                                  | 링크                                                                                                                                                       | 핵심 주제     |
+| ---- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| ★★★  | Paxos Made Simple                   | [https://lamport.azurewebsites.net/pubs/paxos-simple.pdf](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf)                                       | 합의        |
+| ★★★  | Raft: Understandable Consensus      | [https://raft.github.io/raft.pdf](https://raft.github.io/raft.pdf)                                                                                       | 합의        |
+| ★★☆  | Consistent Hashing and Random Trees | [https://people.csail.mit.edu/karger/Papers/web.pdf](https://people.csail.mit.edu/karger/Papers/web.pdf)                                                 | 캐싱/일관 해싱  |
+| ★★☆  | ZooKeeper                           | [https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf)         | 코디네이션     |
+| ★☆☆  | Web Caching with Consistent Hashing | [https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html](https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html)                           | 캐싱        |
+| ★☆☆  | DHT Communications Survey           | [https://arxiv.org/abs/2109.10787](https://arxiv.org/abs/2109.10787)                                                                                     | DHT       |
+| ★★★  | CAP Theorem (Gilbert & Lynch)       | [https://users.ece.cmu.edu/~adrian/731-sp04/readings/Gilbert_Lynch_2002.pdf](https://users.ece.cmu.edu/~adrian/731-sp04/readings/Gilbert_Lynch_2002.pdf) | 분산 한계     |
+| ★★☆  | Fallacies of Distributed Computing  | [https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing)                     | 분산 시스템 오해 |
+
+---
+
+# V. Network / Protocol
+
+| 우선순위 | 제목                                                   | 링크                                                                                                                                       | 핵심 주제       |
+| ---- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| ★★★  | End-to-End Arguments in System Design                | [https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf](https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf) | E2E 설계      |
+| ★★☆  | The Design Philosophy of DARPA Internet Protocols    | [https://www.rfc-editor.org/rfc/rfc1958](https://www.rfc-editor.org/rfc/rfc1958)                                                         | TCP/IP 철학   |
+| ★★☆  | TCP Congestion Avoidance and Control (Jacobson 1988) | [https://ee.lbl.gov/papers/congavoid.pdf](https://ee.lbl.gov/papers/congavoid.pdf)                                                       | 혼잡 제어       |
+| ★★☆  | SCTP: A New Transport Protocol                       | [https://www.rfc-editor.org/rfc/rfc4960](https://www.rfc-editor.org/rfc/rfc4960)                                                         | 멀티스트림/멀티홈   |
+| ★☆☆  | QUIC: Multiplexed Streams over UDP                   | [https://www.rfc-editor.org/rfc/rfc9000](https://www.rfc-editor.org/rfc/rfc9000)                                                         | 현대적 전송 프로토콜 |
+
+---
+
+# VI. Programming Languages / Concurrency
+
+| 우선순위 | 제목                                         | 링크                                                                                                     | 핵심 주제       |
+| ---- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ----------- |
+| ★★☆  | A Study of Real-World Data Races in Golang | [https://arxiv.org/abs/2204.00764](https://arxiv.org/abs/2204.00764)                                   | Data Race   |
+| ★★☆  | Messaging Passing Concurrency in Go        | [https://kar.kent.ac.uk/71491](https://kar.kent.ac.uk/71491)                                           | 메시지 전달      |
+| ★★☆  | Comparative Study via Rosetta Code         | [https://arxiv.org/abs/1409.0252](https://arxiv.org/abs/1409.0252)                                     | PL 비교       |
+| ★☆☆  | Parsl: Parallel Python                     | [https://arxiv.org/abs/1905.02158](https://arxiv.org/abs/1905.02158)                                   | Python 병렬처리 |
+| ★★★  | Communicating Sequential Processes (CSP)   | [https://www.cs.cmu.edu/~crary/654-f07/Hoare78.pdf](https://www.cs.cmu.edu/~crary/654-f07/Hoare78.pdf) | Go 채널 기반    |
+| ★★★  | Actor Model (Hewitt 1973)                  | [https://dl.acm.org/doi/10.1145/1624775.1624804](https://dl.acm.org/doi/10.1145/1624775.1624804)       | Actor Model |
+| ★★☆  | The Go Memory Model                        | [https://go.dev/ref/mem](https://go.dev/ref/mem)                                                       | Go 메모리 모델   |
+
+---
