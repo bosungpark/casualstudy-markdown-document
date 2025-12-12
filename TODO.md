@@ -140,7 +140,6 @@
 | ★★☆  | Gradual Typing for Functional Languages (Siek, 2006) | http://scheme2006.cs.uchicago.edu/13-siek.pdf | 점진적 타이핑 이론 |
 | ★★☆  | Smashing the Stack for Fun and Profit (Aleph One, 1996) | http://phrack.org/issues/49/14.html | 버퍼 오버플로우 기초 |
 | ★★☆  | OWASP Top 10 | https://owasp.org/www-project-top-ten/ | 웹 보안 취약점 |
-| ★★☆  | What Every Programmer Should Know About Memory (Drepper, 2007) | https://people.freebsd.org/~lstewart/articles/cpumemory.pdf | CPU 캐시, 메모리 계층 |
 | ★★★  | Numba: A LLVM-based Python JIT Compiler (Lam, 2015) | https://dl.acm.org/doi/10.1145/2833157.2833162 | JIT 컴파일 |
 
 ---
