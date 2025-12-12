@@ -102,7 +102,6 @@
 | ---- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | ★★★  | End-to-End Arguments in System Design                | [https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf](https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf) | E2E 설계      |
 | ★★☆  | The Design Philosophy of DARPA Internet Protocols    | [https://www.rfc-editor.org/rfc/rfc1958](https://www.rfc-editor.org/rfc/rfc1958)                                                         | TCP/IP 철학   |
-| ★★☆  | TCP Congestion Avoidance and Control (Jacobson 1988) | [https://ee.lbl.gov/papers/congavoid.pdf](https://ee.lbl.gov/papers/congavoid.pdf)                                                       | 혼잡 제어       |
 | ★☆☆  | QUIC: Multiplexed Streams over UDP                   | [https://www.rfc-editor.org/rfc/rfc9000](https://www.rfc-editor.org/rfc/rfc9000)                                                         | 현대적 전송 프로토콜 |
 
 ---
@@ -118,6 +117,31 @@
 | ★★★  | Communicating Sequential Processes (CSP)   | [https://www.cs.cmu.edu/~crary/654-f07/Hoare78.pdf](https://www.cs.cmu.edu/~crary/654-f07/Hoare78.pdf) | Go 채널 기반    |
 | ★★★  | Actor Model (Hewitt 1973)                  | [https://dl.acm.org/doi/10.1145/1624775.1624804](https://dl.acm.org/doi/10.1145/1624775.1624804)       | Actor Model |
 | ★★☆  | The Go Memory Model                        | [https://go.dev/ref/mem](https://go.dev/ref/mem)                                                       | Go 메모리 모델   |
+| ★☆☆  | The Problem with Threads (Lee, 2006) | https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-1.pdf | 스레드의 근본적 문제, 비결정성 |
+| ★★☆  | Communicating Sequential Processes (Hoare, 1978) | https://www.cs.cmu.edu/~crary/819-f09/Hoare78.pdf | CSP 모델, Go/asyncio 영향 |
+| ★★☆  | A Note on Distributed Computing (Waldo et al., 1994) | https://scholar.harvard.edu/files/waldo/files/waldo-94.pdf | 로컬 vs 원격 호출의 차이 |
+| ★★☆  | Uniprocessor Garbage Collection Techniques (Wilson, 1992) | https://www.cs.rice.edu/~javaplt/311/Readings/wilson92uniprocessor.pdf | GC 기법 총정리 |
+| ★☆☆  | pandas: a Foundational Python Library (McKinney, 2010) | https://conference.scipy.org/proceedings/scipy2010/pdfs/mckinney.pdf | DataFrame 설계 철학 |
+| ★★☆  | Array Programming with NumPy (Harris et al., 2020) | https://www.nature.com/articles/s41586-020-2649-2 | NumPy 아키텍처, 벡터화 |
+| ★★☆  | MapReduce: Simplified Data Processing (Dean & Ghemawat, 2004) | https://research.google/pubs/pub62/ | 분산 처리 패턴 |
+| ★★★  | Spark: Cluster Computing with Working Sets (Zaharia, 2010) | https://www.usenix.org/legacy/event/hotcloud10/tech/full_papers/Zaharia.pdf | RDD, PySpark 기반 |
+| ★☆☆  | Scikit-learn: Machine Learning in Python (Pedregosa, 2011) | https://jmlr.org/papers/v12/pedregosa11a.html | API 설계, 파이프라인 |
+| ★★☆  | Automatic Differentiation in PyTorch (Paszke, 2017) | https://openreview.net/pdf?id=BJJsrmfCZ | Autograd 메커니즘 |
+| ★★☆  | TensorFlow: Large-Scale Machine Learning (Abadi, 2016) | https://www.usenix.org/system/files/conference/osdi16/osdi16-abadi.pdf | 연산 그래프, 분산 학습 |
+| ★★★  | Attention Is All You Need (Vaswani, 2017) | https://arxiv.org/abs/1706.03762 | Transformer, LLM 기반 |
+| ★☆☆  | REST: Architectural Styles (Fielding, 2000) | https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm | REST 원론 |
+| ★★☆  | The C10K Problem (Kegel, 2006) | http://www.kegel.com/c10k.html | 대규모 동시 연결 |
+| ★★☆  | PEP 3333 – WSGI Specification | https://peps.python.org/pep-3333/ | Python 웹 표준 |
+| ★★☆  | QuickCheck: Random Testing (Claessen & Hughes, 2000) | https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf | Property-based testing |
+| ★★☆  | Twelve-Factor App (Wiggins, 2011) | https://12factor.net/ | 클라우드 네이티브 원칙 |
+| ★★☆  | Dynamo: Amazon's Key-value Store (DeCandia, 2007) | https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf | 분산 DB, eventual consistency |
+| ★★★  | Borg, Omega, and Kubernetes (Burns, 2016) | https://queue.acm.org/detail.cfm?id=2898444 | 컨테이너 오케스트레이션 |
+| ★★☆  | PEP 484 – Type Hints | https://peps.python.org/pep-0484/ | Python 타입 힌트 표준 |
+| ★★☆  | Gradual Typing for Functional Languages (Siek, 2006) | http://scheme2006.cs.uchicago.edu/13-siek.pdf | 점진적 타이핑 이론 |
+| ★★☆  | Smashing the Stack for Fun and Profit (Aleph One, 1996) | http://phrack.org/issues/49/14.html | 버퍼 오버플로우 기초 |
+| ★★☆  | OWASP Top 10 | https://owasp.org/www-project-top-ten/ | 웹 보안 취약점 |
+| ★★☆  | What Every Programmer Should Know About Memory (Drepper, 2007) | https://people.freebsd.org/~lstewart/articles/cpumemory.pdf | CPU 캐시, 메모리 계층 |
+| ★★★  | Numba: A LLVM-based Python JIT Compiler (Lam, 2015) | https://dl.acm.org/doi/10.1145/2833157.2833162 | JIT 컴파일 |
 
 ---
 
