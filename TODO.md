@@ -82,7 +82,6 @@
 | ★★★  | Paxos Made Simple                   | [https://lamport.azurewebsites.net/pubs/paxos-simple.pdf](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf)                                       | 합의        |
 | ★★★  | Raft: Understandable Consensus      | [https://raft.github.io/raft.pdf](https://raft.github.io/raft.pdf)                                                                                       | 합의        |
 | ★★☆  | Consistent Hashing and Random Trees | [https://people.csail.mit.edu/karger/Papers/web.pdf](https://people.csail.mit.edu/karger/Papers/web.pdf)                                                 | 캐싱/일관 해싱  |
-| ★★☆  | ZooKeeper                           | [https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf)         | 코디네이션     |
 | ★☆☆  | Web Caching with Consistent Hashing | [https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html](https://www.cs.cmu.edu/~srini/15-744/S02/readings/K%2B99.html)                           | 캐싱        |
 | ★☆☆  | DHT Communications Survey           | [https://arxiv.org/abs/2109.10787](https://arxiv.org/abs/2109.10787)                                                                                     | DHT       |
 | ★★★  | CAP Theorem (Gilbert & Lynch)       | [https://users.ece.cmu.edu/~adrian/731-sp04/readings/Gilbert_Lynch_2002.pdf](https://users.ece.cmu.edu/~adrian/731-sp04/readings/Gilbert_Lynch_2002.pdf) | 분산 한계     |
@@ -135,7 +134,6 @@
 | ★★☆  | Twelve-Factor App (Wiggins, 2011) | https://12factor.net/ | 클라우드 네이티브 원칙 |
 | ★★☆  | Dynamo: Amazon's Key-value Store (DeCandia, 2007) | https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf | 분산 DB, eventual consistency |
 | ★★★  | Borg, Omega, and Kubernetes (Burns, 2016) | https://queue.acm.org/detail.cfm?id=2898444 | 컨테이너 오케스트레이션 |
-| ★★☆  | PEP 484 – Type Hints | https://peps.python.org/pep-0484/ | Python 타입 힌트 표준 |
 | ★★☆  | Gradual Typing for Functional Languages (Siek, 2006) | http://scheme2006.cs.uchicago.edu/13-siek.pdf | 점진적 타이핑 이론 |
 | ★★☆  | Smashing the Stack for Fun and Profit (Aleph One, 1996) | http://phrack.org/issues/49/14.html | 버퍼 오버플로우 기초 |
 | ★★☆  | OWASP Top 10 | https://owasp.org/www-project-top-ten/ | 웹 보안 취약점 |
