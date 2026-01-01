@@ -96,7 +96,6 @@
 
 | 우선순위 | 제목                                                   | 링크                                                                                                                                       | 핵심 주제       |
 | ---- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| ★★☆  | The Design Philosophy of DARPA Internet Protocols    | [https://www.rfc-editor.org/rfc/rfc1958](https://www.rfc-editor.org/rfc/rfc1958)                                                         | TCP/IP 철학   |
 | ★☆☆  | QUIC: Multiplexed Streams over UDP                   | [https://www.rfc-editor.org/rfc/rfc9000](https://www.rfc-editor.org/rfc/rfc9000)                                                         | 현대적 전송 프로토콜 |
 
 ---
