@@ -77,7 +77,6 @@
 | ★★★  | Paxos Made Simple                   | [https://lamport.azurewebsites.net/pubs/paxos-simple.pdf](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf)                                       | 합의        |
 | ★★★  | Raft: Understandable Consensus      | [https://raft.github.io/raft.pdf](https://raft.github.io/raft.pdf)                                                                                       | 합의        |
 | ★☆☆  | DHT Communications Survey           | [https://arxiv.org/abs/2109.10787](https://arxiv.org/abs/2109.10787)                                                                                     | DHT       |
-| ★★☆  | Fallacies of Distributed Computing  | [https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing)                     | 분산 시스템 오해 |
 | ★★☆  | Viewstamped Replication Revisited               | [https://pmg.csail.mit.edu/papers/vr-revisited.pdf](https://pmg.csail.mit.edu/papers/vr-revisited.pdf)                                                                                   | 합의·복제 알고리즘(실무적 가용성) . ([pmg.csail.mit.edu][1])    |
 | ★★☆  | Hidden Technical Debt in ML Systems (시스템 관점 보강) | [https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf](https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf) | ML/서비스 운영에서의 기술부채와 인프라 영향 . ([NeurIPS Papers][2]) |
 
