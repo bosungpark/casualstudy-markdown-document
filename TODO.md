@@ -103,7 +103,6 @@
 | ★☆☆  | Parsl: Parallel Python                     | [https://arxiv.org/abs/1905.02158](https://arxiv.org/abs/1905.02158)                                   | Python 병렬처리 |
 | ★★★  | Communicating Sequential Processes (CSP)   | [https://www.cs.cmu.edu/~crary/654-f07/Hoare78.pdf](https://www.cs.cmu.edu/~crary/654-f07/Hoare78.pdf) | Go 채널 기반    |
 | ★★★  | Actor Model (Hewitt 1973)                  | [https://dl.acm.org/doi/10.1145/1624775.1624804](https://dl.acm.org/doi/10.1145/1624775.1624804)       | Actor Model |
-| ★☆☆  | The Problem with Threads (Lee, 2006) | https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-1.pdf | 스레드의 근본적 문제, 비결정성 |
 | ★★☆  | Communicating Sequential Processes (Hoare, 1978) | https://www.cs.cmu.edu/~crary/819-f09/Hoare78.pdf | CSP 모델, Go/asyncio 영향 |
 | ★★☆  | A Note on Distributed Computing (Waldo et al., 1994) | https://scholar.harvard.edu/files/waldo/files/waldo-94.pdf | 로컬 vs 원격 호출의 차이 |
 | ★★☆  | Uniprocessor Garbage Collection Techniques (Wilson, 1992) | https://www.cs.rice.edu/~javaplt/311/Readings/wilson92uniprocessor.pdf | GC 기법 총정리 |
