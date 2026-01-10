@@ -115,7 +115,6 @@
 | ★★★  | Attention Is All You Need (Vaswani, 2017) | https://arxiv.org/abs/1706.03762 | Transformer, LLM 기반 |
 | ★☆☆  | REST: Architectural Styles (Fielding, 2000) | https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm | REST 원론 |
 | ★★☆  | The C10K Problem (Kegel, 2006) | http://www.kegel.com/c10k.html | 대규모 동시 연결 |
-| ★★☆  | PEP 3333 – WSGI Specification | https://peps.python.org/pep-3333/ | Python 웹 표준 |
 | ★★☆  | QuickCheck: Random Testing (Claessen & Hughes, 2000) | https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf | Property-based testing |
 | ★★☆  | Dynamo: Amazon's Key-value Store (DeCandia, 2007) | https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf | 분산 DB, eventual consistency |
 | ★★★  | Borg, Omega, and Kubernetes (Burns, 2016) | https://queue.acm.org/detail.cfm?id=2898444 | 컨테이너 오케스트레이션 |
