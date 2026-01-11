@@ -76,11 +76,19 @@
 | ★★★  | Paxos Made Simple                   | [https://lamport.azurewebsites.net/pubs/paxos-simple.pdf](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf)                                       | 합의        |
 | ★★★  | Raft: Understandable Consensus      | [https://raft.github.io/raft.pdf](https://raft.github.io/raft.pdf)                                                                                       | 합의        |
 | ★☆☆  | DHT Communications Survey           | [https://arxiv.org/abs/2109.10787](https://arxiv.org/abs/2109.10787)                                                                                     | DHT       |
-| ★★☆  | Viewstamped Replication Revisited               | [https://pmg.csail.mit.edu/papers/vr-revisited.pdf](https://pmg.csail.mit.edu/papers/vr-revisited.pdf)                                                                                   | 합의·복제 알고리즘(실무적 가용성) . ([pmg.csail.mit.edu][1])    |
-| ★★☆  | Hidden Technical Debt in ML Systems (시스템 관점 보강) | [https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf](https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf) | ML/서비스 운영에서의 기술부채와 인프라 영향 . ([NeurIPS Papers][2]) |
+| ★★☆  | Viewstamped Replication Revisited   | [https://pmg.csail.mit.edu/papers/vr-revisited.pdf](https://pmg.csail.mit.edu/papers/vr-revisited.pdf)                                                   | 합의·복제 알고리즘 |
+| ★★☆  | Hidden Technical Debt in ML Systems | [https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf](https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf) | ML 시스템 기술부채 |
 
-[1]: https://pmg.csail.mit.edu/papers/vr-revisited.pdf?utm_source=chatgpt.com "Viewstamped Replication Revisited"
-[2]: https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf?utm_source=chatgpt.com "Hidden Technical Debt in Machine Learning Systems"
+
+| ★★★  | Amazon S3: The first 10 years       | [https://www.usenix.org/conference/atc21/presentation/lawson](https://www.usenix.org/conference/atc21/presentation/lawson)                               | 분산 스토리지 |
+| ★★★  | Dynamo: Amazon's Highly Available Key-value Store | [https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) | 분산 KV 스토어 |
+| ★★☆  | Erasure Coding in Windows Azure Storage | [https://www.usenix.org/conference/atc12/technical-sessions/presentation/huang](https://www.usenix.org/conference/atc12/technical-sessions/presentation/huang) | Erasure Coding |
+| ★★☆  | Consistency in Non-Transactional Distributed Storage | [https://dl.acm.org/doi/10.1145/2926965](https://dl.acm.org/doi/10.1145/2926965) | 일관성 모델 |
+| ★★☆  | CORFU: A Shared Log Design for Flash Clusters | [https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/balakrishnan](https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/balakrishnan) | 분산 로그 |
+| ★★☆  | Don't Settle for Eventual: Scalable Causal Consistency | [https://www.cs.cornell.edu/~asdas/papers/cops-sosp13.pdf](https://www.cs.cornell.edu/~asdas/papers/cops-sosp13.pdf) | 인과적 일관성 |
+| ★★☆  | Facebook's Warm BLOB Storage System | [https://www.usenix.org/conference/osdi21/presentation/muralidhar](https://www.usenix.org/conference/osdi21/presentation/muralidhar) | 대규모 스토리지 |
+| ★★☆  | Millions of Tiny Databases          | [https://www.usenix.org/conference/nsdi20/presentation/brooker](https://www.usenix.org/conference/nsdi20/presentation/brooker) | 분산 메타데이터 |
+| ★★☆  | A Study of Practical Deduplication  | [https://www.usenix.org/legacy/events/fast11/tech/full_papers/Meyer.pdf](https://www.usenix.org/legacy/events/fast11/tech/full_papers/Meyer.pdf) | 중복 제거 |
 
 ---
 
