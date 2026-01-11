@@ -88,7 +88,6 @@
 | ★★☆  | Don't Settle for Eventual: Scalable Causal Consistency | [https://www.cs.cornell.edu/~asdas/papers/cops-sosp13.pdf](https://www.cs.cornell.edu/~asdas/papers/cops-sosp13.pdf) | 인과적 일관성 |
 | ★★☆  | Facebook's Warm BLOB Storage System | [https://www.usenix.org/conference/osdi21/presentation/muralidhar](https://www.usenix.org/conference/osdi21/presentation/muralidhar) | 대규모 스토리지 |
 | ★★☆  | Millions of Tiny Databases          | [https://www.usenix.org/conference/nsdi20/presentation/brooker](https://www.usenix.org/conference/nsdi20/presentation/brooker) | 분산 메타데이터 |
-| ★★☆  | A Study of Practical Deduplication  | [https://www.usenix.org/legacy/events/fast11/tech/full_papers/Meyer.pdf](https://www.usenix.org/legacy/events/fast11/tech/full_papers/Meyer.pdf) | 중복 제거 |
 
 ---
 
