@@ -75,7 +75,6 @@
 | ---- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
 | ★★★  | Paxos Made Simple                   | [https://lamport.azurewebsites.net/pubs/paxos-simple.pdf](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf)                                       | 합의        |
 | ★★★  | Raft: Understandable Consensus      | [https://raft.github.io/raft.pdf](https://raft.github.io/raft.pdf)                                                                                       | 합의        |
-| ★☆☆  | DHT Communications Survey           | [https://arxiv.org/abs/2109.10787](https://arxiv.org/abs/2109.10787)                                                                                     | DHT       |
 | ★★☆  | Viewstamped Replication Revisited   | [https://pmg.csail.mit.edu/papers/vr-revisited.pdf](https://pmg.csail.mit.edu/papers/vr-revisited.pdf)                                                   | 합의·복제 알고리즘 |
 | ★★☆  | Hidden Technical Debt in ML Systems | [https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf](https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf) | ML 시스템 기술부채 |
 
