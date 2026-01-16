@@ -85,7 +85,6 @@
 | ★★☆  | Consistency in Non-Transactional Distributed Storage | [https://dl.acm.org/doi/10.1145/2926965](https://dl.acm.org/doi/10.1145/2926965) | 일관성 모델 |
 | ★★☆  | CORFU: A Shared Log Design for Flash Clusters | [https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/balakrishnan](https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/balakrishnan) | 분산 로그 |
 | ★★☆  | Don't Settle for Eventual: Scalable Causal Consistency | [https://www.cs.cornell.edu/~asdas/papers/cops-sosp13.pdf](https://www.cs.cornell.edu/~asdas/papers/cops-sosp13.pdf) | 인과적 일관성 |
-| ★★☆  | Facebook's Warm BLOB Storage System | [https://www.usenix.org/conference/osdi21/presentation/muralidhar](https://www.usenix.org/conference/osdi21/presentation/muralidhar) | 대규모 스토리지 |
 ---
 
 # V. Network / Protocol
