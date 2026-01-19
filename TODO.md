@@ -84,7 +84,6 @@
 | ★★☆  | Erasure Coding in Windows Azure Storage | [https://www.usenix.org/conference/atc12/technical-sessions/presentation/huang](https://www.usenix.org/conference/atc12/technical-sessions/presentation/huang) | Erasure Coding |
 | ★★☆  | Consistency in Non-Transactional Distributed Storage | [https://dl.acm.org/doi/10.1145/2926965](https://dl.acm.org/doi/10.1145/2926965) | 일관성 모델 |
 | ★★☆  | CORFU: A Shared Log Design for Flash Clusters | [https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/balakrishnan](https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/balakrishnan) | 분산 로그 |
-| ★★☆  | Don't Settle for Eventual: Scalable Causal Consistency | [https://www.cs.cornell.edu/~asdas/papers/cops-sosp13.pdf](https://www.cs.cornell.edu/~asdas/papers/cops-sosp13.pdf) | 인과적 일관성 |
 ---
 
 # V. Network / Protocol
