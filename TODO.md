@@ -80,7 +80,6 @@
 
 
 | ★★★  | Amazon S3: The first 10 years       | [https://www.usenix.org/conference/atc21/presentation/lawson](https://www.usenix.org/conference/atc21/presentation/lawson)                               | 분산 스토리지 |
-| ★★★  | Dynamo: Amazon's Highly Available Key-value Store | [https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) | 분산 KV 스토어 |
 | ★★☆  | Erasure Coding in Windows Azure Storage | [https://www.usenix.org/conference/atc12/technical-sessions/presentation/huang](https://www.usenix.org/conference/atc12/technical-sessions/presentation/huang) | Erasure Coding |
 | ★★☆  | Consistency in Non-Transactional Distributed Storage | [https://dl.acm.org/doi/10.1145/2926965](https://dl.acm.org/doi/10.1145/2926965) | 일관성 모델 |
 ---
