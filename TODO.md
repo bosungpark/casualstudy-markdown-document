@@ -77,9 +77,6 @@
 | ★★★  | Raft: Understandable Consensus      | [https://raft.github.io/raft.pdf](https://raft.github.io/raft.pdf)                                                                                       | 합의        |
 | ★★☆  | Viewstamped Replication Revisited   | [https://pmg.csail.mit.edu/papers/vr-revisited.pdf](https://pmg.csail.mit.edu/papers/vr-revisited.pdf)                                                   | 합의·복제 알고리즘 |
 | ★★☆  | Hidden Technical Debt in ML Systems | [https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf](https://papers.neurips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.pdf) | ML 시스템 기술부채 |
-
-
-| ★★★  | Amazon S3: The first 10 years       | [https://www.usenix.org/conference/atc21/presentation/lawson](https://www.usenix.org/conference/atc21/presentation/lawson)                               | 분산 스토리지 |
 ---
 
 # V. Network / Protocol
