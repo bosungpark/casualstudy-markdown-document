@@ -80,7 +80,6 @@
 
 
 | ★★★  | Amazon S3: The first 10 years       | [https://www.usenix.org/conference/atc21/presentation/lawson](https://www.usenix.org/conference/atc21/presentation/lawson)                               | 분산 스토리지 |
-| ★★☆  | Consistency in Non-Transactional Distributed Storage | [https://dl.acm.org/doi/10.1145/2926965](https://dl.acm.org/doi/10.1145/2926965) | 일관성 모델 |
 ---
 
 # V. Network / Protocol
