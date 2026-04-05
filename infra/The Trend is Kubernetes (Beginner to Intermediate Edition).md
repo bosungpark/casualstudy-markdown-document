@@ -65,6 +65,16 @@ Pod Lifecycle을 알면 장애 상황에서 Kubernetes가 어떻게 동작하는
 
 ---
 
+## Component - kube-apiserver, etcd, kube-scheduler, kube-proxy, kube-controller-manager
+
+1. kube-apiserver: Kubernetes API 서버로, 클러스터의 모든 요청을 처리하는 중앙 허브 역할을 한다. kubectl 명령어 등이 이 서버를 통해 클러스터와 상호작용한다.
+2. etcd: 분산 키-값 저장소로, 클러스터의 모든 상태 정보를 저장한다. Kubernetes의 데이터베이스 역할을 한다.
+3. kube-scheduler: Pod를 적절한 노드에 스케줄링하는 컴포넌트로, 리소스 요구사항과 제약사항을 고려하여 배치한다.
+4. kube-proxy: 각 노드에서 실행되는 네트워크 프록시로, 서비스와 Pod 간의 트래픽을 라우팅하고 로드 밸런싱을 수행한다.
+5. kube-controller-manager: 다양한 컨트롤러들을 실행하는 컴포넌트로, 클러스터의 상태를 유지하고 원하는 상태로 복구한다.
+
+---
+
 ## Service - ClusterIP, NodePort, LoadBalancer
 
 1. ClusterIP: 클러스터 내부에서만 접근 가능한 기본 Service 타입. Pod들 사이의 내부 통신에 사용된다. 외부에서는 접근할 수 없다.
