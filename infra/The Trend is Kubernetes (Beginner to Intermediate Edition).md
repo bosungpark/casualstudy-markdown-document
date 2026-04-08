@@ -132,3 +132,510 @@ Pod Lifecycle을 알면 장애 상황에서 Kubernetes가 어떻게 동작하는
 3. CronJob: Job을 주기적으로 생성하고 실행하는 컨트롤러. Linux의 cron과 동일한 스케줄 형식(분 시 일 월 요일)을 사용한다. 정기적인 백업, 리포트 생성, 주기적 데이터 정리 등 반복 작업에 적합하다. concurrencyPolicy를 통해 동시 실행 정책을 제어할 수 있다.
 
 ---
+
+## K8S 실습 자료실 - 컨트롤러
+
+### ReplicaSet
+
+ReplicaSet은 Kubernetes에서 Pod의 복제본을 관리하는 컨트롤러입니다. 지정된 수의 Pod가 항상 실행되도록 보장하며, Pod가 실패하거나 삭제되면 자동으로 새로운 Pod를 생성합니다. ReplicationController의 후속 버전으로, 더 유연한 라벨 선택기를 지원합니다.
+
+#### 주요 구성 요소
+- **Template**: 새로운 Pod를 생성할 때 사용할 Pod 템플릿입니다. 컨테이너 이미지, 라벨, 환경 변수 등을 정의합니다.
+- **Replicas**: 유지할 Pod의 수를 지정합니다.
+- **Selector**: 관리할 Pod를 선택하는 라벨 선택기입니다. `matchLabels`와 `matchExpressions`를 사용하여 복잡한 조건을 지정할 수 있습니다.
+
+#### 예제
+
+##### 1. 기본 Pod
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1
+  labels:
+    type: web
+spec:
+  containers:
+  - name: container
+    image: kubetm/app:v1
+  terminationGracePeriodSeconds: 0
+```
+
+##### 2. ReplicaSet
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: replica1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      type: web
+  template:
+    metadata:
+      labels:
+        type: web
+    spec:
+      containers:
+      - name: container
+        image: kubetm/app:v1
+      terminationGracePeriodSeconds: 0
+```
+
+### ReplicationController에서 ReplicaSet으로 업데이트
+
+ReplicationController는 Kubernetes의 초기 컨트롤러로, ReplicaSet의 전신입니다. 그러나 ReplicationController는 더 이상 사용되지 않으며(deprecated), ReplicaSet으로 대체되었습니다. ReplicationController에서 ReplicaSet으로 마이그레이션할 때는 주의해야 합니다.
+
+#### 마이그레이션 예제
+
+##### ReplicationController
+```yaml
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: replication1
+spec:
+  replicas: 2
+  selector:
+    cascade: "false"
+  template:
+    metadata:
+      labels:
+        cascade: "false"
+    spec:
+      containers:
+      - name: container
+        image: kubetm/app:v1
+```
+
+마이그레이션 명령:
+```bash
+kubectl delete replicationcontrollers replication1 --cascade=false
+```
+
+##### ReplicaSet
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: replica2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      cascade: "false"
+  template:
+    metadata:
+      labels:
+        cascade: "false"
+    spec:
+      containers:
+      - name: container
+        image: kubetm/app:v1
+```
+
+### Selector
+
+Selector는 컨트롤러가 관리할 Pod를 식별하는 데 사용됩니다. ReplicaSet은 ReplicationController보다 더 강력한 선택기를 지원합니다.
+
+- **matchLabels**: 라벨의 키-값 쌍이 정확히 일치하는 Pod를 선택합니다.
+- **matchExpressions**: 더 복잡한 조건을 지정할 수 있습니다. `In`, `NotIn`, `Exists`, `DoesNotExist` 등의 연산자를 사용합니다.
+
+#### 고급 Selector 예제
+
+##### ReplicaSet with Advanced Selector
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: replica1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      type: web
+      ver: v1
+    matchExpressions:
+    - key: type
+      operator: In
+      values: [web]
+    - key: ver
+      operator: Exists
+  template:
+    metadata:
+      labels:
+        type: web
+        ver: v1
+        location: dev
+    spec:
+      containers:
+      - name: container
+        image: kubetm/app:v1
+      terminationGracePeriodSeconds: 0
+```
+
+##### 관련 Pod 예제 (참고용)
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-node-affinity1
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: AZ-01
+            operator: Exists
+  containers:
+  - name: container
+    image: kubetm/init
+```
+
+**참고**: 위의 Pod 예제는 노드 어피니티를 보여주기 위한 것으로, ReplicaSet과 직접 관련이 없습니다.
+
+### 팁
+- **MatchExpressions**: `matchExpressions`를 사용하면 더 유연한 Pod 선택이 가능합니다. 예를 들어, 특정 라벨이 존재하는지 확인하거나, 값이 특정 목록에 포함되는지 등을 조건으로 지정할 수 있습니다.
+- ReplicaSet은 Deployment의 일부로 더 자주 사용되며, 직접적으로 ReplicaSet을 생성하는 경우는 드뭅니다.
+
+### 참조
+- [Kubernetes ReplicaSet](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/)
+- [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+- [ReplicationController](https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/)
+
+### Deployment
+
+Deployment는 Kubernetes에서 애플리케이션의 배포와 업데이트를 관리하는 컨트롤러입니다. ReplicaSet을 기반으로 하며, 롤링 업데이트, 롤백 등의 기능을 제공합니다. 애플리케이션의 무중단 배포를 지원합니다.
+
+#### 배포 전략
+- **Recreate**: 모든 기존 Pod를 삭제한 후 새로운 Pod를 생성합니다. 다운타임이 발생하지만, 간단합니다.
+- **RollingUpdate**: 기존 Pod를 점진적으로 교체합니다. 무중단 배포가 가능합니다.
+
+#### 예제
+
+##### 1. Recreate 전략
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-1
+spec:
+  selector:
+    matchLabels:
+      type: app
+  replicas: 2
+  strategy:
+    type: Recreate
+  revisionHistoryLimit: 1
+  template:
+    metadata:
+      labels:
+        type: app
+    spec:
+      containers:
+      - name: container
+        image: kubetm/app:v1
+      terminationGracePeriodSeconds: 10
+```
+
+##### Service
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-1
+spec:
+  selector:
+    type: app
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+```
+
+테스트 명령:
+```bash
+while true; do curl 10.99.5.3:8080/version; sleep 1; done
+```
+
+롤백 명령:
+```bash
+kubectl rollout undo deployment deployment-1 --to-revision=2
+kubectl rollout history deployment deployment-1
+```
+
+##### 2. RollingUpdate 전략
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-2
+spec:
+  selector:
+    matchLabels:
+      type: app2
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        type: app2
+    spec:
+      containers:
+      - name: container
+        image: kubetm/app:v1
+      terminationGracePeriodSeconds: 0
+```
+
+##### Service
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-2
+spec:
+  selector:
+    type: app2
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+```
+
+테스트 명령:
+```bash
+while true; do curl 10.99.5.3:8080/version; sleep 1; done
+```
+
+##### 3. Blue/Green 배포
+Blue/Green 배포는 두 개의 환경(Blue와 Green)을 유지하고, 트래픽을 한 번에 전환하는 방식입니다. Service의 selector를 변경하여 전환합니다.
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: replica1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      ver: v1
+  template:
+    metadata:
+      labels:
+        ver: v1
+    spec:
+      containers:
+      - name: container
+        image: kubetm/app:v1
+      terminationGracePeriodSeconds: 0
+```
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-3
+spec:
+  selector:
+    ver: v1
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+```
+
+### DaemonSet
+
+DaemonSet은 클러스터의 모든 노드(또는 특정 노드)에 Pod를 하나씩 배포하는 컨트롤러입니다. 로그 수집, 모니터링 등 노드별로 실행해야 하는 애플리케이션에 적합합니다.
+
+#### 주요 기능
+- **HostPort**: Pod의 포트를 호스트의 특정 포트에 바인딩합니다.
+- **NodeSelector**: 특정 라벨이 있는 노드에만 Pod를 배포합니다.
+
+#### 예제
+
+##### 1. HostPort를 사용한 DaemonSet
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: daemonset-1
+spec:
+  selector:
+    matchLabels:
+      type: app
+  template:
+    metadata:
+      labels:
+        type: app
+    spec:
+      containers:
+      - name: container
+        image: kubetm/app
+        ports:
+        - containerPort: 8080
+          hostPort: 18080
+```
+
+테스트 명령:
+```bash
+curl 192.168.56.31:18080/hostname
+```
+
+##### 2. NodeSelector를 사용한 DaemonSet
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: daemonset-2
+spec:
+  selector:
+    matchLabels:
+      type: app
+  template:
+    metadata:
+      labels:
+        type: app
+    spec:
+      nodeSelector:
+        os: centos
+      containers:
+      - name: container
+        image: kubetm/app
+        ports:
+        - containerPort: 8080
+```
+
+라벨 추가:
+```bash
+kubectl label nodes k8s-node1 os=centos
+kubectl label nodes k8s-node2 os=ubuntu
+```
+
+라벨 제거:
+```bash
+kubectl label nodes k8s-node2 os-
+```
+
+### Job
+
+Job은 일회성 작업을 실행하는 컨트롤러입니다. Pod가 완료될 때까지 재시도하며, 완료되면 종료됩니다.
+
+#### 주요 옵션
+- **Completions**: 총 실행 횟수
+- **Parallelism**: 동시 실행 수
+
+#### 예제
+
+##### 1. 기본 Job
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-1
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: container
+        image: kubetm/init
+        command: ["sh", "-c", "echo 'job start';sleep 20; echo 'job end'"]
+      terminationGracePeriodSeconds: 0
+```
+
+##### 2. 병렬 Job
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-2
+spec:
+  completions: 6
+  parallelism: 2
+  activeDeadlineSeconds: 30
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: container
+        image: kubetm/init
+        command: ["sh", "-c", "echo 'job start';sleep 20; echo 'job end'"]
+      terminationGracePeriodSeconds: 0
+```
+
+### CronJob
+
+CronJob은 Job을 주기적으로 실행하는 컨트롤러입니다. Linux의 cron과 유사합니다.
+
+#### 주요 기능
+- **Schedule**: 실행 스케줄 (cron 형식)
+- **ConcurrencyPolicy**: 동시 실행 정책 (Allow, Forbid, Replace)
+
+#### 예제
+
+##### 1. 기본 CronJob
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cron-job
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: container
+            image: kubetm/init
+            command: ["sh", "-c", "echo 'job start';sleep 20; echo 'job end'"]
+          terminationGracePeriodSeconds: 0
+```
+
+수동 실행:
+```bash
+kubectl create job --from=cronjob/cron-job cron-job-manual-001
+```
+
+일시 중지:
+```bash
+kubectl patch cronjobs cron-job -p '{"spec" : {"suspend" : false }}'
+```
+
+**참고**: Kubernetes 1.19 이후, CronJob 삭제 시 수동으로 생성한 Job도 함께 삭제됩니다.
+
+##### 2. ConcurrencyPolicy를 사용한 CronJob
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cron-job-2
+spec:
+  schedule: "20,21,22 * * * *"
+  concurrencyPolicy: Replace
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: container
+            image: kubetm/init
+            command: ["sh", "-c", "echo 'job start';sleep 140; echo 'job end'"]
+          terminationGracePeriodSeconds: 0
+```
+
+**참고**: Kubernetes 1.19 이후, Replace 모드에서는 기존 Job이 삭제되고 새 Job이 생성됩니다.
+
+### 참조
+- [Kubernetes Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+- [Kubernetes Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/)
+- [Kubernetes CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)
+- [Running Automated Tasks with a CronJob](https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/)
