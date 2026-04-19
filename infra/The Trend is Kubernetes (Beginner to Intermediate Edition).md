@@ -1349,6 +1349,992 @@ spec:
 
 ---
 
+## [중급편] Pod - Lifecycle
+
+초급에서는 Pod의 Phase 5가지(Pending, Running, Succeeded, Failed, Unknown)만 다뤘다. 중급에서는 Pod의 `status` 구조 전체를 뜯어보고, **Phase가 어떻게 결정되는지**, **Container의 State가 어떻게 전이되는지**까지 본다. 장애 분석은 Phase가 아니라 **status.conditions**와 **containerStatuses**를 봐야 한다.
+
+### Pod의 status 구조
+
+Pod 오브젝트가 살아 있는 동안 `status` 필드는 다음 4가지로 구성된다.
+
+| 필드 | 의미 |
+|---|---|
+| **status.phase** | Pod의 전체 단계 (Pending / Running / Succeeded / Failed / Unknown) |
+| **status.conditions** | Pod가 거쳐온 마일스톤 (Initialized, ContainersReady, PodScheduled, Ready) |
+| **status.containerStatuses** | 컨테이너별 상세 상태 (Waiting / Running / Terminated) |
+| **status.podIP, hostIP** | 네트워크 정보 |
+
+### Pod Conditions — "단계별 마일스톤"
+
+Pod이 생성되는 과정에서 통과하는 4가지 마일스톤이다. 각 단계가 `True`/`False`로 표시된다.
+
+| Condition | 의미 |
+|---|---|
+| **PodScheduled** | Scheduler가 Node를 골라 배치 완료 |
+| **Initialized** | Init Container가 모두 정상 종료 |
+| **ContainersReady** | 모든 컨테이너의 Readiness Probe가 성공 (없으면 컨테이너 기동 완료) |
+| **Ready** | Pod가 Service에 트래픽을 받을 수 있는 상태 |
+
+> Phase가 `Running`이라고 해서 트래픽을 받을 준비가 됐다는 뜻이 아니다. **Ready 컨디션이 True가 되어야** Service의 Endpoint에 등록된다.
+
+### Init Container — "본 컨테이너 전에 돌려야 할 것들"
+
+Pod가 Pending 상태일 때 내부적으로 일어나는 일은 크게 3가지다.
+
+1. **Init Container 실행** — 볼륨 초기화, 보안 설정, 의존 서비스 대기 등 사전 작업. 모든 Init Container가 성공해야 `Initialized = True`
+2. **Node 스케줄링** — Scheduler가 Node를 결정하면 `PodScheduled = True`
+3. **이미지 Pull + 컨테이너 기동** — 이 기간 동안 컨테이너 State는 `Waiting` / reason `ContainerCreating`
+
+Init Container를 아예 지정하지 않은 경우에도 `Initialized = True`가 된다(통과로 간주).
+
+### Container State — "컨테이너의 일생"
+
+Pod 안의 각 컨테이너는 다음 3가지 상태 중 하나를 가진다.
+
+| State | 언제 발생하나 | 추가 필드 |
+|---|---|---|
+| **Waiting** | 이미지 Pull 중, Init Container 대기 중 등 | `reason` (예: ContainerCreating, ImagePullBackOff, CrashLoopBackOff) |
+| **Running** | 정상적으로 실행 중 | `startedAt` |
+| **Terminated** | 종료됨 | `exitCode`, `reason` (Completed, Error, OOMKilled), `startedAt`, `finishedAt` |
+
+> **중요한 착각 포인트**: Pod의 Phase가 `Running`이어도 내부 컨테이너가 전부 Running은 아니다. `CrashLoopBackOff` 상태의 컨테이너는 State가 `Waiting`이지만, Kubernetes는 Pod 자체는 여전히 `Running`으로 본다. 그래서 운영에서는 `phase`만 보면 안 되고 `containerStatuses`와 `conditions.Ready`를 같이 봐야 한다.
+
+### restartPolicy — "컨테이너가 죽었을 때 어떻게 할지"
+
+Pod의 `spec.restartPolicy`는 컨테이너가 종료됐을 때 kubelet이 어떻게 행동할지를 정한다.
+
+| 값 | 동작 | 사용처 |
+|---|---|---|
+| **Always** (기본값) | Exit Code와 무관하게 항상 재시작 | Deployment 등 상시 서비스 |
+| **OnFailure** | Exit Code != 0인 경우만 재시작 | Job (실패 시 재시도) |
+| **Never** | 절대 재시작하지 않음 | Job (한 번만 시도) |
+
+> `Always`는 무한 재시작 시 **CrashLoopBackOff** 상태가 된다. 재시작 간격이 지수적으로(10s, 20s, 40s, ... 최대 5분) 늘어나 시스템을 보호한다.
+
+### 시나리오로 보는 Phase 결정
+
+| 시나리오 | Phase 변화 |
+|---|---|
+| 정상 기동 | Pending → Running |
+| Job 정상 종료 (Always 외) | Running → Succeeded |
+| Job 실패 종료 | Running → Failed |
+| Image Pull 실패 | Pending에서 멈춤 (containerStatus는 Waiting/ImagePullBackOff) |
+| Node 장애 | Running → Unknown (kubelet과 통신 두절) |
+
+---
+
+## [중급편] Pod - ReadinessProbe, LivenessProbe
+
+### 두 Probe가 필요한 이유
+
+문서 앞부분의 ["파드가 죽었다는 사실을 어떻게 아는가"](#) 흐름을 떠올려 보자. kubelet은 컨테이너 프로세스의 종료(Exit Code)는 감지하지만, **프로세스가 살아 있으면서도 응답 불능인 상태**(데드락, GC 폭주 등)는 감지하지 못한다. Probe가 이 빈틈을 메운다.
+
+| Probe | 실패 시 동작 | 목적 |
+|---|---|---|
+| **ReadinessProbe** | Service Endpoint에서 **제외** (재시작 X) | 트래픽을 받을 준비 안 됨 |
+| **LivenessProbe** | 컨테이너 **재시작** | 컨테이너가 죽음 (응답 불능) |
+
+> 핵심 차이: **Readiness는 트래픽 차단, Liveness는 재시작.** 이 둘을 혼동하면 운영 사고로 이어진다.
+
+### Probe 진단 방식 3가지
+
+| 방식 | 동작 | 사용처 |
+|---|---|---|
+| **httpGet** | 지정한 path와 port로 HTTP GET 요청. 200~399면 성공 | 웹 서비스 (가장 일반적) |
+| **exec** | 컨테이너 안에서 명령 실행. Exit Code 0이면 성공 | DB, 캐시 등 비-HTTP 앱 |
+| **tcpSocket** | 지정한 포트로 TCP 연결 시도. 성공하면 OK | 단순 포트 오픈 확인 |
+
+> **Tomcat 500 에러 같은 상황**이 LivenessProbe가 꼭 필요한 전형적인 케이스다. Tomcat 프로세스 자체는 살아 있어서 Pod는 `Running`으로 남지만, 위에서 돌고 있는 앱은 메모리 오버플로우로 `500 Internal Server Error`만 뿜는다. 프로세스 모니터링만으로는 이 빈틈을 못 메운다.
+
+### 공통 옵션 — "언제, 얼마나, 몇 번 체크할지"
+
+| 옵션 | 기본값 | 의미 |
+|---|---|---|
+| **initialDelaySeconds** | 0 | 컨테이너 시작 후 첫 체크까지 대기 시간 |
+| **periodSeconds** | 10 | 체크 주기 |
+| **timeoutSeconds** | 1 | 체크 응답 대기 시간 |
+| **successThreshold** | 1 | 성공 판정에 필요한 연속 성공 횟수 |
+| **failureThreshold** | 3 | 실패 판정에 필요한 연속 실패 횟수 |
+
+### YAML 예제 — 두 Probe 동시 적용
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-probe
+spec:
+  containers:
+  - name: container
+    image: kubetm/app
+    ports:
+    - containerPort: 8080
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      failureThreshold: 3
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 8080
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 3
+```
+
+> 두 Probe의 path를 분리하는 게 좋다. `/ready`는 의존성(DB, 캐시) 확인까지 포함하고, `/health`는 자기 프로세스 살아 있는지만 가볍게 응답하도록 설계한다.
+
+### exec + hostPath로 수동 제어하는 전형적 예제
+
+강의에서 자주 쓰이는 패턴으로, `ready.txt` 파일을 조건부로 만들어서 ReadinessProbe의 성공/실패를 수동으로 토글한다. 디버깅이나 데모에 유용하다.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-readiness-exec
+  labels:
+    app: readiness
+spec:
+  containers:
+  - name: container
+    image: kubetm/app
+    ports:
+    - containerPort: 8080
+    volumeMounts:
+    - name: host-path
+      mountPath: /mount1
+    readinessProbe:
+      exec:
+        command: ["cat", "/mount1/ready.txt"]
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      successThreshold: 3
+  volumes:
+  - name: host-path
+    hostPath:
+      path: /tmp/readiness
+      type: DirectoryOrCreate
+```
+
+**동작 흐름**:
+
+1. Pod 생성 직후 `/mount1/ready.txt`가 없음 → probe 실패 → `Ready=False`
+2. `kubectl describe endpoints`에서 이 Pod IP는 `notReadyAddresses`에 등록 (Service 트래픽 안 받음)
+3. 호스트 Node에서 `touch /tmp/readiness/ready.txt` → probe 성공 시작
+4. **3번 연속 성공**(successThreshold) 후 `Ready=True` → endpoints의 `addresses`로 이동, 트래픽 유입
+
+### Startup Probe — "느리게 뜨는 앱을 위한 안전장치"
+
+JVM, Spring Boot처럼 기동에 30초 이상 걸리는 앱에서 Liveness가 먼저 동작하면 무한 재시작 루프에 빠진다. Startup Probe가 성공할 때까지 Liveness/Readiness는 **유예**된다.
+
+```yaml
+startupProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  failureThreshold: 30   # 최대 30 * 10s = 5분 대기
+  periodSeconds: 10
+```
+
+### 실습 시나리오 — Service와 함께 동작 확인
+
+ReadinessProbe를 가진 Pod 2개와 Service 하나를 만들어 동작을 확인한다.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-readiness
+spec:
+  selector:
+    app: readiness
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-readiness-1
+  labels:
+    app: readiness
+spec:
+  containers:
+  - name: container
+    image: kubetm/app
+    ports:
+    - containerPort: 8080
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 10
+```
+
+**확인 포인트**:
+
+```bash
+# Pod의 Ready 상태 확인 (READY 컬럼)
+kubectl get pods
+
+# Service의 Endpoint 확인 — Ready=True인 Pod만 addresses에 등록됨
+# Ready=False인 Pod는 notReadyAddresses로 분리되어 서비스 트래픽 대상에서 제외
+kubectl describe endpoints svc-readiness
+
+# Pod의 conditions 상세 확인
+kubectl describe pod pod-readiness-1
+```
+
+`/ready`가 실패를 반환하도록 만들면 `kubectl describe endpoints`에서 해당 Pod IP가 `addresses`에서 `notReadyAddresses`로 이동하지만, **Pod 자체는 죽지 않고 Running으로 유지**된다. LivenessProbe였다면 컨테이너가 재시작되어 RESTARTS 카운트가 올라간다.
+
+---
+
+## [중급편] Pod - QoS Classes
+
+### QoS가 왜 필요한가?
+
+Node의 자원이 부족해지면 kubelet은 Pod를 강제 퇴출(Eviction)한다. **누구를 먼저 죽일지** 결정하는 우선순위가 QoS Class다. requests/limits 설정 방식에 따라 자동으로 부여된다.
+
+### 3가지 QoS Class
+
+| Class | 조건 | Eviction 우선순위 |
+|---|---|---|
+| **Guaranteed** | 모든 컨테이너가 CPU/Memory 모두 `requests == limits` | 가장 늦게 죽음 (안전) |
+| **Burstable** | 하나라도 requests/limits가 설정되어 있지만 Guaranteed 조건에 미달 | 중간 |
+| **BestEffort** | 어떤 컨테이너도 requests/limits를 지정하지 않음 | 가장 먼저 죽음 |
+
+### YAML 예제 — Class별 설정
+
+**Guaranteed** — 운영 환경의 핵심 서비스에 권장
+
+```yaml
+resources:
+  requests:
+    cpu: "1"
+    memory: "1Gi"
+  limits:
+    cpu: "1"
+    memory: "1Gi"
+```
+
+**Burstable** — 평소엔 적게, 부하 시 더 쓰는 일반 워크로드
+
+```yaml
+resources:
+  requests:
+    cpu: "0.5"
+    memory: "500Mi"
+  limits:
+    cpu: "1"
+    memory: "1Gi"
+```
+
+**BestEffort** — 죽어도 상관없는 임시/배치 작업
+
+```yaml
+# resources 자체를 지정하지 않음
+```
+
+### Eviction 시나리오
+
+Node에 메모리가 부족해지면 kubelet은 다음 순서로 Pod를 퇴출한다.
+
+1. **BestEffort** Pod 모두
+2. **Burstable** Pod 중 requests를 초과해서 사용 중인 Pod
+3. **Guaranteed** Pod (시스템 데몬 보호 차원에서만)
+
+### 같은 Class 안에서 누가 먼저 죽나 — OOM Score
+
+한 Class 안에 여러 Pod가 있을 때는 **OOM Score**(Out-Of-Memory Score)가 높은 쪽이 먼저 죽는다. 핵심은 **"내가 요청한 양 대비 실제로 얼마나 쓰고 있느냐"**의 비율이다.
+
+| Pod | requests.memory | 실제 사용량 | 사용 비율 | OOM 대상 순위 |
+|---|---|---|---|---|
+| Pod2 | 5Gi | 4Gi | **80%** | 먼저 죽음 |
+| Pod3 | 8Gi | 4Gi | 50% | 나중 |
+
+> 같은 Burstable이라도 **requests 대비 과소비 중인 Pod**가 먼저 희생된다. 이는 "자기 몫을 더 많이 쓰는 쪽이 시스템에 더 큰 부담"이라는 kubelet의 판단 기준이다. 요청량을 실사용보다 지나치게 낮게 잡으면 Eviction 1순위가 될 수 있다는 뜻.
+
+> 실무 팁: 결제, 인증 같은 **절대 죽으면 안 되는 서비스는 Guaranteed**, 일반 백엔드는 **Burstable**, 로그 수집 같은 부수 작업은 **BestEffort**로 두는 식의 계층 설계가 정석이다.
+
+### QoS Class 확인
+
+```bash
+kubectl get pod pod-1 -o jsonpath='{.status.qosClass}'
+```
+
+---
+
+## [중급편] Pod - Node Scheduling
+
+초급에서 본 `nodeSelector`는 **단순 Label 매칭**만 가능했다. 중급에서는 더 정교한 4가지 스케줄링 메커니즘을 다룬다.
+
+### 한눈에 보기
+
+| 메커니즘 | 누가 결정 | 무엇을 본다 |
+|---|---|---|
+| **NodeName** | 사용자 | Node 이름 직접 지정 (Scheduler 우회) |
+| **NodeSelector / Node Affinity** | Scheduler | Node의 Label |
+| **Pod Affinity / Anti-Affinity** | Scheduler | 다른 Pod의 위치 |
+| **Taint / Toleration** | Node + Pod | Node가 거부, Pod가 감내 |
+
+### 1. NodeName — "이 Node에 무조건 올려라"
+
+가장 단순하지만 위험한 방법. Scheduler를 거치지 않고 직접 Node를 지정한다. Node가 죽거나 자원이 없어도 그대로 시도한다. 실무에서는 거의 안 쓴다.
+
+```yaml
+spec:
+  nodeName: node1
+```
+
+### 2. Node Affinity — "Label을 더 유연하게 매칭"
+
+NodeSelector의 확장판. **연산자**(In, NotIn, Exists, DoesNotExist, Gt, Lt)를 지원하고, **Required vs Preferred**(필수 vs 선호)를 구분할 수 있다.
+
+| 종류 | 의미 |
+|---|---|
+| **requiredDuringSchedulingIgnoredDuringExecution** | 반드시 만족해야 스케줄. 없으면 Pending |
+| **preferredDuringSchedulingIgnoredDuringExecution** | 가급적 만족하도록 노력. 없어도 다른 Node에 스케줄 |
+
+```yaml
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: gpu
+            operator: In
+            values: ["true"]
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: zone
+            operator: In
+            values: ["seoul"]
+```
+
+> 이름의 `IgnoredDuringExecution`은 "이미 떠 있는 Pod의 Node Label이 바뀌어도 쫓아내지 않음"을 뜻한다. 스케줄링 시점에만 평가된다.
+
+**matchExpressions 연산자**: `In`, `NotIn`, `Exists`, `DoesNotExist`, `Gt`, `Lt`. 앞 `Gt`/`Lt`는 "지정한 value보다 크거나 작은 Node"를 고르는 Node Affinity 고유 연산자다 (예: 특정 CPU 용량 이상의 Node).
+
+### Preferred의 weight — 점수 가산 방식
+
+Scheduler는 원래 CPU 여유 등으로 Node에 기본 점수를 매기고, `preferred` 조건을 만족하는 Node에 **weight만큼 점수를 추가**해 최종 점수가 가장 높은 Node를 고른다.
+
+예시: Node1(`zone=kr`, CPU 여유 50점), Node2(`zone=us`, CPU 여유 30점)에 `preferred` (key: `zone`, value: `kr`, weight: 50)인 Pod를 배치하면
+
+| Node | 기본 점수 | preferred 가산 | 최종 |
+|---|---|---|---|
+| Node1 (kr) | 50 | +50 | **100** ← 배치 |
+| Node2 (us) | 30 | 0 | 30 |
+
+> `required`와 달리 `preferred`는 조건 미달 Node도 후보에 포함된다. weight는 0~100 정수.
+
+### 3. Pod Affinity / Anti-Affinity — "다른 Pod와 가까이/멀리"
+
+Node가 아니라 **다른 Pod의 위치**를 기준으로 배치한다.
+
+| 종류 | 용도 |
+|---|---|
+| **podAffinity** | 같은 Node/Zone에 모으기. 캐시-앱처럼 통신이 잦은 Pod끼리 묶을 때 |
+| **podAntiAffinity** | 서로 떨어뜨리기. 동일 서비스 Pod가 한 Node에 몰리지 않게 (HA) |
+
+```yaml
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values: ["web"]
+        topologyKey: "kubernetes.io/hostname"
+```
+
+> `topologyKey`가 핵심이다. `hostname`이면 같은/다른 Node 기준, `zone`이면 같은/다른 가용영역 기준이다.
+
+**전형적 사용 시나리오**:
+
+| 상황 | 어떤 걸 쓰나 |
+|---|---|
+| 웹 Pod와 서버 Pod가 **같은 hostPath PV를 공유** → 같은 Node에 있어야 데이터 접근 가능 | `podAffinity` (웹 Pod의 라벨을 매칭) |
+| 마스터/슬레이브 DB처럼 **한 Node 장애 시 둘 다 죽으면 안 됨** | `podAntiAffinity` (마스터 Pod의 라벨을 매칭) |
+
+> 먼저 스케줄링된 Pod가 기준점이 된다. 매칭 대상 라벨의 Pod가 아직 없으면 `required`인 경우 `Pending`으로 대기하고, 그 Pod가 뜨면 비로소 스케줄이 진행된다.
+
+### 4. Taint / Toleration — "Node가 Pod를 거부하기"
+
+지금까지는 **Pod가 Node를 골랐다**면, Taint는 반대로 **Node가 Pod를 거부**한다. Pod에 일치하는 Toleration이 있어야만 그 Node에 들어갈 수 있다.
+
+**Taint Effect 3가지**:
+
+| Effect | 새 Pod 스케줄 | 이미 떠 있는 Pod | 전형적 쓰임 |
+|---|---|---|---|
+| **NoSchedule** | 차단 | **그대로 유지** | GPU Node 격리, Master Node 보호 |
+| **PreferNoSchedule** | 가급적 회피 | 유지 | "정 할당할 Node가 없으면 여기라도" |
+| **NoExecute** | 차단 | **쫓아냄** (tolerationSeconds 후) | Node 장애 감지, 격리 긴급 이전 |
+
+> **헷갈리기 쉬운 포인트**: Node Affinity, Pod Affinity, `NoSchedule` taint 모두 **최초 스케줄링 시점에만** 평가된다. 이미 배치된 Pod는 Node Label이 바뀌거나 `NoSchedule` taint가 추가돼도 **쫓겨나지 않는다**. 기존 Pod까지 건드리고 싶으면 `NoExecute`가 유일한 선택지.
+
+```bash
+# Node에 Taint 부여
+kubectl taint nodes node1 gpu=true:NoSchedule
+
+# Node에서 Taint 제거
+kubectl taint nodes node1 gpu=true:NoSchedule-
+```
+
+```yaml
+# Pod에 Toleration 부여
+spec:
+  tolerations:
+  - key: "gpu"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+```
+
+### 실습 시나리오 — Node Label + Affinity
+
+Node에 지역 Label을 달고 `nodeAffinity`로 한쪽 Node에만 배치하는 시나리오.
+
+```bash
+# 1. Node에 라벨 부여 (여러 노드에 그룹핑 가능)
+kubectl label nodes node1 kr=az1
+kubectl label nodes node2 us=az1
+
+# 2. required로 key=kr인 Node에만 Pod 배치
+# 3. key가 없는 Pod는 Pending (required) / 자원 많은 Node로 배치 (preferred)
+```
+
+### 실습 시나리오 — Taint와 Toleration
+
+GPU Node를 분리해서 GPU 워크로드만 올리는 시나리오.
+
+```bash
+# 1. node1에 GPU Taint 부여 (key=hw, value=gpu, effect=NoSchedule)
+kubectl taint nodes node1 hw=gpu:NoSchedule
+
+# 2. Toleration 없는 Pod + nodeSelector(node1) → 에러 (taint 때문에 거부)
+# 3. Toleration 있는 Pod + nodeSelector(node1) → 정상 배치
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-tol
+spec:
+  nodeSelector:
+    gpu-type: nvidia
+  tolerations:
+  - key: "hw"
+    operator: "Equal"
+    value: "gpu"
+    effect: "NoSchedule"
+  containers:
+  - name: container
+    image: kubetm/app
+```
+
+### 실습 시나리오 — NoExecute + tolerationSeconds
+
+기존 Pod가 어떻게 쫓겨나는지 확인.
+
+```bash
+# 1. node2에 일반 Pod들 배치 (toleration 없음)
+# 2. tolerationSeconds=30인 Pod도 node2에 배치
+# 3. node2에 NoExecute taint 부여
+kubectl taint nodes node2 out=service:NoExecute
+
+# 결과:
+# - 일반 Pod들 → 즉시 삭제
+# - tolerationSeconds=30인 Pod → 30초 후 삭제
+# - tolerationSeconds 없는 matching Toleration Pod → 계속 유지
+```
+
+> **실습 중 주의**: Master Node의 기본 `NoSchedule` taint를 지우지 않은 상태에서 Worker 전체에 `NoExecute`를 걸면, 쫓겨난 Pod들이 갈 곳이 없어 `Pending`으로 쌓인다. 노드가 2개뿐인 테스트 환경에서는 한쪽 taint를 먼저 제거한 뒤 다른 쪽에 NoExecute를 거는 순서로 진행한다.
+
+> **주의**: Toleration은 "거부를 무시할 수 있는 권한"일 뿐, "그 Node로 배치"하는 게 아니다. 실제로 GPU Node로 보내려면 `nodeSelector`나 `nodeAffinity`를 함께 써야 한다.
+
+### tolerationSeconds — NoExecute의 "유예 시간"
+
+`NoExecute` taint가 붙으면 기존 Pod가 쫓겨나는데, Pod 쪽에 `tolerationSeconds`를 지정하면 **그 시간만큼 버틴 뒤 삭제**된다. 장애 Node에서 graceful shutdown을 원할 때 쓴다.
+
+```yaml
+spec:
+  tolerations:
+  - key: "out-of-service"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationSeconds: 30   # 30초 후 퇴출
+```
+
+- `tolerationSeconds` 생략: NoExecute taint가 매칭되는 한 **영원히 유지**됨
+- 지정: 해당 초 경과 후 Pod 삭제
+
+### 쿠버네티스가 자동으로 쓰는 Taint들
+
+평소 거의 못 보지만 실제로는 Kubernetes가 내부적으로 taint를 계속 쓰고 있다.
+
+| 언제 붙나 | Taint | Effect |
+|---|---|---|
+| Master Node 생성 시 (기본 제공) | `node-role.kubernetes.io/control-plane` | `NoSchedule` |
+| Node 장애 감지 (kubelet 통신 두절 등) | `node.kubernetes.io/unreachable` | `NoExecute` |
+| 메모리/디스크 압박 | `node.kubernetes.io/memory-pressure` 등 | `NoSchedule` |
+
+> **Master Node에 Pod가 안 뜨는 이유** = 기본 `NoSchedule` taint. 테스트 클러스터에서 Master에도 워크로드를 올리고 싶으면 이 taint를 지우거나 Toleration을 달아야 한다.
+>
+> **Node 장애 시 자동 복구 흐름**: Node가 죽으면 kubelet 통신 두절 → Kubernetes가 해당 Node에 `NoExecute` taint 자동 부여 → 위에 있던 Pod들이 Eviction → ReplicaSet/Deployment가 부족분을 감지하고 다른 Node에 새 Pod 생성. 이게 "self-healing"의 실제 메커니즘이다.
+
+### 4가지 메커니즘 조합 — 실무 패턴
+
+| 목적 | 조합 |
+|---|---|
+| GPU 전용 Node 분리 | Taint(GPU Node) + Toleration + nodeSelector |
+| 동일 서비스 Pod 분산 | podAntiAffinity (topologyKey: hostname) |
+| 캐시-앱 인접 배치 | podAffinity (topologyKey: hostname) |
+| 특정 Zone 선호 | nodeAffinity (Preferred) |
+
+핵심은 **"누가 누구를 거부/선호하는가"**의 방향을 명확히 잡는 것이다. Pod가 Node를 고르는지, Node가 Pod를 거르는지, 다른 Pod를 기준으로 삼는지에 따라 메커니즘을 선택한다.
+
+---
+
+## [중급편] Service - Headless, Endpoint, ExternalName
+
+초급에서는 사용자가 Pod에 접근하기 위한 Service(ClusterIP/NodePort/LoadBalancer)를 다뤘다. 중급에서는 **Pod 입장에서** 다른 Pod나 외부 서비스에 접근하는 방법을 본다. 핵심 문제: Pod IP는 **동적으로 바뀌기 때문에** Pod A가 Pod B의 IP를 미리 알 수가 없다.
+
+### Cluster DNS — 이름으로 찾는 기본 메커니즘
+
+클러스터 안에는 DNS 서버(CoreDNS)가 떠 있고, Service/Pod 생성 시 FQDN이 자동 등록된다.
+
+| 대상 | FQDN 형식 |
+|---|---|
+| Service | `<service-name>.<namespace>.svc.cluster.local` |
+| Pod | `<pod-ip-dashed>.<namespace>.pod.cluster.local` (기본) |
+
+같은 네임스페이스 내에서는 서비스를 **짧은 이름**(`service-name`)으로도 부를 수 있다. Pod는 기본 FQDN의 앞부분이 IP라 실용적이지 않고, Headless Service를 통해 이름을 부여해야 쓸 만하다.
+
+```bash
+# Pod 안에서 DNS 조회
+nslookup my-service                                    # 짧은 이름
+nslookup my-service.default.svc.cluster.local         # FQDN
+curl my-service:8080                                   # 이름으로 호출
+```
+
+### Headless Service — 개별 Pod에 직접 접근
+
+`clusterIP: None`을 주면 Service에 IP가 할당되지 않는다. DNS 질의 시 **연결된 Pod들의 IP 목록을 그대로 반환**한다. 개별 Pod로 라우팅하고 싶을 때 쓴다(StatefulSet의 기본 패턴).
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: headless1
+spec:
+  clusterIP: None   # 핵심
+  selector:
+    app: pod
+  ports:
+  - port: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-a
+  labels:
+    app: pod
+spec:
+  hostname: pod-a          # 이 값이 DNS 이름 앞자리가 됨
+  subdomain: headless1     # Service 이름과 동일하게
+  containers:
+  - name: container
+    image: kubetm/app
+```
+
+등록되는 DNS 이름:
+
+```
+# Service (여러 Pod IP 반환)
+headless1.default.svc.cluster.local → [Pod-A IP, Pod-B IP, ...]
+
+# Pod별 개별 이름
+pod-a.headless1.default.svc.cluster.local → Pod-A IP
+pod-b.headless1.default.svc.cluster.local → Pod-B IP
+```
+
+> `hostname` + `subdomain`을 Pod에 안 넣으면 개별 Pod 이름으로는 DNS 조회가 안 된다. StatefulSet을 쓰면 이걸 자동으로 넣어준다.
+
+### Endpoint — Service↔Pod의 실제 연결고리
+
+Label/Selector로 Service와 Pod를 묶는 건 사용자 편의용이다. Kubernetes는 매칭이 일어나면 **Service와 같은 이름의 Endpoint 오브젝트**를 자동 생성해서 실제 연결을 관리한다.
+
+```bash
+kubectl get endpoints                # Service와 같은 이름의 Endpoint가 있음
+kubectl describe endpoints my-svc    # 연결된 Pod IP/Port 목록
+```
+
+이 규칙을 알면 **Selector 없이** 수동으로 Endpoint를 만들어 원하는 대상을 가리킬 수 있다.
+
+```yaml
+# 1. Selector 없는 Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: endpoint1
+spec:
+  ports:
+  - port: 8080
+---
+# 2. Service와 같은 이름의 Endpoint 직접 생성
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: endpoint1          # Service 이름과 동일해야 연결됨
+subsets:
+- addresses:
+  - ip: 192.168.1.100      # 내부 Pod IP or 외부 IP 모두 가능
+  ports:
+  - port: 8080
+```
+
+IP로는 외부 서버(예: GitHub IP)도 지정 가능. 하지만 **IP는 바뀔 수 있으니** 도메인으로 지정하고 싶을 땐 ExternalName을 쓴다.
+
+### ExternalName — 외부 도메인에 이름으로 연결
+
+Pod가 GitHub 같은 외부 서비스를 호출할 때 Pod 코드에 외부 도메인을 박아두면, 나중에 대상이 바뀔 때 Pod 재배포가 필요해진다. ExternalName Service는 이 문제를 우회한다.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: externalname1
+spec:
+  type: ExternalName
+  externalName: github.com   # 실제 연결할 외부 도메인
+```
+
+- Pod는 항상 `externalname1`이라는 **내부 이름**으로 호출
+- 대상이 `gitlab.com`으로 바뀌면 Service의 `externalName`만 수정하면 됨
+- 내부적으로는 DNS CNAME 레코드로 동작
+
+| 방법 | 대상 지정 방식 | 쓸 때 |
+|---|---|---|
+| Endpoint 직접 생성 | IP | 외부 시스템 IP가 고정일 때 |
+| ExternalName Service | 도메인 | 도메인을 쓸 수 있을 때 (일반적으로 추천) |
+
+---
+
+## [중급편] Volume - Dynamic Provisioning, PV Status, ReclaimPolicy
+
+초급에서는 PV를 관리자가 먼저 만들고 사용자가 PVC로 연결하는 정적 방식을 다뤘다. 중급에서는 **사용자가 PVC만 만들면 PV가 자동 생성**되는 Dynamic Provisioning, 그리고 **PV의 생명주기/삭제 정책**을 본다.
+
+### Dynamic Provisioning — PVC만 만들면 PV 자동 생성
+
+정적 방식의 번거로움(관리자가 매번 PV를 만들고, 용량/accessMode 맞춰야 함)을 해결하는 구조. 사전에 **StorageClass**가 있어야 한다.
+
+```
+사용자: PVC 생성 (storageClassName 지정)
+   ↓
+StorageClass가 지정된 Provisioner를 호출
+   ↓
+실제 볼륨(AWS EBS, StorageOS, NFS 등)이 생성됨
+   ↓
+PV가 자동 생성되어 PVC와 Bound
+```
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-dynamic
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: fast     # ← StorageClass 이름 지정
+```
+
+### StorageClass 동작 방식
+
+| 경우 | 동작 |
+|---|---|
+| `storageClassName: "fast"` | `fast` StorageClass로 동적 생성 |
+| `storageClassName: ""` (빈 문자열) | 동적 생성 비활성화 → 기존 PV와 정적 바인딩 |
+| `storageClassName` 필드 생략 | **default StorageClass**로 동적 생성 (있을 경우) |
+
+default StorageClass는 `annotation: storageclass.kubernetes.io/is-default-class: "true"`로 지정한다. 클러스터당 하나가 기본값이 된다.
+
+> **StorageClass의 reclaimPolicy**도 정해진다. 기본 `Delete` (PVC 지우면 PV + 실제 볼륨 삭제). `Retain`으로 바꿔 두면 PVC 삭제 후에도 데이터가 남는다.
+
+### PV Status — 5가지 상태
+
+PV는 생성 → 연결 → 사용 → 해제의 생명주기를 거치며 `status.phase` 값이 바뀐다.
+
+| Status | 언제 |
+|---|---|
+| **Available** | PV 생성 직후, 아직 어떤 PVC와도 연결 안 됨 |
+| **Bound** | PVC와 연결된 상태 |
+| **Released** | 연결됐던 PVC가 삭제됨 (데이터는 남아 있지만 재사용 불가) |
+| **Failed** | PV와 실제 볼륨 연결 오류 |
+| **Pending** | 볼륨이 아직 완전히 준비되지 않음 |
+
+> **주의**: PV를 먼저 만들었을 때(정적)는 실제 볼륨 데이터는 Pod가 연결되는 시점에 생성된다. Dynamic Provisioning의 경우 PVC 생성 즉시 실제 볼륨이 생긴다.
+
+### ReclaimPolicy — PVC 삭제 후 PV의 운명
+
+PVC가 삭제되면 PV의 `spec.persistentVolumeReclaimPolicy`에 따라 동작이 달라진다.
+
+| Policy | PVC 삭제 시 동작 | 실제 데이터 | 기본값이 되는 경우 |
+|---|---|---|---|
+| **Retain** | PV는 `Released` 상태로 남음, 재사용 불가 | 유지됨 (수동 삭제 필요) | **정적 PV의 기본값** |
+| **Delete** | PV + 실제 볼륨까지 자동 삭제 | 볼륨 종류에 따라 삭제됨 | **Dynamic PV의 기본값** |
+| **Recycle** | PV는 `Available`로 돌아옴, 재사용 가능 | 자동 삭제(`rm -rf /volume/*`) | — (Deprecated, 사용 비권장) |
+
+```yaml
+# PV에서 직접 지정
+spec:
+  persistentVolumeReclaimPolicy: Retain
+
+# StorageClass에서 지정 (Dynamic PV 전체에 적용)
+reclaimPolicy: Retain
+```
+
+### PVC/PV가 안 지워질 때 — Force Delete
+
+Finalizer 등으로 PV/PVC가 Terminating 상태에 걸리면 강제 삭제가 필요하다.
+
+```bash
+# 네임스페이스 단위로 모든 자원 조회
+kubectl get all -n <namespace>
+
+# Force delete
+kubectl delete pvc <name> --grace-period=0 --force
+kubectl delete pv <name> --grace-period=0 --force
+```
+
+---
+
+## [중급편] Authentication - UserAccount, ServiceAccount
+
+Kubernetes API Server는 **모든 요청의 단일 진입점**이다. 이 서버에 접근하는 경로는 크게 "사용자가 접근"(UserAccount)과 "Pod가 접근"(ServiceAccount) 두 가지다.
+
+### API Server 접근의 3단계
+
+```
+요청 → Authentication (누구인가?) → Authorization (뭘 할 권한?) → AdmissionControl (제약 조건 통과?)
+```
+
+- **Authentication**: 인증서/토큰 검증
+- **Authorization**: 자원 권한 확인 (주로 RBAC)
+- **AdmissionControl**: PV 용량 제한, 네임스페이스 정책 등
+
+### UserAccount — 사용자가 API에 접근
+
+`kubeconfig` 파일(보통 `~/.kube/config` 또는 `/etc/kubernetes/admin.conf`)에 인증 정보가 들어 있다.
+
+```yaml
+apiVersion: v1
+kind: Config
+clusters:                        # 접근할 클러스터들
+- name: cluster-a
+  cluster:
+    server: https://10.0.0.1:6443
+    certificate-authority-data: <CA-CRT-base64>
+users:                           # 사용자별 인증 정보
+- name: admin-a
+  user:
+    client-certificate-data: <client.crt-base64>
+    client-key-data: <client.key-base64>
+contexts:                        # 클러스터 ↔ 사용자 묶음
+- name: context-a
+  context:
+    cluster: cluster-a
+    user: admin-a
+current-context: context-a
+```
+
+세 가지 접근 방식:
+
+| 방식 | 내용 | 보안 |
+|---|---|---|
+| **HTTPS + 인증서** | 외부 PC가 kubeconfig의 client.crt/key로 직접 API Server 호출 | 안전 (운영) |
+| **kubectl proxy** | 내부 마스터에서 `kubectl proxy --accept-hosts=.*` → 8001 포트에 HTTP 프록시 오픈 | 위험 (로컬 개발만) |
+| **kubectl config** | 여러 클러스터의 kubeconfig를 합쳐놓고 `kubectl config use-context` 로 전환 | 안전 (멀티 클러스터) |
+
+멀티 클러스터 전환 예시:
+
+```bash
+# 컨텍스트 전환
+kubectl config use-context context-a
+kubectl get nodes                    # cluster-a의 노드 조회
+
+kubectl config use-context context-b
+kubectl get nodes                    # cluster-b의 노드 조회
+
+# kubectx 툴(간편 전환)
+kubectx context-a
+```
+
+### ServiceAccount — Pod가 API에 접근
+
+Namespace를 만들면 `default`라는 ServiceAccount가 자동 생성된다. Pod에 연결된 ServiceAccount의 **Secret(토큰)**으로 API Server에 인증한다.
+
+```
+Namespace 생성
+  └─ ServiceAccount (default) 자동 생성
+       └─ Secret(CA 인증서 + Token) 자동 연결
+            └─ Pod 생성 시 자동 마운트 (/var/run/secrets/...)
+```
+
+Pod 안에서 토큰으로 API 호출:
+
+```bash
+TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+curl -k -H "Authorization: Bearer $TOKEN" \
+  https://kubernetes.default.svc/api/v1/namespaces/default/pods
+```
+
+외부에서도 토큰만 있으면 쓸 수 있다:
+
+```bash
+# Secret에서 토큰 추출
+kubectl get secret <sa-secret> -o jsonpath='{.data.token}' | base64 -d
+
+# HTTP 헤더로 전달
+curl -H "Authorization: Bearer <token>" https://<api-server>/api/v1/...
+```
+
+> 기본 `default` SA는 권한이 거의 없다. Pod 목록 조회도 막혀 있어 Role/RoleBinding을 붙여 줘야 실제로 쓸 수 있다 (다음 섹션).
+
+---
+
+## [중급편] Authorization - RBAC
+
+Authentication을 통과했다고 자원을 다 다룰 수 있는 건 아니다. **RBAC**(Role-Based Access Control)가 "이 주체가 이 자원에 이 동작을 할 수 있는지"를 결정한다.
+
+### 4가지 오브젝트
+
+| 오브젝트 | 범위 | 역할 |
+|---|---|---|
+| **Role** | Namespace 내 | 네임스페이스 자원(Pod, Service 등)에 대한 권한 정의 |
+| **RoleBinding** | Namespace 내 | Role ↔ SA 연결 |
+| **ClusterRole** | 클러스터 전체 | 클러스터 자원(Node, PV 등) + 네임스페이스 자원 권한 정의 |
+| **ClusterRoleBinding** | 클러스터 전체 | ClusterRole ↔ SA 연결 |
+
+조합별 효과:
+
+| Binding | Role 종류 | 결과 |
+|---|---|---|
+| RoleBinding | Role | SA는 **해당 Namespace 내 지정된 자원**만 접근 |
+| RoleBinding | ClusterRole | SA는 **해당 Namespace 내에서 ClusterRole 권한**만 사용 (클러스터 자원 접근 불가) |
+| ClusterRoleBinding | ClusterRole | SA는 **클러스터 전역** 자원 접근 가능 (admin 수준) |
+
+> "RoleBinding + ClusterRole" 조합은 왜 쓰나? 여러 네임스페이스에 **동일한 권한**을 뿌려야 할 때, 매 네임스페이스마다 Role을 복사하는 대신 ClusterRole 하나를 공유하고 각 네임스페이스에서 RoleBinding으로 연결한다. 권한 변경 시 ClusterRole 하나만 고치면 된다.
+
+### Role YAML — Pod 조회만 허용
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: namespace1
+  name: role-pod-reader
+rules:
+- apiGroups: [""]           # "" = core API (Pod, Service, Node 등)
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+```
+
+**apiGroups**: apiVersion이 `v1`인 core API 자원(Pod, Service, ConfigMap 등)은 `""`. `apps/v1`의 Deployment는 `"apps"`. Job은 `"batch"`.
+
+**verbs**: `get`, `list`, `watch`, `create`, `update`, `patch`, `delete`, `deletecollection`. 모든 동작은 `["*"]`.
+
+### RoleBinding — SA에 Role 연결
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rb-pod-reader
+  namespace: namespace1
+roleRef:
+  kind: Role
+  name: role-pod-reader
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: default              # 기본 SA도 OK
+  namespace: namespace1
+```
+
+### ClusterRole + ClusterRoleBinding — 모든 권한 부여
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cr-admin
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: crb-admin
+roleRef:
+  kind: ClusterRole
+  name: cr-admin
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: my-sa
+  namespace: namespace2
+```
+
+이 SA의 토큰으로는 다른 네임스페이스 Pod, 클러스터 단위 Node까지 전부 조회/생성 가능.
+
+### 실습에서 자주 쓰는 패턴 — Dashboard 보안 접근
+
+기본 설치된 Dashboard가 "skip 로그인 + 모든 자원 접근"이 되는 이유:
+
+```
+Dashboard Pod
+  └─ ServiceAccount: kubernetes-dashboard
+       └─ ClusterRoleBinding: cluster-admin (내장 ClusterRole)
+            → 클러스터 전 자원 접근 가능
+```
+
+**보안 강화 방법**:
+
+1. ClusterRoleBinding을 제거하거나 제한된 ClusterRole로 교체
+2. API Server 직접 접근(HTTPS + client cert)으로 변경
+3. `kubectl proxy` 없이 **인증서 등록한 브라우저**에서 Dashboard 접근
+4. Dashboard 로그인 시 **SA 토큰**을 입력 (skip 버튼 우회 방지)
+
+```bash
+# 클라이언트 인증서를 P12로 합쳐 브라우저에 등록
+openssl pkcs12 -export -out client.p12 \
+  -inkey client.key -in client.crt
+
+# Dashboard용 SA 토큰 확인
+kubectl get secret <dashboard-sa-secret> -o jsonpath='{.data.token}' | base64 -d
+```
+
+이러면 3중 보안: **IP/포트를 알아도**, **클러스터 인증서가 없으면 접근 불가**, **접근해도 토큰이 없으면 로그인 불가**.
+
+---
+
 ## 참조
 
 - [Kubernetes ReplicaSet](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/)
@@ -1357,3 +2343,16 @@ spec:
 - [Kubernetes Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/)
 - [Kubernetes CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)
 - [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+- [Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
+- [Configure Liveness, Readiness and Startup Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+- [Pod QoS Classes](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/)
+- [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
+- [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+- [DNS for Services and Pods](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
+- [Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
+- [Dynamic Volume Provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/)
+- [Persistent Volumes - Lifecycle](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#lifecycle-of-a-volume-and-claim)
+- [Authenticating](https://kubernetes.io/docs/reference/access-authn-authz/authentication/)
+- [Managing Service Accounts](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/)
+- [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
+- [Organizing Cluster Access Using kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
