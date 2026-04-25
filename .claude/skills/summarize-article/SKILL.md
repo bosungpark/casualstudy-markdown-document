@@ -1,3 +1,8 @@
+---
+name: summarize-article
+description: Use this skill when the user wants to research a technical topic by searching the web for in-depth articles and summarize them into a Korean markdown document following this repo's template (출처 / AI 요약 / 내가 얻은 인사이트 sections). Trigger on `/summarize-article <topic>` or when the user says things like "이 주제 정리해줘", "기술 아티클 찾아서 정리", "딥다이브 정리해줘" with a technical topic like "AWS Redshift 아키텍처", "Kafka 내부 구조", "PostgreSQL MVCC".
+---
+
 # Summarize Technical Article
 
 기술 아티클/논문을 검색하여 프로젝트 템플릿 형식에 맞게 정리합니다.
@@ -9,9 +14,9 @@
 ## Instructions
 
 ### 1단계: 주제 분석 및 검색
-1. $ARGUMENTS로 전달받은 주제를 파악합니다.
+1. `$ARGUMENTS`로 전달받은 주제를 파악합니다.
 2. WebSearch를 사용하여 해당 주제에 대한 심층 기술 아티클을 검색합니다.
-   - 검색 쿼리 예시: "[주제] architecture deep dive internals"
+   - 검색 쿼리 예시: `[주제] architecture deep dive internals`
    - 공식 문서, 기술 블로그, 논문 등을 찾습니다.
 
 ### 2단계: 아티클 내용 수집
@@ -20,6 +25,7 @@
 3. 필요시 여러 소스를 조합합니다.
 
 ### 3단계: 템플릿 형식으로 현재 존재하는 디렉터리에 정리
+
 현재 존재하는 디렉터리에 다음 템플릿 구조를 따라 마크다운 문서를 작성합니다:
 
 ```markdown
@@ -56,11 +62,11 @@
 
 ### 4단계: 파일 저장
 1. 적절한 하위 디렉토리를 결정합니다:
-   - database/ : 데이터베이스 관련
-   - system/ : 시스템 설계, 분산 시스템
-   - cloud/ : 클라우드 서비스
+   - `database/` : 데이터베이스 관련
+   - `system/` : 시스템 설계, 분산 시스템
+   - `cloud/` : 클라우드 서비스
    - 기타 주제에 맞는 디렉토리
-2. 파일명은 "[주제 제목].md" 형식으로 작성합니다.
+2. 파일명은 `[주제 제목].md` 형식으로 작성합니다.
 3. Write 도구를 사용하여 파일을 저장합니다.
 
 ## 작성 가이드라인
