@@ -181,7 +181,7 @@ Pod Lifecycle을 알면 장애 상황에서 Kubernetes가 어떻게 동작하는
 
 ## StatefulSet
 
-1. StatefulSet: 순서와 고유성을 보장해야 하는 Pod(예: DB, Zookeeper 등)에 사용. 각 Pod에 고유한 이름과 네트워크 ID, 영구 스토리지를 부여한다. Pod가 재시작돼도 이름과 볼륨이 유지된다. 주로 상태 저장 서비스에 적합.
+1. StatefulSet: 순서와 고유성을 보장해야 하는 Pod(예: DB, Zookeeper 등)에 사용. 각 Pod에 고유한 이름과 네트워크 ID, 영구 스토리지를 부여한다. Pod가 재시작돼도 이름과 볼륨이 유지된다. 주로 상태 저장 서비스에 적합. (자세한 정리는 문서 하단 [발표 정리] 참고)
 
 ---
 
@@ -2335,6 +2335,462 @@ kubectl get secret <dashboard-sa-secret> -o jsonpath='{.data.token}' | base64 -d
 
 ---
 
+# [발표 정리] StatefulSet · Ingress · AutoScaler
+
+> 이번 주 발표용으로 강의 순서(StatefulSet 이론 → 실습 → Ingress 이론 → 실습 → AutoScaler 이론 → HPA 실습)에 맞춰 한 곳에 모은 정리. 위 본문의 짧은 1줄 정리와 일부 중복되지만, 발표 시 이 섹션만 따라가면 흐름이 끊기지 않도록 구성했다.
+
+## [발표] 1. StatefulSet — Stateful 앱을 위한 Controller
+
+### 1-1. Stateless vs Stateful — 왜 다른 Controller가 필요한가
+
+| 구분 | Stateless 앱 | Stateful 앱 |
+|---|---|---|
+| **대표 예시** | Apache, Nginx, IIS 같은 웹서버 | MongoDB, MariaDB, Redis 같은 DB |
+| **Pod 역할** | 모두 같은 역할(단순 복제) | Pod마다 고유 역할(Primary, Secondary, Arbiter 등) |
+| **Pod 이름** | 바뀌어도 무방 | 이름 자체가 식별자 → 절대 바뀌면 안 됨 |
+| **장애 복구** | 같은 역할의 Pod를 새로 찍어내면 끝 | 죽은 Pod와 동일한 이름·역할로 재생성되어야 함 |
+| **볼륨** | 필수가 아님. 있으면 모든 Pod가 한 볼륨을 공유해도 됨 | 각 Pod가 자기 전용 볼륨을 가져야 함 |
+| **네트워크** | 외부 사용자 트래픽을 분산해서 받음 | 내부 시스템이 역할에 맞는 특정 Pod에 의도적으로 접속 |
+| **K8s Controller** | ReplicaSet | StatefulSet |
+| **연결 Service** | 일반 Service (ClusterIP/NodePort/LoadBalancer) | Headless Service |
+
+> **MongoDB 예시**: Primary가 메인 DB(R/W), Secondary는 읽기 전용 복제본, Arbiter는 Primary 사망을 감지해 Secondary를 Primary로 승격시키는 감시자. Arbiter Pod가 죽으면 반드시 다시 Arbiter로 복구돼야 하고, 이름이 바뀌면 다른 시스템이 누가 누구인지 알 수 없게 된다.
+
+### 1-2. StatefulSet vs ReplicaSet 동작 차이
+
+| 항목 | ReplicaSet | StatefulSet |
+|---|---|---|
+| **Pod 이름** | `replica1-xxxxx` (해시 랜덤) | `statefulset1-0`, `-1`, `-2` (0부터 순차) |
+| **Pod 생성 순서** | 동시에 한꺼번에 생성 | 한 개씩 순차 생성 (앞 Pod가 Ready되어야 다음) |
+| **Pod 삭제 순서** | 동시에 한꺼번에 삭제 | 인덱스 큰 것부터 (`-2` → `-1` → `-0`) 순차 삭제 |
+| **재생성 시 이름** | 새로운 해시로 다른 이름 | 삭제된 것과 **동일한 이름**으로 재생성 |
+
+이 "고정 이름 + 순차 생성"이 Stateful 앱 클러스터링에 결정적이다. "0번이 먼저 떠야 1번이 거기에 붙는" 의존성을 안전하게 처리할 수 있다.
+
+### 1-3. 볼륨 — `volumeClaimTemplates`로 Pod마다 PVC 자동 생성
+
+| 동작 | ReplicaSet | StatefulSet |
+|---|---|---|
+| PVC 생성 | 사용자가 직접 미리 생성 | `volumeClaimTemplates`로 Pod마다 자동 생성 |
+| PVC ↔ Pod | N:1 (모든 Pod가 한 PVC 공유) | 1:1 (Pod마다 전용 PVC) |
+| 생성된 PVC 이름 | 사용자가 정함 | `<volumeClaimTemplate.name>-<pod-name>` (예: `volume1-statefulset1-0`) |
+| Pod 재생성 시 | 동일 PVC에 다시 붙음 | 같은 이름으로 재생성된 Pod가 **자기가 쓰던 PVC**에 다시 붙음 |
+| `replicas: 0`으로 축소 | Pod 삭제 (PVC는 사용자 책임) | Pod는 순차 삭제, **PVC는 남는다** (데이터 보호) |
+
+> **PVC를 자동 삭제하지 않는 이유**: 볼륨에는 운영 데이터가 있다. 사고 방지를 위해 사용자가 직접 정리해야 한다.
+
+### 1-4. Headless Service — 특정 Pod를 콕 집어 부르기
+
+StatefulSet 매니페스트의 `serviceName`에 Headless Service 이름을 넣고 동명의 Headless Service(`clusterIP: None`)를 만들면 각 Pod에 예측 가능한 DNS가 붙는다.
+
+```
+<pod-name>.<service-name>.<namespace>.svc.cluster.local
+예: statefulset1-0.headless1.default.svc.cluster.local
+```
+
+일반 Service는 ClusterIP 한 개로 트래픽을 분산하지만, Headless Service는 IP 없이 DNS만 제공해서 내부 시스템이 도메인으로 원하는 Pod(`-0`, `-1`, `-2`)를 직접 지명해 접속할 수 있다.
+
+### 1-5. StatefulSet YAML 예제
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset1
+spec:
+  replicas: 3
+  serviceName: headless1          # 아래 Headless Service와 매칭
+  selector:
+    matchLabels:
+      type: db
+  template:
+    metadata:
+      labels:
+        type: db
+    spec:
+      containers:
+      - name: container
+        image: kubetm/app:v1
+        volumeMounts:
+        - name: volume1            # ← volumeClaimTemplates의 name과 일치해야 함
+          mountPath: /applog
+      terminationGracePeriodSeconds: 10
+  volumeClaimTemplates:
+  - metadata:
+      name: volume1                # ← volumeMounts.name과 매칭
+    spec:
+      accessModes: [ReadWriteOnce]
+      resources:
+        requests:
+          storage: 1G
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: headless1
+spec:
+  clusterIP: None                   # Headless 핵심 — IP를 만들지 않음
+  selector:
+    type: db
+  ports:
+  - port: 80
+```
+
+> **흔한 함정**: `volumeClaimTemplates.metadata.name`과 컨테이너의 `volumeMounts.name`이 다르면 Pod가 정상적으로 만들어지지 않는다.
+
+### 1-6. 실습으로 검증한 핵심 동작
+
+`terminationGracePeriodSeconds: 10`을 주면 동작 순서가 눈에 잘 들어온다.
+
+**(a) 생성·삭제**
+
+| 시나리오 | ReplicaSet 동작 | StatefulSet 동작 |
+|---|---|---|
+| `replicas: 1 → 3` | 추가 Pod 2개가 **동시에** 생성 | `-1` 생성 → Ready → `-2` 생성 (한 번에 하나씩) |
+| Pod 1개 삭제 | 다른 해시 이름 새 Pod 생성 후 10초 뒤 기존 Pod 삭제 | 기존 Pod 완전 삭제 후 **동일한 이름**으로 재생성 |
+| `replicas: 0` 축소 | 모든 Pod 동시에 삭제 | `-2` → `-1` → `-0` 순으로 10초 간격 순차 삭제 |
+
+**(b) 볼륨**
+- ReplicaSet은 같은 PVC를 모든 Pod가 공유 → Pod 0에서 만든 파일이 Pod 1·2에서도 보인다.
+- StatefulSet은 Pod별 전용 PVC → Pod 0의 파일은 Pod 1에서 보이지 않는다.
+- 어떤 Pod를 삭제해도 같은 이름으로 다시 만들어지면서 **이전 PVC에 다시 붙는다 → 데이터 보존**.
+- `replicas: 0`으로 줄여도 **PVC는 그대로 남는다** (수동 정리 필요).
+
+**(c) Headless Service로 개별 Pod 접근**
+
+```bash
+# Headless 서비스 자체에 nslookup → 연결된 모든 Pod의 IP 목록
+nslookup stateful-headless
+
+# 특정 Pod에 직접 접근 → <pod-name>.<service-name>
+curl statefulset1-0.stateful-headless
+curl statefulset1-1.stateful-headless
+```
+
+---
+
+## [발표] 2. Ingress — 외부 트래픽을 도메인·Path로 라우팅
+
+### 2-1. Ingress란? 왜 쓰나
+
+클러스터 외부의 HTTP/HTTPS 트래픽을 도메인 이름과 URL Path 기준으로 내부 Service에 라우팅. 전통 인프라의 L4/L7 스위치 역할을 K8s 안에서 선언적으로 표현.
+
+| 유스케이스 | 설명 |
+|---|---|
+| **Service Load Balancing** | 한 도메인 안에서 `/customer`, `/order` 같은 Path별로 다른 Service에 분기. 별도 L4/L7 장비 불필요. |
+| **Canary 업그레이드** | 같은 도메인 트래픽 중 N%만 v2 Pod로, 또는 특정 헤더 값만 v2로 보내 점진 검증. |
+| **HTTPS 종료(SSL Termination)** | Ingress에 인증서를 달아 외부 HTTPS를 받고 내부는 HTTP로 처리. Pod에서 인증서 관리가 부담될 때 유용. |
+
+### 2-2. Ingress 동작 구조 — Rule만으로는 아무 일도 안 일어난다
+
+**Ingress 오브젝트는 단순한 "규칙 명세"**일 뿐이다. K8s 기본 설치만으로는 룰을 실행할 주체가 없으므로 별도 **Ingress Controller**(Nginx, Kong 등)를 설치해야 한다.
+
+```
+[외부 사용자]
+      ↓
+[NodePort/LoadBalancer Service]   ← 외부 진입점
+      ↓
+[Nginx Ingress Pod]                ← Ingress Rule을 watch해 라우팅
+      ↓
+[svc-shopping] [svc-customer] [svc-order]
+      ↓             ↓               ↓
+   [shopping]   [customer]      [order] Pod
+```
+
+> Nginx Pod로 트래픽이 흘러야 하므로 외부 진입용 Service(NodePort 또는 LoadBalancer)를 Nginx Pod에 붙여야 한다.
+
+### 2-3. Service Load Balancing — Path 기반 분기
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-service
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-shopping
+            port: { number: 8080 }
+      - path: /customer
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-customer
+            port: { number: 8080 }
+      - path: /order
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-order
+            port: { number: 8080 }
+```
+
+`http://<master-ip>:<nodeport>/` → shopping, `/customer` → 고객센터, `/order` → 주문으로 분기.
+
+### 2-4. Canary 업그레이드 — Annotation으로 비율·헤더 제어
+
+같은 호스트로 v1 Ingress가 운영 중일 때 **두 번째 Ingress를 같은 호스트로 추가하고 Annotation을 붙이면** Canary가 된다.
+
+**(a) 비율 분산 — `canary-weight`**
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-canary
+  annotations:
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "10"   # 트래픽의 10%만 v2로
+spec:
+  rules:
+  - host: www.app.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-v2
+            port: { number: 8080 }
+```
+
+`while true; do curl www.app.com; sleep 1; done` 같은 식으로 트래픽을 보내면 약 10% 비율로 v2가 응답한다. 검증 후 weight를 100으로 올리거나 v1을 내려서 전환을 마무리한다.
+
+**(b) 헤더 매칭 — 특정 타겟만 100% 분기**
+
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/canary: "true"
+  nginx.ingress.kubernetes.io/canary-by-header: "Accept-Language"
+  nginx.ingress.kubernetes.io/canary-by-header-value: "kr"
+```
+
+`curl -H "Accept-Language: kr" www.app.com`처럼 헤더 일치 트래픽 전부가 v2로, 그 외는 v1으로. 특정 지역·디바이스 그룹만 골라 신 버전을 시험할 때 쓴다.
+
+### 2-5. HTTPS — TLS Secret 연결
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-https
+spec:
+  tls:
+  - hosts:
+    - www.app.com
+    secretName: secret-https      # 인증서를 담은 Secret
+  rules:
+  - host: www.app.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-https
+            port: { number: 8080 }
+```
+
+Secret은 `openssl`로 인증서를 생성한 뒤 `kubectl create secret tls secret-https --cert=tls.crt --key=tls.key`로 만든다. 적용 후 사용자는 반드시 `https://www.app.com`으로 접근해야 연결되고, HTTP는 차단된다.
+
+### 2-6. 실습 시 도메인이 안 풀릴 때 — hosts 파일 매핑
+
+`www.app.com` 같은 도메인은 공인 DNS에 없으므로 hosts 파일에 직접 매핑 등록 필요.
+
+```bash
+# Linux/Mac (Master 노드 등)
+sudo sh -c 'echo "192.168.0.30  www.app.com" >> /etc/hosts'
+
+# Windows
+# C:\Windows\System32\drivers\etc\hosts 에 같은 형식으로 추가
+```
+
+### 2-7. Ingress 사용 체크리스트
+
+1. Ingress Controller(Nginx 등)가 설치되어 있는가?
+2. Ingress Controller Pod에 외부 진입용 Service(NodePort/LoadBalancer)가 붙어 있는가?
+3. Ingress 룰의 호스트/Path가 백엔드 Service 이름·포트와 정확히 매칭되는가?
+4. (Canary) `canary: "true"` Annotation이 두 번째 Ingress에 함께 들어가 있는가?
+5. (HTTPS) TLS Secret이 같은 네임스페이스에 존재하는가?
+
+---
+
+## [발표] 3. AutoScaler — HPA, VPA, CA
+
+### 3-1. 3종 AutoScaler 한눈에 비교
+
+| 종류 | 풀네임 | 무엇을 조정하나 | 방향 | 적합한 앱 |
+|---|---|---|---|---|
+| **HPA** | Horizontal Pod Autoscaler | Pod **개수** | 수평 (Scale Out/In) | Stateless |
+| **VPA** | Vertical Pod Autoscaler | Pod의 **CPU/Memory 자원** | 수직 (Scale Up/Down, Pod 재시작 동반) | Stateful |
+| **CA** | Cluster Autoscaler | 클러스터의 **노드 수** | 노드 추가/삭제 (클라우드 프로바이더 연동) | 인프라 레벨 |
+
+> **주의**: 한 컨트롤러에 HPA와 VPA를 동시에 달면 충돌해 작동하지 않는다.
+
+### 3-2. HPA가 필요한 이유
+
+ReplicaSet/Deployment로 Pod가 N개 떠 있는데 트래픽이 폭증해 자원이 한계에 닿으면 Pod가 죽을 수 있다. HPA가 자원 사용량을 감시하다가 위험 수준이면 Controller의 `replicas`를 자동 증가(**Scale Out**), 부하가 줄면 다시 감소(**Scale In**)시킨다.
+
+**권장 조건**:
+- **빠르게 기동되는 앱** (부하 급증 시 빠르게 따라잡아야 함)
+- **Stateless 앱** (Stateful은 Pod마다 역할이 있어 "어떤 역할의 Pod를 늘릴지" 판단 불가 → VPA 사용)
+
+### 3-3. HPA 메트릭 경로 — Metrics Server가 왜 필요한가
+
+```
+[Container] → [cAdvisor (kubelet 내부)] → [Metrics Server (Add-on)] → [kube-apiserver의 metrics API]
+                                                                              ↑
+                                                                            [HPA가 15초 주기로 조회]
+```
+
+| 컴포넌트 | 역할 |
+|---|---|
+| **cAdvisor** | 각 노드 kubelet 내부에서 Container의 CPU/Memory 측정 |
+| **Metrics Server** | kubelet으로부터 메트릭 수집 → kube-apiserver의 `metrics.k8s.io` API로 노출. **별도 설치 필수** |
+| **HPA** | kube-apiserver의 metrics API를 15초 주기로 조회 |
+| (옵션) **Prometheus + Custom Adapter** | CPU/Memory 외 Pod 패킷 수, Ingress 요청 수 같은 커스텀 메트릭 제공 |
+
+> Metrics Server가 없으면 `kubectl top pod`도, HPA도 동작하지 않는다.
+
+### 3-4. HPA YAML과 Replica 계산 공식
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-cpu
+spec:
+  scaleTargetRef:               # 누구를 스케일할지
+    apiVersion: apps/v1
+    kind: Deployment
+    name: deployment-cpu
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization       # request 대비 % 기준
+        averageUtilization: 50  # 평균 50% 초과 시 Scale Out
+```
+
+**target.type 3가지**:
+
+| Type | 설명 |
+|---|---|
+| `Utilization` | Pod의 `requests` 대비 평균 사용률(%) — 가장 많이 쓰는 기본 |
+| `AverageValue` | 절대 평균 값 (예: `100Mi`, `200m`) |
+| `Value` | 단일 합산 값 |
+
+**Replica 계산 공식**:
+
+```
+desiredReplicas = ceil( currentReplicas × (currentMetric / targetMetric) )
+```
+
+예시 (`currentReplicas=2`, target = `100m`):
+
+| 현재 평균 CPU | 계산식 | desired |
+|---|---|---|
+| 100m | 2 × (100 / 100) | 2 (변화 없음) |
+| 300m | 2 × (300 / 100) | 6 (Scale Out) |
+| 50m  | 6 × (50 / 100)  | 3 (Scale In) |
+
+`min/max`로 상·하한이 잡히므로 그 범위 안에서만 움직인다.
+
+### 3-5. Metric Type 종류 — 다른 오브젝트로도 트리거 가능
+
+| Metric Type | 데이터 출처 | 예시 |
+|---|---|---|
+| `Resource` | Metrics Server (cAdvisor) | Pod CPU/Memory |
+| `Pods` | Custom Metrics API (Prometheus 등) | Pod로 들어오는 패킷 수 |
+| `Object` | Custom Metrics API | Ingress가 받은 요청 수 |
+| `External` | External Metrics API | 클라우드 큐(SQS) 길이 등 |
+
+`Pods`/`Object`/`External`은 Prometheus + Custom Metrics Adapter 설치가 전제.
+
+### 3-6. HPA 실습 — 부하 주입 → Scale Out → 부하 중단 → Scale In
+
+**(a) Metrics Server 설치 및 확인**
+
+```bash
+# 설치 (공식 매니페스트)
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+# API 등록 확인 (AVAILABLE이 True면 정상)
+kubectl get apiservices | grep metrics
+
+# 1~2분 후 메트릭 조회 가능
+kubectl top node
+kubectl top pod
+```
+
+**(b) HPA 모니터링**
+
+```bash
+kubectl get hpa -w   # watch 모드: 메트릭/Replica 변화가 즉시 표시
+```
+
+`TARGETS` 컬럼은 `<현재값>/<타겟값>`, `REPLICAS`는 현재 Pod 수.
+
+**(c) 부하 주입 → Scale Out**
+
+```bash
+# NodePort로 노출된 서비스에 짧은 간격으로 트래픽
+while true; do curl -s http://<node-ip>:30001 > /dev/null; sleep 0.01; done
+```
+
+부하가 올라가면 `TARGETS`의 현재값이 50%를 넘기 시작하고, HPA가 공식대로 Replica를 **6 → 8 → 10(max)**까지 단계적으로 증가시킨다.
+
+**(d) 부하 중단 → Scale In은 5분 지연**
+
+부하를 끊으면 메트릭은 즉시 떨어지지만 Pod는 바로 줄지 않는다. **기본 5분(`--horizontal-pod-autoscaler-downscale-stabilization`) 안정화 시간**이 지나야 천천히 줄인다. Scale Out은 빠르게, Scale In은 신중하게 하는 정책이다.
+
+**(e) Memory 기반 HPA — `AverageValue` 예시**
+
+```yaml
+metrics:
+- type: Resource
+  resource:
+    name: memory
+    target:
+      type: AverageValue
+      averageValue: 20Mi        # Pod당 평균 20Mi 초과 시 Scale Out
+```
+
+흐름은 CPU 시나리오와 동일, 트리거 기준만 메모리 절대값.
+
+### 3-7. VPA / CA — 핵심만
+
+- **VPA**: Stateful 앱처럼 Pod 수 증가가 어렵고 자원만 키워야 하는 경우. 자원 부족 감지 시 Pod를 **재시작**하면서 `requests/limits`를 키운다(Scale Up). 같은 컨트롤러에 HPA와 동시 사용 금지.
+- **CA**: 모든 노드의 자원이 부족해 새 Pod를 어디에도 배치할 수 없을 때, 클라우드 프로바이더(AWS/GCP/Azure)에 노드 추가 요청. 반대로 노드가 한가해지면 Pod를 다른 노드로 옮기고 빈 노드를 삭제해 비용 절감.
+
+### 3-8. AutoScaler 사용 체크리스트
+
+1. **Stateless 앱**이면 HPA, **Stateful 앱**이면 VPA를 검토.
+2. **Metrics Server**(또는 Prometheus + Adapter)가 설치되어 있는가? `kubectl top` 명령이 동작해야 HPA도 동작한다.
+3. Pod에 **`resources.requests`가 설정되어 있는가?** Utilization 기반 HPA는 requests가 기준이라 없으면 동작하지 않는다.
+4. 같은 컨트롤러에 HPA와 VPA를 동시에 달지 않았는가?
+5. Scale In의 5분 지연을 감안해 운영·테스트 시나리오를 잡는다.
+
+---
+
+## [발표] 4. 마무리 — 세 주제를 관통하는 한 줄
+
+| 주제 | 한 문장 |
+|---|---|
+| **StatefulSet** | "각 Pod에 고정된 이름과 전용 볼륨을 부여하는 Controller — Headless Service와 짝지어 역할 기반 접속을 가능하게 한다." |
+| **Ingress** | "K8s 안에서 도메인·Path 기반 라우팅을 선언적으로 표현하는 규칙 — 동작은 별도로 설치한 Ingress Controller가 한다." |
+| **AutoScaler** | "부하 변화에 맞춰 Pod 수(HPA), Pod 자원(VPA), 노드 수(CA)를 자동으로 조정 — Metrics Server가 데이터 공급선이다." |
+
+---
+
 ## 참조
 
 - [Kubernetes ReplicaSet](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/)
@@ -2356,3 +2812,11 @@ kubectl get secret <dashboard-sa-secret> -o jsonpath='{.data.token}' | base64 -d
 - [Managing Service Accounts](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/)
 - [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 - [Organizing Cluster Access Using kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
+- [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
+- [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+- [Ingress Controllers](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/)
+- [NGINX Ingress Controller — Canary Annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary)
+- [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+- [Vertical Pod Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler)
+- [Cluster Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler)
+- [Kubernetes Metrics Server](https://github.com/kubernetes-sigs/metrics-server)
