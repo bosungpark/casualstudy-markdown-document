@@ -287,14 +287,45 @@ terraform import aws_s3_bucket.legacy my-existing-bucket
 
 > **임포트 후 반드시 `plan` 으로 diff 0 확인**. 속성이 어긋나면 다음 apply 에서 의도치 않은 변경.
 
-### 4.4 State 조작 명령
+### 4.4 State 조작 — 선언형(권장) vs 명령형
+
+> **원칙**: 모듈 리팩터링·관리 중단처럼 **재현/리뷰가 필요한 작업**은 선언형 블록으로. CLI `state mv` / `state rm` 은 일회성·응급용으로 한 단계 내려서 사용.
+
+**`moved` 블록 (1.1+)** — 리소스 주소 변경 시 권장:
+
+```hcl
+moved {
+  from = aws_s3_bucket.logs
+  to   = module.storage.aws_s3_bucket.logs
+}
+```
+
+- 모듈 추출/이름 변경 시 단순 주소 변경이 **destroy → create** 로 잘못 잡히는 걸 방지.
+- plan 에 `# ... has moved to ...` 로 표시되고 변경 0.
+- 코드에 남으니 PR 리뷰·CI 재현 가능. 적용 후 정리해도 무방.
+
+**`removed` 블록 (1.7+)** — 관리 중단(자원은 보존):
+
+```hcl
+removed {
+  from = aws_s3_bucket.legacy
+  lifecycle {
+    destroy = false   # state 에서만 제거, 실제 자원 보존
+  }
+}
+```
+
+- 단순히 `resource` 블록을 지우면 자동 destroy → 의도와 반대.
+- `destroy = false` 로 자원은 살리고 관리만 해제.
+
+**CLI 명령** (응급/일회성):
 
 | 명령 | 용도 |
 |---|---|
 | `terraform state list` | 관리 중인 리소스 나열 |
 | `terraform state show <addr>` | 단일 리소스 상세 |
-| `terraform state mv` | 리소스 주소 이동 (모듈 리팩터링 시) |
-| `terraform state rm` | state 에서만 제거 (실제 자원은 보존) |
+| `terraform state mv` | 주소 이동 — **응급용**, 평시는 `moved` 블록 |
+| `terraform state rm` | state 에서만 제거 — **응급용**, 평시는 `removed` 블록 |
 | `terraform state pull/push` | state 백업/수동 갱신 (위험) |
 
 ---
