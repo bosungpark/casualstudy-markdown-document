@@ -82,6 +82,46 @@ App ──read()──> NFS Client ──RPC──> NFS Server (DOWN)
 
 > **실무 팁**: 읽기 전용(read-only) 마운트는 `soft`가 안전. 쓰기가 있는 마운트는 `hard` + 짧은 timeout + 모니터링이 정석.
 
+#### 깊이 보기 ① — Hard mount는 stateless 설계의 논리적 귀결이다
+
+Hard mount가 "기본값"이 된 이유는 보수성이 아니라, **stateless 서버 + 멱등성 RPC라는 설계 결정에서 자동 도출되는 결론**이기 때문이다.
+
+NFSv2/v3는 "서버는 클라이언트 상태를 기억하지 않는다"는 원칙으로 설계됐다. 서버 재시작이 클라이언트에 투명해지는 대신, 클라이언트는 서버 무응답 시 그 요청이 도달했는지 알 수 없다. 이를 안전하게 처리하기 위해 모든 RPC를 **멱등(idempotent)** 으로 정의했다 — 같은 요청을 100번 보내도 결과가 1번 보낸 것과 동일하다 (`write`에 offset 명시, `append` 같은 비멱등 연산 부재 등).
+
+멱등성이 보장되면, 응답 없는 요청에 대한 클라이언트의 합리적 선택은 두 가지로 좁혀진다:
+
+| 선택지 | 의미 | 결과 |
+| --- | --- | --- |
+| 포기하고 EIO 반환 | 앱이 재시도 책임을 짐 | 멱등성 보장 활용 못함, 앱 복잡도↑ |
+| **무한 재전송 (= hard)** | 커널이 끝까지 도달 보장 | 데이터 무결성 완벽, 단 서버 영구 다운 시 hang |
+
+커널은 후자를 골랐다. **Hard mount의 hang은 버그가 아니라 "재시도가 안전한 작업에 한해 끝까지 책임진다"는 약속의 부작용**이다. 즉 "hard mount는 앱 개발자를 위한 안전망"을 한 겹 더 풀면, 정확히는 **"stateless 설계를 깨지 않으면서 데이터 무결성을 지키는 유일한 방법이 무한 대기였다"** 가 된다.
+
+#### 깊이 보기 ② — D state는 왜 kill되지 않는가
+
+`kill -9`가 D state 프로세스에 통하지 않는 이유는 시그널이 전달되지 않아서가 아니다. 시그널은 `task_struct`에 정상적으로 펜딩되지만, 프로세스가 **커널 자료구조의 락(VFS 락, inode 락, 페이지 캐시 락 등)을 잡은 상태**라 그대로 깨우면 락이 영구히 남아 시스템이 망가지기 때문이다.
+
+Linux 커널의 sleep 상태는 세 가지다:
+
+| 상태 | 표시 | 시그널 처리 | 사용처 |
+| --- | --- | --- | --- |
+| `TASK_INTERRUPTIBLE` | `S` | 전부 OK | 일반 read/select/poll |
+| `TASK_UNINTERRUPTIBLE` | `D` | **전부 차단** | 커널 락 보유 중, 디스크 I/O 한가운데 |
+| `TASK_KILLABLE` | `D` (구분 안 됨) | **SIGKILL만 OK** | NFS RPC 대기 등 (2008~, 커널 2.6.25) |
+
+`TASK_KILLABLE`은 "락은 안 잡고 단순히 응답만 기다리는 구간"에 한해 SIGKILL을 받아들이도록 한 절충안이다. NFS 클라이언트도 이를 채택했지만, 실제 NFS read/write 흐름은 **KILLABLE 구간과 UNINTERRUPTIBLE 구간을 빠르게 오간다**:
+
+```
+NFS read() 내부 흐름:
+  1. VFS 진입, 락 잡음        ← TASK_UNINTERRUPTIBLE
+  2. RPC 패킷 큐잉            ← TASK_KILLABLE (여기서 kill -9 통함)
+  3. 응답 받아 페이지 캐시 갱신  ← TASK_UNINTERRUPTIBLE
+```
+
+사용자가 `kill -9`를 친 그 순간이 어느 구간이냐에 따라 통하기도, 안 통하기도 한다. 서버가 영구 다운된 케이스에선 재시도 사이클이 락 잡는 구간을 자주 들락거리므로 잡기 어렵다.
+
+> 본문이 언급한 "최신 커널에서 `intr` 옵션이 무시된다"는 정확히는 **"이제 기본이 KILLABLE이라 `intr`을 명시할 필요가 없다"** 는 뜻에 가깝다.
+
 ### 4. 진단: hang인지 어떻게 확인하나
 
 서비스가 멈춘 것 같을 때 **NFS가 범인인지** 빠르게 분리해야 한다.
@@ -154,7 +194,122 @@ sudo lsof -n 2>/dev/null | grep /mnt/nfs-share
 
 > **주의**: `umount -l`은 **새로운 접근을 차단할 뿐**, 이미 D 상태인 프로세스를 살려주진 않는다. 새 요청이 더 쌓이는 것을 막는 응급 조치다.
 
-### 6. 예방: fstab 옵션 설계
+#### 깊이 보기 ③ — `umount -f`와 `-l`은 서로 다른 레이어에서 동작한다
+
+위 표에 "강제 vs lazy"로 짧게 정리된 두 명령은 **건드리는 레이어 자체가 다르다.**
+
+Linux의 마운트는 두 층으로 분리되어 있다:
+
+- **Namespace 레이어**: `/mnt/nfs`라는 경로가 어떤 superblock을 가리키는지의 매핑
+- **Superblock 레이어**: 실제 NFS 클라이언트 인스턴스 — RPC 연결, 캐시, 열린 fd. **Refcount가 0이 될 때까지 살아있다.**
+
+```
+  ┌──────────────────────────────────┐
+  │ namespace                        │
+  │   /mnt/nfs   ──→ ┐               │
+  └──────────────────┼───────────────┘
+                     ↓
+                 [Superblock for NFS]
+                     ├─ NFS client state (RPC, 캐시)
+                     ├─ inode 들
+                     ├─ open fd 들 (D state 프로세스가 보유)
+                     └─ refcount: 마운트 + 열린 fd 수
+```
+
+이 분리를 알고 보면 두 명령의 차이가 명확해진다:
+
+| 명령 | 커널 플래그 | 동작 레이어 | RPC 큐 청소 | D state 해제 |
+| --- | --- | --- | --- | --- |
+| `umount -f` | `MNT_FORCE` | **NFS 드라이버** (`nfs_umount_begin`) | ✓ `rpc_killall_tasks` 호출 | ✓ (깨울 수 있는 것만) |
+| `umount -l` | `MNT_DETACH` | **VFS namespace만** | ✗ | ✗ |
+
+`umount -l`은 namespace 트리에서만 마운트 항목을 제거할 뿐 **NFS 클라이언트에는 아무 말도 걸지 않는다.** D state 프로세스는 여전히 superblock 위의 RPC 큐에 매달려 있고, 그 superblock은 refcount > 0인 한 살아있다. 그래서 `umount -l`은 "새 접근 차단"일 뿐 "기존 hang 해소"가 아니다.
+
+`umount -f`만이 NFS 드라이버를 거쳐 `rpc_killall_tasks()`를 호출하고, 대기 중인 RPC 작업에 `RPC_TASK_KILLED`를 표시한 뒤 `wake_up_process`로 D state를 풀어낸다. 단, RPC 작업이 "응답 대기" 단계가 아니라 "TCP 재전송 중" 같은 더 깊은 단계에 있으면 `-f`로도 깨우지 못한다 — 그 경우가 바로 다음 항목의 무대다.
+
+#### 깊이 보기 ④ — 가짜 NFS 서버 트릭의 본질은 TCP 레이어다
+
+Step 5의 "동일 IP를 다른 머신에 부여" 트릭(Linux Journal)은 NFS 프로토콜을 흉내내는 게 아니다. **TCP의 정상 동작(모르는 연결에 RST를 보내는 것)을 활용해 위층(RPC → NFS → 프로세스)을 일제히 깨우는 기법**이다.
+
+먼저 hang의 진짜 원인을 짚어보면 — 서버 머신이 갑자기 전원을 잃거나 방화벽이 트래픽을 차단한 경우, 클라이언트의 TCP 소켓은 `ESTABLISHED` 상태로 굳는다. 패킷을 재전송해도 ACK도 RST도 오지 않는다. Linux의 기본 `tcp_retries2`는 15회로 약 13~30분 후 ETIMEDOUT이 나지만, NFS hard mount는 그걸 받자마자 **새 연결을 만들어 또 RPC를 보낸다.** 즉 hang의 본질은 "TCP가 죽은 연결을 죽었다고 확신할 신호를 받지 못함"이다.
+
+가짜 서버는 이 신호를 만들어준다:
+
+```
+[원인 상태]
+  클라 TCP: ESTABLISHED, src=client:54321, dst=server:2049
+  ↓ retransmit
+  패킷이 어둠 속으로 사라짐 → 영원히 반복
+
+[트릭 적용 후]
+  같은 IP의 가짜 머신이 LAN에 등장 (ip addr add + arping)
+  ↓
+  클라의 재전송 패킷이 가짜 머신에 도착
+  ↓
+  가짜 머신 TCP 스택: "이 src/dst 조합, 내 conntrack에 없음"
+  ↓
+  RST 자동 응답 (커널 기본 동작)
+  ↓
+  클라 TCP 소켓: ESTABLISHED → CLOSED 즉시 전환
+  ↓
+  RPC 클라이언트: 소켓 죽음 감지 → 대기 task 전부에 EIO + wake_up
+  ↓
+  D state 프로세스 깨어남, read()가 -1 EIO 반환
+```
+
+주목할 점 세 가지:
+
+1. **가짜 머신에 nfsd가 떠있을 필요가 없다.** TCP 스택만 살아있으면 "모르는 연결에 RST"는 커널이 자동으로 한다. 단, OUTPUT 체인에서 RST를 막는 iptables 룰이 있으면 무력화된다.
+2. **UDP NFS에는 통하지 않는다.** UDP는 stateless라 "이 연결 모름"이라는 개념 자체가 없다 — RST 같은 명시적 종료 신호가 나오지 않는다.
+3. **본질은 레이어를 한 칸 더 내려간 것이다.** NFS 레이어에서 풀려고 하면 어려운 hang을, TCP 레이어의 RST 한 방으로 끊어낸다.
+
+> 가짜 서버는 "응답하는 척"이 아니라 **"죽은 서버가 마지막으로 했어야 할 일(연결 정리)을 대신 해주는 것"** 이다. 분산 시스템 디자인에서 "프로토콜 레이어를 거꾸로 활용한" 대표 사례.
+
+#### 깊이 보기 ⑤ — 종합: 레이어별 탈출 전략
+
+지금까지의 복구 단계를 레이어 관점으로 다시 정리하면, NFS hang 대응은 **"위 레이어에서 풀어보고, 안 되면 한 칸 아래로 내려간다"** 는 원칙으로 압축된다.
+
+```
+[Layer 5] 앱            : 재시도, 백오프  (soft mount일 때만 가능)
+   ↓ 안 풀리면
+[Layer 4] VFS namespace : umount -l       (새 접근만 차단, hang 해소 X)
+   ↓
+[Layer 3] NFS 드라이버  : umount -f       (rpc_killall_tasks → EIO)
+   ↓
+[Layer 2] TCP           : 가짜 서버 RST   (소켓 자체를 끊음)
+   ↓
+[Layer 1] OS            : Reboot          (최종 카드)
+```
+
+각 단계는 위 단계보다 **더 강력하지만 더 둔탁하다.** 위에서부터 시도하는 게 원칙이고, NFSv4 환경이라도 lease/delegation 회수가 막힌 케이스에선 결국 이 사다리를 타고 내려가게 된다.
+
+### 6. NFS 프로토콜의 진화 — NFSv4가 hang을 어떻게 바꿨나
+
+NFSv4(2003)는 NFSv2/v3의 stateless 원칙을 폐기하고 **lease 기반 stateful 설계**로 전환했다. 동기는 (1) NLM 별도 프로토콜 없이 락 통합, (2) close-to-open 일관성을 위한 GETATTR 폭증 해소, (3) 단일 포트(2049/tcp)로 방화벽 친화성 확보였다. 이 결정이 hang 문제에 미친 영향은 양면적이다.
+
+**Hang이 줄어든 측면**
+
+| 메커니즘 | 효과 |
+| --- | --- |
+| **Lease + RENEW heartbeat** | 클라가 hang 걸려 lease(보통 60초)간 RENEW가 없으면 서버가 그 클라의 락/state 자동 해제 → 다른 클라가 영향받지 않음 |
+| **Delegation** | 서버가 단독 사용 중인 클라에 권한 위임 → 클라가 로컬 캐시로 read/write 처리, RPC 자체가 발생하지 않음 |
+| **단일 포트(2049/tcp)** | 옛 NLM, rpcbind, mountd 등 다중 데몬 의존 제거 → 장애 표면 축소 |
+
+**Hang의 새 입구**
+
+| 시나리오 | 메커니즘 |
+| --- | --- |
+| **CLOSE hang** | v3의 `close()`는 로컬 작업, v4는 CLOSE RPC 필요 → `lsof` 등 진단 도구도 hang 위험 증가 |
+| **Delegation 회수 hang** | 클라 A가 delegation 보유 중 B가 접근 → 서버가 A에게 회수 요청 → A의 네트워크 단절 시 A의 D state로 B까지 묶임 |
+| **Grace period 대기** | 서버 재부팅 후 ~90초간 옛 클라의 state reclaim만 허용, 새 락 요청은 `NFS4ERR_GRACE` 받고 대기 |
+
+**구조적 변화**
+
+Stateless의 "구조적 멱등성"은 NFSv4.1의 **세션 + slot/sequence number** 메커니즘으로 대체됐다. 모든 RPC에 시퀀스 번호를 붙이고, 서버는 같은 시퀀스를 보면 재실행하지 않고 캐시된 응답을 반환한다. Hard mount의 "무한 재전송 안전성"이 다른 방식으로 재구성된 것이다.
+
+> v4는 **hang을 없앤 게 아니라 분포를 바꿨다.** 영향 범위는 좁아졌지만(lease로 클라 간 격리), 새 stateful 연산이 새 hang 입구가 됐다. NFS의 30년 진화는 "네트워크가 죽었는지 느린지 끝까지 알 수 없다"는 본질적 한계를 점점 더 정교한 안전망으로 감싸온 역사다.
+
+### 7. 예방: fstab 옵션 설계
 
 대응보다 예방이 항상 낫다. 권장 fstab 옵션은 다음과 같다.
 
@@ -183,7 +338,7 @@ sudo lsof -n 2>/dev/null | grep /mnt/nfs-share
 | `nofail` | 부팅 봉인 방지 | NFS 서버 다운 시에도 OS 부팅 |
 | `x-systemd.automount` | 지연 마운트 | 접근 안 하면 마운트 자체를 안 함 |
 
-### 7. 운영 관점: 모니터링과 알림
+### 8. 운영 관점: 모니터링과 알림
 
 NFS hang은 **터지면 늦다**. 미리 감지하는 게 핵심이다.
 
@@ -243,3 +398,5 @@ NFS hang은 **터지면 늦다**. 미리 감지하는 게 핵심이다.
 7. **"hang"은 가장 진단하기 어려운 장애 유형**
    - 크래시는 로그를 남기고, 느림은 메트릭이 잡지만, hang은 **메트릭 수집 자체가 hang 걸린다**. 그래서 hang을 다루는 시스템은 항상 "외부 관찰자(external observer)"가 필요하다 — pingdom, blackbox exporter, 별도 헬스체크 노드 등.
    - 모니터링 시스템을 모니터링 대상과 같은 NFS에 올려두는 실수만 안 해도 절반은 산다.
+
+> **한 줄 통찰**: NFS hang은 단일 버그가 아니라 **stateless 설계 → 무한 재시도 → 커널 락 안전성 → VFS/NFS/TCP 레이어 분리**가 한 줄로 꿰어진 구조다. 본문의 운영 가이드를 외우기보다, 어느 레이어에서 무슨 일이 일어나는지 그림이 그려져야 — 새로운 상황에서도 어느 사다리 칸을 내려갈지 판단할 수 있다.
