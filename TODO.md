@@ -85,7 +85,6 @@
 
 | 우선순위 | 제목                                                   | 링크                                                                                                                                       | 핵심 주제       |
 | ---- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| ★★★  | A Note on Distributed Computing                      | [https://scholar.harvard.edu/files/waldo/files/waldo-94.pdf](https://scholar.harvard.edu/files/waldo/files/waldo-94.pdf)                 | 로컬 vs 원격 호출 차이 |
 | ★★☆  | REST: Architectural Styles                           | [https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm](https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm)               | REST 원론 |
 | ★★☆  | The C10K Problem                                     | [http://www.kegel.com/c10k.html](http://www.kegel.com/c10k.html)                                                                         | 대규모 동시 연결 |
 | ★★☆  | QUIC: Multiplexed Streams over UDP                   | [https://www.rfc-editor.org/rfc/rfc9000](https://www.rfc-editor.org/rfc/rfc9000)                                                         | 현대적 전송 프로토콜 |
