@@ -181,7 +181,7 @@ Pod Lifecycle을 알면 장애 상황에서 Kubernetes가 어떻게 동작하는
 
 ## StatefulSet
 
-1. StatefulSet: 순서와 고유성을 보장해야 하는 Pod(예: DB, Zookeeper 등)에 사용. 각 Pod에 고유한 이름과 네트워크 ID, 영구 스토리지를 부여한다. Pod가 재시작돼도 이름과 볼륨이 유지된다. 주로 상태 저장 서비스에 적합. (자세한 정리는 문서 하단 [발표 정리] 참고)
+1. StatefulSet: 순서와 고유성을 보장해야 하는 Pod(예: DB, Zookeeper 등)에 사용. 각 Pod에 고유한 이름과 네트워크 ID, 영구 스토리지를 부여한다. Pod가 재시작돼도 이름과 볼륨이 유지된다. 주로 상태 저장 서비스에 적합. (자세한 정리는 문서 하단 StatefulSet 섹션 참고)
 
 ---
 
@@ -596,7 +596,7 @@ spec:
 
 **원리**: 환경 변수는 Pod 생성 시 한 번 "주입"되고 끝이다. 그 후 ConfigMap이 바뀌어도 이미 주입된 환경 변수는 바뀌지 않는다. 반면 마운트는 "원본과의 연결"을 유지하는 개념이라, 원본이 바뀌면 마운트된 파일도 함께 바뀐다.
 
-> **발표 포인트**: "런타임에 설정을 동적으로 바꿔야 한다면 볼륨 마운트, 한 번 설정하고 변하지 않을 값이면 환경 변수" 식으로 상황에 맞게 선택한다.
+> "런타임에 설정을 동적으로 바꿔야 한다면 볼륨 마운트, 한 번 설정하고 변하지 않을 값이면 환경 변수" 식으로 상황에 맞게 선택한다.
 
 ---
 
@@ -1120,7 +1120,7 @@ spec:
 
 ## DaemonSet, Job, CronJob
 
-이 세 Controller는 모두 Pod를 만들지만, **누가 만들었느냐**에 따라 Pod의 동작이 근본적으로 다르다. 발표에서 가장 강조해야 할 부분이다.
+이 세 Controller는 모두 Pod를 만들지만, **누가 만들었느냐**에 따라 Pod의 동작이 근본적으로 다르다.
 
 ### Controller에 따라 Pod의 성격이 달라진다
 
@@ -2335,11 +2335,11 @@ kubectl get secret <dashboard-sa-secret> -o jsonpath='{.data.token}' | base64 -d
 
 ---
 
-# [발표 정리] StatefulSet · Ingress · AutoScaler
+# StatefulSet · Ingress · AutoScaler
 
-> 이번 주 발표용으로 강의 순서(StatefulSet 이론 → 실습 → Ingress 이론 → 실습 → AutoScaler 이론 → HPA 실습)에 맞춰 한 곳에 모은 정리. 위 본문의 짧은 1줄 정리와 일부 중복되지만, 발표 시 이 섹션만 따라가면 흐름이 끊기지 않도록 구성했다.
+> 강의 순서(StatefulSet 이론 → 실습 → Ingress 이론 → 실습 → AutoScaler 이론 → HPA 실습)에 맞춰 한 곳에 모은 정리. 위 본문의 짧은 1줄 정리와 일부 중복된다.
 
-## [발표] 1. StatefulSet — Stateful 앱을 위한 Controller
+## 1. StatefulSet — Stateful 앱을 위한 Controller
 
 ### 1-1. Stateless vs Stateful — 왜 다른 Controller가 필요한가
 
@@ -2469,7 +2469,7 @@ curl statefulset1-1.stateful-headless
 
 ---
 
-## [발표] 2. Ingress — 외부 트래픽을 도메인·Path로 라우팅
+## 2. Ingress — 외부 트래픽을 도메인·Path로 라우팅
 
 ### 2-1. Ingress란? 왜 쓰나
 
@@ -2620,7 +2620,7 @@ sudo sh -c 'echo "192.168.0.30  www.app.com" >> /etc/hosts'
 
 ---
 
-## [발표] 3. AutoScaler — HPA, VPA, CA
+## 3. AutoScaler — HPA, VPA, CA
 
 ### 3-1. 3종 AutoScaler 한눈에 비교
 
@@ -2781,7 +2781,7 @@ metrics:
 
 ---
 
-## [발표] 4. 마무리 — 세 주제를 관통하는 한 줄
+## 4. 마무리 — 세 주제를 관통하는 한 줄
 
 | 주제 | 한 문장 |
 |---|---|
@@ -4525,17 +4525,10 @@ data:
 
 > 같은 파일 안에 여러 리소스가 만들어지는 **Multi-document YAML** 패턴. `dashboardFound` 같은 boolean 플래그를 변수로 두고 range 안에서 갱신하는 자바스러운 패턴도 자주 보인다.
 
----
-
-<!-- ============================================================ -->
-<!-- 📢 내 발표 파트 시작 (강의 14~18 / 차트 개발 팁 · Helm Hook) -->
-<!-- ============================================================ -->
 
 ## Helm 추가 기능 — NOTES, lint, get, rollback, package
 
-> **🎤 발표 파트 (강의 14)** — Helm 추가 기능
->
-> ⚠️ **강의 스크립트 미수신**. 강의 14의 실제 커버리지를 모르는 상태에서 **Helm 공식 문서 기준 정규 토픽으로 보강**한 섹션입니다. 발표 전 강의 영상과 대조해 가감 필요.
+> ⚠️ **강의 스크립트 미수신**. 강의 14의 실제 커버리지를 모르는 상태에서 **Helm 공식 문서 기준 정규 토픽으로 보강**한 섹션이다. 강의 영상과 대조해 가감이 필요할 수 있다.
 
 차트를 만드는 법(앞 챕터)과 운영 팁(다음 챕터) 사이에 들어가는 **"헬름이 추가로 제공하는 도구 / 메타 기능"** 들. 차트를 짜고 배포하는 본 흐름 외에, **사용자 가이드 메시지 / 검증 / 조회 / 롤백 / 패키지 공유** 등을 담당한다.
 
@@ -4692,3 +4685,476 @@ metadata:
     {{- include "common.labels" . | nindent 4 }}   # 라이브러리 차트의 define 사용
 ```
 
+---
+
+## Helm 운영 팁 — install / upgrade, 재배포, 저장소
+
+차트를 잘 짜는 것과 **운영 중에 헬름을 잘 다루는 것**은 다른 영역이다. 이 챕터는 헬름 공식의 *Chart Development Tips and Tricks*와 실전에서 자주 마주치는 함정을 정리한다.
+
+### install vs upgrade — `--install`로 분기 자체를 없애기
+
+- 최초 배포: `helm install` (이미 같은 릴리즈가 있으면 에러)
+- 그 뒤부터: `helm upgrade` (릴리즈가 없으면 에러)
+
+CI/CD에서 "이게 처음인가 두 번째인가"를 매번 조회해 분기하는 게 번거롭다. 그래서 **둘을 합친 관용구**가 있다.
+
+```bash
+helm upgrade <release> <chart> \
+  --install \              # 없으면 install, 있으면 upgrade
+  --namespace <ns> \
+  --create-namespace       # 네임스페이스 없으면 만들고 들어감
+```
+
+`--install` 한 줄로 "최초/재배포" 분기를 헬름이 알아서 처리한다.
+
+> **왜 `upgrade`가 기본이고 `install`이 옵션일까?** 직관적으로는 "처음 = install"이 메인일 것 같지만, 실행 빈도를 보면 반대다. 어떤 서비스든 최초 배포는 한 번뿐이고 재배포는 수백 번이다. 그래서 **자주 일어나는 동작(upgrade)을 기본으로 깔고, 드문 케이스(최초)를 fallback으로** 둔 것이다. 자주 쓰는 경로를 default로 두는 건 API 설계의 흔한 원칙이다.
+>
+> 더 큰 그림에서 보면 `--install`은 **멱등성(idempotency)을 향한 몸부림**이다. "스크립트를 몇 번을 돌려도 같은 결과"를 만들려는 것 — 이게 선언형/GitOps 배포의 핵심 욕구인데, 헬름이 본질적으로 명령형 CLI다 보니 이런 플래그로 멱등을 흉내 내는 셈이다.
+
+### `--wait` / `--timeout` — Pod가 진짜 뜰 때까지 기다리기
+
+기본 동작은 **리소스를 만든 즉시 OK 리턴**이다. Pod가 Init 중이건 CrashLoop이건 헬름은 모른다. 배포 파이프라인에서 "다 떴는지 확인하고 다음 스텝"이 필요할 때:
+
+```bash
+helm upgrade ... --install \
+  --wait \                 # 모든 Pod가 Ready될 때까지 블록
+  --timeout 10m            # 기본 5분 — 길게 잡고 싶을 때
+```
+
+타임아웃이 지나면 결과는 **실패**로 떨어진다 (자원이 지워지진 않음).
+
+> **핵심은 "만듦 ≠ 떴음"이다.** `--wait` 없이 헬름이 말하는 "성공"은 *"API 서버가 매니페스트를 접수했다"*는 뜻일 뿐, Pod가 실제로 떴다는 보장이 아니다. 그 순간 Pod는 `Init` 중이거나 이미지 pull 중이거나 `CrashLoopBackOff`로 죽어가는 중일 수도 있다. CI에서 "배포 성공"이라는데 바로 이어지는 스모크 테스트가 깨지는 흔한 사고가 여기서 나온다.
+>
+> 한 가지 더 — `--wait`가 보는 "Ready"의 기준은 결국 **Pod의 readiness probe**다. probe가 부실하면 헬름은 "컨테이너가 Running이면 Ready"로 느슨하게 보고 통과시킬 수 있다. 즉 **`--wait`의 신뢰도는 readiness probe 품질에 달려 있다.**
+>
+> 참고로 실패 시 자원을 남기지 않고 **이전 상태로 자동 롤백**까지 원하면 `--atomic`을 쓴다 (`--wait`를 내포한다).
+
+### ConfigMap이 바뀌어도 Pod는 안 뜬다 — checksum annotation
+
+`helm upgrade`로 ConfigMap의 값을 바꿔도, **Deployment 자체가 변경되지 않으면 Pod는 재기동되지 않는다.** 마운트한 파일은 자동 갱신될 수 있지만, **환경 변수로 주입한 값은 절대 갱신되지 않는다.**
+
+해법: ConfigMap의 해시를 Pod 템플릿의 어노테이션에 박는다.
+
+```yaml
+spec:
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+```
+
+ConfigMap이 바뀌면 해시도 바뀌고, Deployment의 update strategy(RollingUpdate/Recreate)에 따라 Pod가 다시 뜬다.
+
+> **여기서 "위치"가 전부다.** 해시 어노테이션을 `metadata.annotations`(Deployment 자체)가 아니라 **`spec.template.metadata.annotations`(Pod 템플릿 안)**에 박는다는 점이 핵심이다. Deployment는 *Pod 템플릿이 바뀌면* Pod를 교체하는 컨트롤러이므로, 템플릿 안의 어노테이션 한 글자만 달라져도 새 Pod 스펙으로 인식하고 롤링 교체를 돈다. 템플릿 *바깥*에 박았다면 아무 일도 일어나지 않는다.
+>
+> 사고방식을 한 번 짚을 가치가 있다. K8s에는 "ConfigMap이 바뀌면 Pod를 재시작" 같은 기능이 **없다.** 그래서 헬름이 한 일은, 템플릿 렌더 단계에서 ConfigMap의 해시를 계산해 어노테이션에 끼워 넣어 **ConfigMap의 내용 변화를 Deployment 스펙 안으로 끌어들인** 것뿐이다. 새 기능을 만든 게 아니라 텍스트 조작으로 우회했다 — **이것이 헬름이 일하는 방식의 표본이다. 헬름은 똑똑한 게 아니라 텍스트를 영리하게 다룰 뿐이다.**
+
+### 무조건 재배포하고 싶을 때 — `rollme`
+
+개발 환경에서 이미지 태그가 `latest`로 고정돼 있으면 같은 매니페스트가 나가서 Deployment가 "변경 없음"으로 본다. 강제로 다르게 만드는 트릭.
+
+```yaml
+annotations:
+  rollme: {{ randAlphaNum 5 | quote }}   # 배포마다 값이 바뀜
+```
+
+> ⚠️ **주의**: `randAlphaNum`은 **렌더할 때마다** 결과가 바뀐다. 비밀번호처럼 진짜 랜덤값을 한 번만 박고 싶은 곳에 잘못 쓰면, `helm upgrade` 할 때마다 값이 갈려서 매번 자동 재배포된다. 이런 케이스에는 다음 챕터에서 다룰 **Hook**과 `lookup` 같은 기법을 써야 한다.
+
+> **`checksum/config`와 `rollme`는 동전의 양면이다.** 둘 다 *Pod 템플릿 어노테이션을 바꿔치기해 강제로 재기동시킨다*는 **완전히 같은 메커니즘**을 쓴다. 차이는 어노테이션에 넣는 값이 무엇이냐 하나뿐이다.
+>
+> | 트릭 | 넣는 값 | 효과 |
+> |---|---|---|
+> | `checksum/config` | ConfigMap의 **해시** (결정적) | 내용이 바뀔 때**만** 재기동 |
+> | `rollme` | **랜덤**값 (비결정적) | **항상** 재기동 |
+>
+> 해시는 입력이 같으면 출력도 같은 결정적 함수, 랜덤은 매번 다른 값. 같은 도구의 두 얼굴로 나란히 두면 "결국 같은 원리"라는 그림이 깔끔하게 잡힌다.
+>
+> 그리고 이 `randAlphaNum` 함정이 바로 **다음 Hook 챕터로 넘어가는 다리**다. "값을 한 번만 만들고 기억하려면?"이라는 질문에서 헬름의 한계(템플릿엔 기억이 없다)가 드러나고, 그 답이 Hook과 `lookup`이다.
+
+### PV 수정 — 헬름으로 안 되는 게 아니라, K8s 자체가 안 됨
+
+`helm upgrade`로 PV의 `hostPath`나 `capacity` 같은 핵심 필드를 바꾸면 에러가 난다. **PVC와 바인딩된 상태의 PV는 K8s API 레벨에서 immutable**이기 때문이다. 헬름이 보낸 PATCH 요청을 API 서버가 거절한 것.
+
+해법: `helm uninstall`로 릴리즈 통째로 정리 → 리소스 다 빠지길 기다림 → `helm install`로 새로 배포.
+
+> 헬름이 만능이 아니다. **밑단의 K8s 리소스 제약이 그대로 적용된다.**
+
+> **"헬름이 PV를 못 고친다"는 말은 정확하지 않다. 거절한 주체는 K8s다.** 헬름은 `capacity`를 바꿔달라는 PATCH를 API 서버에 전달했을 뿐이고, *"PVC와 Bound된 PV의 그 필드는 immutable"*이라며 막은 건 K8s API 서버다. `kubectl edit pv`로 직접 고쳐도 똑같이 거절당한다.
+>
+> 왜 immutable일까? PV는 설정값이 아니라 **데이터가 들어 있는 실제 저장 장치(EBS, NFS 경로 등)와 1:1로 묶인 객체**다. 멀쩡히 돌아가는 앱 밑에서 용량이나 경로가 갈리면 데이터 유실로 직결되므로, K8s가 잠가둔 안전장치다.
+>
+> 운영자 관점의 교훈: **헬름 에러를 보고 "헬름 탓"이라 단정하면 안 된다.** 그게 *K8s가 거절한 것*인지 *헬름이 막은 것*인지 구분하는 눈이 필요하다. 헬름이라는 얇은 추상화 밑으로 K8s의 제약이 그대로 새어 나오는 — 전형적인 **누수 추상화(leaky abstraction)**다.
+
+### Namespace는 헬름이 안 지운다
+
+`--create-namespace`로 만든 네임스페이스라도 `helm uninstall` 시점에 **자동 삭제되지 않는다.**
+
+이유: 한 네임스페이스에 다른 헬름 릴리즈가 같이 살고 있을 수도 있고, 네임스페이스를 지우면 그 안의 **모든 자원이 따라 죽는 큰 영향**이 있다. 헬름은 보수적으로 "만들기는 해도 지우진 않음" 정책.
+
+```bash
+helm uninstall my-release -n my-ns
+kubectl delete namespace my-ns   # 네임스페이스 정리는 직접
+```
+
+> **이건 "생성과 삭제의 비대칭"이다.** 만드는 건 되돌리기 쉽지만, (특히 광범위한) 삭제는 되돌리기 어렵다. 그래서 잘 만든 도구일수록 삭제에 보수적이다. 뒤에서 볼 Hook의 `hook-delete-policy`, PV의 `resource-policy: keep`도 똑같이 "지우는 건 신중히"라는 철학을 공유한다. **헬름은 만들기엔 적극적, 지우기엔 소극적**이라는 일관된 성격을 기억해 두면 여러 동작이 한 번에 이해된다.
+
+### 헬름 저장소 — 릴리즈 정보는 Kubernetes Secret으로 저장된다
+
+헬름 자체가 별도 DB를 쓰지 않는다. **각 리비전마다 Secret이 하나씩 생성**되고, 데이터에 릴리즈 정보가 인코딩되어 들어간다.
+
+```bash
+kubectl get secret -l owner=helm,name=my-release
+# NAME                            TYPE                 DATA   AGE
+# sh.helm.release.v1.my-release.v1  helm.sh/release.v1   1      5m
+# sh.helm.release.v1.my-release.v2  helm.sh/release.v1   1      3m
+
+helm history my-release      # ← 위 Secret들을 읽어서 표로 출력
+```
+
+> **이 사실 하나에서 헬름의 정체가 드러난다 — 헬름은 무상태(stateless) 클라이언트다.** `helm history`·`helm rollback`·`helm list`가 참조하는 릴리즈 이력은 헬름 서버(없다)도, 로컬 파일도, 외부 DB도 아닌 **클러스터 안의 Secret**에 들어 있다. `helm history`는 그 Secret들을 긁어 표로 그려줄 뿐이다. 그래서 로컬에서 돌리든 CI에서 돌리든 결과가 같고, 내 노트북이 터져도 이력은 클러스터에 안전하게 남는다.
+>
+> Secret을 직접 까보면 "헬름의 마법"이 base64 + gzip된 데이터일 뿐임이 드러난다:
+>
+> ```bash
+> kubectl get secret sh.helm.release.v1.my-release.v1 \
+>   -o jsonpath='{.data.release}' | base64 -d | base64 -d | gunzip
+> # → 차트 전체 + values + 렌더된 매니페스트가 통째로 출력됨
+> ```
+>
+> `base64 -d`가 두 번인 점에 주목. K8s Secret이 한 번, 그 안에서 헬름이 gzip + base64를 또 한 겹 씌운다.
+>
+> **왜 이렇게 설계했나:** Helm 2에는 클러스터 안에 **Tiller**라는 서버 컴포넌트가 god-mode 권한으로 상주해 보안 문제가 컸다. Helm 3는 Tiller를 없애고 *"상태는 Secret에 박고, 헬름은 kubectl처럼 순수 클라이언트로"* 전환했다. **"상태를 가진 서버를 두는 것이 실수였다"**는 깨달음의 산물이다.
+
+#### 리비전이 무한정 쌓이는 걸 막기 — `--history-max`
+
+배포 때마다 Secret이 쌓인다. `--history-max`로 보관 개수를 제한.
+
+```bash
+helm upgrade ... --install --history-max 3
+# 4번째 배포부터는 가장 오래된 리비전이 삭제됨
+```
+
+> 운영 환경에서는 적당히 (예: 5~10) 잡아두는 게 정신 건강에 좋다.
+
+> 작은 통찰: 이건 **상태를 클러스터에 위임한 대가**다. 헬름이 무상태라 좋지만, 그 상태가 etcd에 쌓이니 누군가는 청소해야 한다. `--history-max`가 바로 그 청소 정책이다. 공짜 점심은 없다.
+
+---
+
+## Helm Hook — 배포 라이프사이클 제어
+
+> ℹ️ 강의 17(추정: Hook 이론)이 `스크립트 없음`으로 표기되어 있어, **실습 [18] 스크립트만 받은 상태**다. 타입표·실행 시점 같은 기초 개념은 실습 진행 중 강사가 인용한 범위에서 정리했다.
+
+헬름 배포는 "여러 리소스를 한꺼번에 만든다"가 기본이다. 하지만 가끔은 **"이 작업이 먼저 끝난 다음 본 배포가 진행되어야 한다"** 같은 순서 제어가 필요하다. 예: 스키마 마이그레이션, CRD 설치, 헬스 체크 등. 이걸 가능하게 하는 게 **Hook**이다.
+
+> **이 챕터를 관통하는 한 문장:**
+> **"Hook은 선언형 세계(K8s)에 명령형 절차를 몰래 끼워넣는 뒷문(escape hatch)이다."**
+>
+> 쿠버네티스는 **선언형**이다 — *"원하는 상태만 적어라, 순서는 신경 쓰지 마라, 컨트롤러가 알아서 수렴(reconcile)시킨다."* 그런데 *"A가 끝난 다음 B"* 같은 순서는 본질적으로 **명령형(절차)**이라, 선언형 모델로는 표현할 수가 없다. Hook은 바로 이 빈틈을 메우는 장치다.
+
+### Hook은 그냥 어노테이션이다
+
+어떤 리소스든 `helm.sh/hook` 어노테이션이 붙으면 헬름이 그걸 **본 배포 흐름과 분리해서** 특정 시점에 따로 실행한다.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pre-pod
+  annotations:
+    "helm.sh/hook": pre-upgrade           # 언제 실행?
+    "helm.sh/hook-weight": "-1"           # 같은 시점 안에서 순서
+    "helm.sh/hook-delete-policy": hook-succeeded   # 끝난 뒤 지울지
+spec:
+  containers:
+  - name: c
+    image: busybox
+    command: ["sh", "-c", "echo start; sleep 10; echo done"]
+  restartPolicy: Never
+```
+
+> **이 단순함 자체가 인사이트다.** Hook을 위한 특별한 리소스 타입(`kind: Hook` 같은)은 없다. 그냥 평범한 Pod/Job에 어노테이션 한 줄을 붙이면 헬름이 그걸 본 배포 흐름에서 빼내 따로 다룬다. 같은 차트 안에 있어도 어노테이션 유무로 **일반 트랙과 Hook 트랙**이 갈린다.
+>
+> 이것이 앞서 본 `checksum/config`와 **정확히 같은 수법**이다. 헬름은 K8s에 새 개념을 추가할 능력이 없으니(텍스트 치환기일 뿐이니), 할 수 있는 건 *기존 리소스에 메모(어노테이션)를 붙여 "얘는 특별 취급해줘"* 하는 것뿐이다. 헬름의 모든 마법이 결국 어노테이션으로 환원된다.
+>
+> 한 가지 더 짚을 점 — **이 순서를 지휘하는 주체는 K8s가 아니라 헬름(클라이언트)이다.** K8s는 `helm.sh/hook`이라는 어노테이션의 의미를 전혀 모른다. 그저 의미 없는 메모일 뿐이다. "pre-upgrade니 본 배포 전에 먼저 띄우고, 끝날 때까지 기다렸다 진행한다"는 오케스트레이션은 전적으로 `helm` 명령을 실행하는 그 프로세스가 한다. (그래서 `helm upgrade`를 친 터미널이 중간에 끊기면 Hook 제어도 함께 끊긴다.)
+
+### Hook 타입과 실행 시점
+
+| Hook | 시점 |
+|---|---|
+| `crd-install` | (구버전) install 시작 전, CRD 먼저 |
+| `pre-install` / `post-install` | install **본 작업 직전 / 직후** |
+| `pre-upgrade` / `post-upgrade` | upgrade **본 작업 직전 / 직후** |
+| `pre-rollback` / `post-rollback` | rollback 전·후 |
+| `pre-delete` / `post-delete` | uninstall 전·후 |
+| `test` | `helm test`로 명시 호출했을 때만 실행 |
+
+> **순서 예 (`helm upgrade` 한 번에)**: crd-install → pre-upgrade 훅 → **본 리소스 업그레이드** → post-upgrade 훅. 훅 각각은 완료(`Completed`) 될 때까지 헬름이 **블록**한다.
+
+> **이 표는 사실 헬름이 만든 "시계"다.** 외울 필요 없이 패턴은 하나 — *헬름의 모든 동사(install/upgrade/rollback/delete)에 `pre-`(직전)와 `post-`(직후)를 붙인 것*뿐이다(`test`만 예외). 그런데 선언형 K8s에는 원래 "직전/직후"라는 개념이 없다. 상태는 그저 *존재할 뿐* 먼저도 나중도 없기 때문이다. `pre`·`post`라는 시간 축을 새겼다는 건, **헬름이 시간이 없던 세계에 인위적으로 눈금을 그어 넣었다**는 뜻이다.
+>
+> **그리고 "블록"이 순서 보장의 핵심이자 비용이다.** Hook이 `Completed`될 때까지 헬름이 다음으로 안 넘어가기 때문에 "먼저 끝났다"가 보장된다. 뒤집으면, 블록한다는 건 **직렬화(serialize)**다 — Hook을 쓰는 만큼 배포가 순차적으로 느려진다. 선언형 K8s가 순서를 버린 이유 중 하나가 "병렬로 와르르 = 빠르고 자가복구됨"이었는데, Hook으로 순서를 되찾는 순간 그 병렬성을 반납하는 셈이다. **순서는 공짜가 아니다.**
+
+### `hook-weight` — 같은 시점 안에서 순서 정하기
+
+같은 `pre-install` 훅이 여러 개면 weight가 **작은 것부터** 실행된다.
+
+```yaml
+# pod1
+"helm.sh/hook-weight": "-1"
+# pod2  (weight 없음 — 0으로 간주)
+# pod3
+"helm.sh/hook-weight": "1"
+# → 실행 순서: pod1 → pod2 → pod3
+```
+
+> **작은 함정 — 값은 "문자열"인데 정렬은 "숫자"로 된다.** 어노테이션 값은 K8s 규칙상 무조건 문자열이라 `"10"`처럼 따옴표로 감싸야 하지만, 헬름은 정렬할 때 이를 숫자로 변환해 비교한다. 그래서 `"10"`은 `"9"`보다 **뒤**다(10 > 9). 문자열로 정렬했다면 `"10"`이 `"9"`보다 앞이었을 것이다. weight가 같으면 **리소스 종류 → 이름의 알파벳 순**으로 깨지는데, 이건 결정적이긴 해도 의도한 순서가 아니므로, 순서가 중요하면 weight를 명시적으로 다르게 주는 게 안전하다.
+
+> **수렴 진화(convergent evolution).** 이 "가중치로 단계 순서를 매긴다"는 패턴은 헬름만의 것이 아니다. **ArgoCD에도 똑같은 게 있다** — `argocd.argoproj.io/sync-wave: "1"`. 이름만 weight → wave로 바뀌었을 뿐 개념이 동일하다. 서로 베끼지도 않은 두 도구가 **독립적으로 같은 해법을 발명**했다는 것은, *"선언형 배포에서의 순서 제어"라는 구멍이 너무 근본적이라 누가 만들어도 결국 같은 패치를 붙이게 된다*는 신호다. Terraform의 `depends_on`도 같은 흉터다. **두 시스템이 같은 해킹을 독립적으로 만들어냈다면, 그건 바닥에 진짜 구멍이 있다는 뜻이다.**
+
+### `hook-delete-policy` — 훅 리소스의 청소
+
+훅으로 만든 Pod/Job은 다 쓰고 나면 어떻게 할지 명시한다. 여러 값을 콤마로 조합.
+
+| 값 | 의미 |
+|---|---|
+| `before-hook-creation` | **기본값**. 같은 이름 훅이 이미 있으면 만들기 전에 지움 |
+| `hook-succeeded` | 훅이 성공으로 끝나면 즉시 삭제 |
+| `hook-failed` | 훅이 실패하면 즉시 삭제 (디버깅 어려워지니 신중하게) |
+
+```yaml
+"helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+```
+
+> 기본값(`before-hook-creation`)이 항상 적용되기 때문에, 같은 릴리즈를 여러 번 업그레이드하면서도 훅 이름 충돌이 자동으로 해결된다.
+
+> **`before-hook-creation`이라는 이름이 직관적이지 않은데, 메커니즘을 보면 영리하다.** Hook Pod는 이름이 고정된 경우가 많다(예: `db-migrate`). 같은 릴리즈를 두 번, 세 번 upgrade하면 매번 같은 이름을 또 만들려다 *"이미 있다"*는 충돌이 난다. `before-hook-creation`은 **새 Hook을 만들기 직전에 같은 이름의 옛 Hook을 먼저 지워** 이 충돌을 자동으로 푼다. 기본값이라 항상 적용되므로 우리가 평소 이름 충돌을 신경 쓰지 않아도 됐던 것이다.
+
+> **디버깅 역설 — 자동 청소가 증거를 인멸한다.** `hook-succeeded`로 성공한 Hook을 치우는 건 좋다. 그럼 `hook-failed`로 실패한 것도 치우면 더 깔끔할까? 함정이 여기 있다. Hook이 **실패**했다는 건 그게 **제일 들여다봐야 할 순간**이라는 뜻이다. 그런데 `hook-failed`를 걸어두면 *실패 → 즉시 삭제 → 로그도 함께 증발*해, `kubectl logs`를 치면 "pod not found"만 돌아온다. 그래서 디버깅 단계에서는 `hook-failed`를 빼두는 게 안전하다.
+>
+> 이건 Helm만의 얘기가 아니다. **"깔끔함과 관찰가능성(observability)은 트레이드오프"**라는, 시스템 운영 전반에 깔린 보편적 긴장이다. 임시 컨테이너를 자동 삭제하면 깔끔하지만 사후 부검이 막히고, 서버리스/Lambda가 디버깅 어려운 이유도 *실행이 끝나면 실행 환경이 증발*하기 때문이다. Helm의 디테일 하나가 청중 각자의 도메인으로 확장되는 지점이다.
+
+### `helm test` — 헬스 체크 훅
+
+`helm install`로 띄운 뒤, 실제로 잘 떴는지 확인하고 싶을 때 쓰는 별도 명령.
+
+```bash
+helm test my-release
+```
+
+이 명령은 `helm.sh/hook: test` 어노테이션이 붙은 리소스만 실행한다. 보통 패턴:
+
+1. `templates/tests/test-cm.yaml` — 실행할 `run.sh` 스크립트가 담긴 ConfigMap (그냥 같이 배포됨)
+2. `templates/tests/test-connection.yaml` — `test` 훅이 붙은 Pod. ConfigMap을 마운트해서 `curl http://my-svc/health` 같은 검증을 돌림. 종료 코드 0이면 **테스트 성공**.
+
+`helm test`는 이 Pod의 Complete/Error 결과를 그대로 명령 결과로 리턴한다. CI 파이프라인에 배포 검증 스텝으로 끼우기 좋다.
+
+```bash
+helm test my-release --logs        # 실패 Pod 로그를 함께 출력 (디버깅에 유용)
+helm test my-release --timeout 5m  # 기본 타임아웃 연장
+```
+
+> **`test` Hook은 성격이 다르다 — "배포"와 "검증"을 일부러 분리한 것이다.** 앞서 본 `pre-upgrade` 같은 Hook들은 배포 과정에 자동으로 끼어들지만, `test` Hook은 자동으로 돌지 않고 오직 `helm test`를 사람이 직접 칠 때만 실행된다. 운영 팁에서 본 `--wait`가 *"Pod가 Ready인가"*까지만 본다면, `helm test`는 한 단계 위에서 *"앱이 실제로 기능하는가"*(DB 연결, `/health` 200 등)를 검증하는 **스모크 테스트**다.
+>
+> 핵심은 **종료 코드**다. 검증 Pod가 0으로 끝나면 성공, 아니면 실패이고, `helm test`는 그 결과를 자기 명령의 종료 코드로 그대로 넘긴다. 덕분에 파이프라인에 한 줄로 꽂을 수 있다 — *staging에 배포 → `helm test` 통과 → 그래야 prod로 승격*. "테스트를 통과하지 못하면 다음 단계로 못 간다"를 자동화하는 게이트다.
+
+> **레거시 키워드 주의**: 옛날 차트엔 `helm.sh/hook: test-success`, `test-failure`가 보인다. **현재 키워드는 `test` 하나뿐**. (그라파나처럼 호환을 위해 옛 키워드를 그대로 둔 차트도 많음)
+
+여기까지가 Hook의 *문법*(언제·어떤 순서로·어떻게 청소되는가)이다. 이제 한 단계 내려가, **그래서 Hook을 어떤 리소스로 만들고, 실제로 어디에 쓰며, 무엇을 조심해야 하는지**를 본다.
+
+### Hook을 무엇으로 만드나 — Pod vs Job *(보강)*
+
+훅으로 가장 흔히 쓰는 두 가지 리소스. **재시도 보장이 필요한지**가 분기점.
+
+| 측면 | **Pod** | **Job** |
+|---|---|---|
+| 재시도 | 없음 (`restartPolicy: Never` 필수) | `backoffLimit` 으로 제어 |
+| 타임아웃 | 직접 관리 | `activeDeadlineSeconds`로 강제 종료 |
+| 사후 정리 | `hook-delete-policy`로 | 동일 + `ttlSecondsAfterFinished` 옵션 |
+| 용도 | 짧은 한 번 실행 (헬스체크 등) | DB 마이그레이션처럼 **실패 시 재시도가 안전한 작업** |
+
+```yaml
+# Job 훅 예 — DB 마이그레이션
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrate
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3                  # 실패 시 3번 재시도
+  activeDeadlineSeconds: 600       # 10분 넘으면 강제 실패
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: migrate
+        image: myapp/migrator:{{ .Chart.AppVersion }}
+        command: ["./migrate", "up"]
+```
+
+> **DB 마이그레이션은 거의 항상 Job + pre-upgrade**. 새 코드 Pod가 뜨기 전에 스키마부터 맞춰야 하기 때문.
+
+> **왜 분기점이 "재시도"인가.** Pod는 날것이다 — 실패하면 끝이고, 타임아웃도 직접 챙겨야 한다. Job은 Pod를 감싼 컨트롤러라 재시도(`backoffLimit`)·강제 타임아웃(`activeDeadlineSeconds`)·자동 청소(`ttlSecondsAfterFinished`)를 얹어준다. 그래서 일시적 네트워크 끊김으로 깨질 수 있는 진지한 작업(마이그레이션)은 Job, 짧은 1회 검증(헬스체크)은 Pod다.
+>
+> 한 가지 함정 — **Hook Pod에는 `restartPolicy: Never`가 필수**다. 안 그러면 실패한 Pod가 무한 재시작하고, 헬름은 `Completed`를 영원히 못 봐서 **배포가 영구히 블록**된다. (Job은 `OnFailure`로 두고 재시도를 `backoffLimit`이 관리하니 괜찮다.)
+
+> **마이그레이션 — Hook이 어려움을 *숨길* 뿐이라는 진실.** `pre-upgrade Job` 한 덩어리로 싸놓으면 우아해 보이지만, 마이그레이션의 진짜 난점은 하나도 사라지지 않는다. `pre-upgrade`인 이유는 명확하다 — 새 코드는 *새 스키마*를 기대하는데 DB가 아직 *옛 스키마*면 곧장 터지므로, 스키마부터 맞추고(pre) 새 코드를 띄운다. 문제는 그 다음이다:
+>
+> ```
+> pre-upgrade Job: 마이그레이션 시작 → 절반 돌다 실패 ❌ (컬럼 3개 중 2개만 변경)
+>    → 헬름은 "hook failed"로 본 배포를 중단하지만, DB는 절반 바뀐 채로 남는다.
+>    → Hook은 자동 롤백이 없다.
+> ```
+>
+> 그래서 현업은 마이그레이션을 **expand-contract(확장-수축) 패턴**으로 짠다 — 컬럼을 *지우거나 바꾸지 않고 추가만* 해서 구버전·신버전 코드가 동시에 살아남게 한다. 그래야 중간에 깨져도, 롤백해도 안전하다. 요컨대 **"Hook은 마이그레이션을 *쉽게* 만드는 게 아니라 *깔끔해 보이게* 만든다." 진짜 해법은 도구가 아니라 규율(expand-contract)이다.** 사실 마이그레이션은 *상태 있고·순서 있고·멱등 아니고·되돌릴 수 없는*, 선언형 시스템이 싫어하는 모든 속성을 한 몸에 가진 작업이다. 가장 명령형스러운 작업이 선언형 도구의 간판 예시라는 게 이 챕터의 아이러니다.
+
+### Hook을 어디에 쓰나 — 실전 패턴 카탈로그 *(보강)*
+
+오픈소스 차트에서 가장 자주 보는 훅 사용처 5가지.
+
+#### 1. DB 스키마 마이그레이션
+
+`pre-upgrade` Job. 새 버전 Pod가 뜨기 전 스키마를 최신으로 끌어올림. 위 Job 예제가 정석.
+
+#### 2. CRD 부트스트랩
+
+`pre-install` Job/Pod. CRD를 본 리소스보다 먼저 깐다. 다만 Helm 3는 `crds/` 폴더에 CRD를 두는 게 **권장 방식**이고, 훅으로 CRD 관리는 옛 패턴.
+
+```
+mychart/
+├── crds/               # 헬름이 install 시점 첫 단계에 자동 설치
+│   └── mycrd.yaml
+└── templates/
+```
+
+> **작은 통찰 — Hook은 "정식 기능의 대기실"이다.** CRD는 "다른 모든 것보다 먼저, 무조건 한 번"이라는 성격이 너무 명확해서, 헬름이 아예 `crds/` 폴더라는 1급 시민으로 승격시켰다. 뒤의 인증서 발급도 cert-manager 같은 오퍼레이터로 졸업한다. 즉 **자주 쓰는 Hook 패턴은 결국 도구의 정식 기능으로 흡수되고, Hook은 아직 정식 기능이 없는 것들의 임시 거처**인 셈이다.
+
+#### 3. 1회성 시크릿 생성 + 보존
+
+비밀번호처럼 **매 배포마다 갈리면 안 되는 랜덤값**을 처음 1회만 생성. `lookup` + `helm.sh/resource-policy: keep` 조합.
+
+```yaml
+{{- $existingSecret := lookup "v1" "Secret" .Release.Namespace "my-secret" }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+  annotations:
+    "helm.sh/resource-policy": keep    # uninstall 시에도 보존
+data:
+  password: {{ $existingSecret.data.password | default (randAlphaNum 16 | b64enc) }}
+```
+
+> 처음엔 랜덤 생성, 두 번째 부터는 기존 값을 그대로 쓰므로 **재배포해도 비번이 바뀌지 않는다.**
+
+> **이 트릭은 "순수 함수에 부작용을 끼워넣는 해킹"이다.** 헬름 템플릿은 본래 *입력(values) → 출력(YAML)*인 순수 함수에 가깝다 — 같은 입력이면 같은 출력. 그래서 운영 팁의 `randAlphaNum` 함정(렌더할 때마다 값이 갈림)이 생긴다. 템플릿엔 "기억"이 없기 때문이다. `lookup`은 이 본성을 거스른다 — 렌더 도중 **클러스터 상태를 실시간으로 훔쳐봐서** "과거"(이미 있는 Secret)를 읽어온다. 즉 출력이 values뿐 아니라 *지금 클러스터에 뭐가 있나*에도 의존하게 만든다. 여기에 `resource-policy: keep`(uninstall해도 삭제 안 함)이 그 기억을 보호한다.
+>
+> 의미심장한 건, **멱등 시스템에서 "지난번 값을 기억하라"는 본질적으로 모순**이라는 점이다. 멱등은 "과거와 무관하게 늘 같은 결과"인데 기억은 정반대로 과거에 의존한다. `lookup` 트릭은 그 모순을 우회해, *헬름이 "기억 없음"이라는 자기 본성을 거슬러 억지로 상태를 갖는 순간*이다.
+>
+> ⚠️ 단, `lookup`은 **실제 클러스터에 연결돼 있을 때만** 동작한다. `helm template`(클러스터 없이 렌더)이나 `--dry-run`에서는 빈 값을 반환해 매번 새 비번처럼 보일 수 있다. 이 트릭은 클러스터 연결이 전제다.
+
+#### 4. 인증서 발급/갱신
+
+`pre-install` + `pre-upgrade` Job. cert-manager 같은 오퍼레이터가 없을 때 직접 발급 스크립트를 돌려 Secret을 만들어둔다.
+
+#### 5. 배포 후 헬스체크
+
+위에서 다룬 `helm test`. 운영 환경 적용 직전 staging에서 자동으로 돌려서 통과해야만 prod로 가도록 파이프라인을 묶는 패턴.
+
+### 무엇을 조심해야 하나 — 디버깅과 함정 *(보강)*
+
+#### 훅 실패 시 디버깅
+
+```bash
+# 훅 Pod 로그 확인 (delete-policy 때문에 이미 지워졌으면 못 봄)
+kubectl logs -n <ns> <hook-pod-name>
+
+# 일시적으로 보존하려면 delete-policy를 떼고 재배포
+# helm.sh/hook-delete-policy: hook-succeeded → 일단 제거 → 재현 → 다시 추가
+```
+
+> **운영 팁**: `hook-failed`는 실패 사례를 볼 수 없게 만든다. 디버깅 단계에서는 빼두는 게 안전.
+
+#### 훅은 `helm get manifest`에 안 나온다
+
+훅 리소스는 **본 배포 매니페스트 집합에서 분리** 관리된다. `helm get hooks`로만 조회 가능.
+
+```bash
+helm get hooks my-release
+```
+
+> 앞서 "Hook은 본 배포와 다른 트랙"이라고 했는데, 그 분리가 **조회 명령까지 갈라놓은** 것이다. 일반 리소스는 `helm get manifest`, Hook은 `helm get hooks` — 배포된 걸 다 봤다고 생각했는데 Hook Pod가 안 보여 당황하는 흔한 케이스의 원인이다.
+
+#### `--wait`는 훅을 다르게 다룬다
+
+`helm install --wait`는 **본 리소스의 Ready 여부**만 기다린다. 훅 Pod/Job은 별도 단계로 이미 실행 완료된 상태.
+
+> 이유는 타임라인이 겹치지 않기 때문이다. Hook은 자기 시점에 이미 "완료까지 블록"으로 처리되어 끝났고, `--wait`는 그 다음 본 리소스를 보는 단계다.
+
+#### 멱등성 함정 — 이 챕터의 결론
+
+훅은 매 install/upgrade 마다 실행된다. **부작용이 있는 작업**(외부 API 호출, 이메일 발송 등)을 훅에 넣을 땐 멱등성을 직접 보장해야 한다. 위 1회성 시크릿 패턴의 `lookup` 트릭이 대표적.
+
+```
+post-upgrade Hook: "배포 완료 🎉" 메일을 팀 전체에 발송
+   → upgrade 1번 = 메일 1통. 오타 고쳐서 또 upgrade = 2통. 또 = 3통…  "그만 좀 보내!" 😱
+```
+
+> **왜 이런 일이 생기나 — 도입부 thesis의 완벽한 귀결.** 정상적인 K8s 리소스(Deployment 등)는 **reconcile(수렴)**된다. 컨트롤러가 "원하는 상태"와 "현재 상태"를 비교해 *이미 맞으면 아무것도 안 한다.* 그래서 100번 적용해도 한 번 적용한 것과 같다 — 이게 멱등이다.
+>
+> **그런데 Hook은 reconcile이 안 된다.** Hook은 "상태"가 아니라 **"실행할 절차(명령)"**이기 때문이다. 명령은 비교 대상이 없다. 그냥 시키면 매번 실행된다. 즉 **Hook이 명령형이라서, 선언형 시스템의 멱등성 보장을 못 받는 것**이다. `lookup` 트릭은 그 명령형 이물질에 억지로 "기억"을 줘 멱등을 흉내 내게 하는 처방이다.
+>
+> 여기서 모든 게 하나로 연결된다 — Hook이 어노테이션인 것, 롤백이 안 되는 것, 디버깅이 어려운 것, 멱등이 안 되는 것. **전부 "명령형이라서"라는 한 단어로 환원된다.** 한마디로, *Hook은 선언형 세계에 들어온 명령형 이물질이고, 멱등성 함정은 그 면역 거부 반응이다.*
+>
+> Hook은 강력하지만 reconcile도 롤백도 안 된다. 그래서 절차가 복잡해지면 결국 **지속적으로 수렴시키는 Operator로 졸업**하게 된다. *"Hook을 잘 안다는 건, 언제 Hook으로 충분하고 언제 그것을 넘어서야 하는지를 아는 것이다. 좋은 엔지니어의 목표는 Hook을 정복하는 게 아니라, Hook이 필요 없는 시스템을 만드는 것이다."*
+
+### 실전 팁 (핵심 요약) *(보강)*
+
+> 아래 6개 항목 중 **상위 2개만 [18] 스크립트에서 직접 언급**되고("훅 에러 시 본 배포 중단", 그리고 운영 팁 [15]의 `restartPolicy` 컨텍스트), 나머지는 일반 Helm 운영 관례입니다.
+
+- 훅 Pod에는 `restartPolicy: Never` 필수. 안 그러면 실패 Pod가 무한 재시작되며 헬름이 영원히 블록된다.
+- 훅 중 에러가 나면 **본 배포가 그 자리에서 중단**된다. 헬름이 알려주는 `... hook failed` 메시지를 신뢰. *([18]에서 직접 시연)*
+- 재시도가 안전한 작업 → **Job + backoffLimit**, 짧은 1회 검증 → **Pod**.
+- 같은 시점 훅 여러 개면 `hook-weight`로 정렬, 같은 weight는 **이름 알파벳 순**.
+- 디버깅 중엔 `hook-delete-policy`에서 `hook-failed` 빼고 Pod 로그를 직접 확인.
+- 비밀번호 같은 1회성 랜덤값은 **`lookup` + `resource-policy: keep`** 으로 멱등 처리.
+
+## 참조
+
+- [Kubernetes ReplicaSet](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/)
+- [Kubernetes Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+- [Kubernetes DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
+- [Kubernetes Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/)
+- [Kubernetes CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)
+- [Labels and Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+- [Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
+- [Configure Liveness, Readiness and Startup Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+- [Pod QoS Classes](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/)
+- [Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
+- [Taints and Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+- [DNS for Services and Pods](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
+- [Headless Services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services)
+- [Dynamic Volume Provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/)
+- [Persistent Volumes - Lifecycle](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#lifecycle-of-a-volume-and-claim)
+- [Authenticating](https://kubernetes.io/docs/reference/access-authn-authz/authentication/)
+- [Managing Service Accounts](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/)
+- [Using RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
+- [Organizing Cluster Access Using kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
+- [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
+- [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+- [Ingress Controllers](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/)
+- [NGINX Ingress Controller — Canary Annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary)
+- [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+- [Vertical Pod Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler)
+- [Cluster Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler)
+- [Kubernetes Metrics Server](https://github.com/kubernetes-sigs/metrics-server)
+- [Helm 공식 문서](https://helm.sh/docs/)
+- [Helm Chart Template Guide](https://helm.sh/docs/chart_template_guide/)
+- [Helm Built-in Objects](https://helm.sh/docs/chart_template_guide/builtin_objects/)
+- [Helm Template Function List](https://helm.sh/docs/chart_template_guide/function_list/)
+- [Helm Best Practices](https://helm.sh/docs/chart_best_practices/)
+- [Artifact Hub](https://artifacthub.io/)
+- [Bitnami Helm Charts](https://github.com/bitnami/charts)
