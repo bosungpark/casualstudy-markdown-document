@@ -129,3 +129,74 @@
 | ★★☆  | QuickCheck: Random Testing                 | [https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf](https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf) | Property-based Testing |
 | ★★☆  | Deterministic Graph-Based Inference for Guardrailing LLMs | [https://rainbird.ai/wp-content/uploads/2025/03/Deterministic-Graph-Based-Inference-for-Guardrailing-Large-Language-Models.pdf](https://rainbird.ai/wp-content/uploads/2025/03/Deterministic-Graph-Based-Inference-for-Guardrailing-Large-Language-Models.pdf) | 가드레일 로직 설계 |
 | ★☆☆  | APILogGuard: API Logging and Monitoring    | [https://www.jetir.org/papers/JETIR2504A31.pdf](https://www.jetir.org/papers/JETIR2504A31.pdf)         | API 이벤트 수집/모니터링 |
+
+---
+
+# X. 인프라 실무 / 운영 / 트러블슈팅 (실무 스터디)
+
+## X-1. 리눅스 / OS / 시스템 기초
+
+| 제목                                                          | 핵심 주제                          |
+| ----------------------------------------------------------- | ------------------------------ |
+| 리눅스의 inode는 무엇이며, 거기에 저장되지 않는 정보는 무엇인지        | inode 구조, 메타데이터 범위           |
+| inode full 발생 시 대처방법                                     | inode 고갈 진단·복구                 |
+| 스토리지 사용률은 낮은데 no space left on device 오류 원인          | inode 고갈 / 삭제된 열린 파일 / 예약 블록 |
+| 키보드에 A를 누르면 화면에 A가 찍히는 과정                          | 입력 → 인터럽트 → 커널 → 디스플레이 경로  |
+| linux single mode 진입 방법 및 사용 가능한 명령어 정리              | 부팅 단계, 복구 모드 명령어            |
+| kernel panic 원인 및 대처 방안                                  | 패닉 트리거, 분석·복구                |
+| 정규 표현식에 대한 기본적인 이해                                  | regex 문법, grep/sed/awk 활용     |
+| 시스템 리소스 상세 파악 (top, free -h, df, du, cpuinfo)          | 메트릭 상세 해석                     |
+| 각 OS·버전별 default log 위치 파악 및 추출 (awk/grep)            | 로그 경로, 시간대·문자열 추출         |
+| APP 로그 분석 (package 방식 / 특정 solution별 위치·형식)          | 애플리케이션 로그 위치·포맷 분석       |
+
+## X-2. 네트워크 / DNS / 프로토콜
+
+| 제목                                                          | 핵심 주제                          |
+| ----------------------------------------------------------- | ------------------------------ |
+| DNS가 udp/53이 아닌 tcp/53을 쓰는 이유 (resolv.conf, 인증서 갱신) | DNS 전송 계층, 동작 방식            |
+| DNS 계층구조와 각 record(A, CNAME, PTR, SOA 등) 이해           | DNS 레코드 타입, 위임 구조          |
+| CoreDNS가 클러스터 내부 DNS를 처리하는 방식                       | CoreDNS, 서비스 디스커버리          |
+| IPSec / SSL VPN 방식 주요 차이점 (암호화·운영 방식)               | VPN 아키텍처 비교                  |
+| SSL 인증서 동작 방식, 적용 방식                                  | TLS 핸드셰이크, 인증서 체인          |
+| L4 / L7 로드밸런서 차이점과 적합한 케이스                         | LB 계층별 동작·선택 기준           |
+| MTU 설정이 잘못됐을 때 증상과 확인 방법                          | MTU/MSS, 단편화 진단              |
+| NAT / PAT 차이점과 클라우드 환경에서의 동작 방식                  | 주소 변환, 클라우드 게이트웨이        |
+| VLAN과 서브넷의 차이점, 함께 쓰는 이유                          | L2 분리 vs L3 분리               |
+| tcpdump 등을 이용한 data 흐름 파악                              | 패킷 캡처·분석                     |
+| 웹서버 접속 불가 트러블슈팅 순서 + 재발 방지 쉘 스크립트 작성       | 계층별 진단, 자동화 스크립트         |
+
+## X-3. 컨테이너 / 쿠버네티스 / 가상화
+
+| 제목                                                          | 핵심 주제                          |
+| ----------------------------------------------------------- | ------------------------------ |
+| 컨테이너 런타임 내부 구조: CLI 한 줄이 Linux Kernel까지 닿는 과정   | runtime, namespace/cgroup (✅ Inside Docker) |
+| docker, podman, containerd 차이점                             | 컨테이너 런타임 비교               |
+| DockerFile의 동작 및 가상화 환경 실행                           | 이미지 빌드, 레이어 캐시            |
+| 하이퍼바이저 type1/2와 XEN, KVM 상세 비교                       | 가상화 아키텍처 비교               |
+| cpu/mem/disk 가상화 이해 (GVA>GPA>HPA, vCPU/pCPU 매핑)         | 메모리 변환, 자원 제어 설정         |
+| 메모리·CPU 사용량 max가 실제 host와 다른 상황                    | 게스트/호스트 메트릭 괴리           |
+| 쿠버네티스 환경에서 PVC가 pending 상태일 때 확인할 부분           | PVC/PV 바인딩, StorageClass     |
+| NetworkPolicy 동작 원리와 Pod 간 트래픽 제어 방법                | CNI, 네트워크 정책               |
+| Ingress와 Service 차이점, Ingress Controller 동작 방식          | k8s 트래픽 노출 계층             |
+| GitHub Actions Runner Controller (ARC)                       | 셀프호스티드 러너 오토스케일       |
+| XCP-NG 기본 컴포넌트와 아키텍처                                 | XCP-NG / Xen 기반 가상화        |
+
+## X-4. 클라우드 / 아키텍처 / 메시징
+
+| 제목                                                          | 핵심 주제                          |
+| ----------------------------------------------------------- | ------------------------------ |
+| AWS 이용 B2C 웹사이트 설계 (VM기반 / Container기반)             | 비용·HA·CICD·모니터링·로깅·보안   |
+| AWS 테스트 계정 내 VPC 3-tier 구축 (ACM,EC2,SG,ASG,L7 LB,S3)   | 3-tier 아키텍처 실습             |
+| public cloud 선택 시 고려사항과 검증 방법                       | 클라우드 선정 기준               |
+| HCI, public cloud, private cloud 차이점                       | 인프라 모델 비교                 |
+| 온프레미스 → 퍼블릭 클라우드 마이그레이션 시 네트워크 설계         | 하이브리드 연결, 주소 설계        |
+| rabbitmq, kafka, redis 비교                                   | 메시징·스트리밍·캐시 비교         |
+
+## X-5. 스토리지 / 디스크 운영
+
+| 제목                                                          | 핵심 주제                          |
+| ----------------------------------------------------------- | ------------------------------ |
+| 오브젝트 / 블록 / 파일 스토리지 차이점과 사용 케이스              | 스토리지 유형 선택               |
+| 운영 중 서버 디스크가 100% 찼을 때 점검 순서                     | 디스크 풀 진단 절차             |
+| 스토리지 서버에 마운트된 디스크가 접근되지 않을 때 조치           | 마운트 장애 복구               |
+| 스토리지 장애 발생 시 데이터 무결성 검증 방법                    | 체크섬, 정합성 검사            |
