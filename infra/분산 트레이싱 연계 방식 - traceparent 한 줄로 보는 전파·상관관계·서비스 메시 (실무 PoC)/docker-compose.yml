@@ -1,0 +1,97 @@
+name: distributed-tracing
+
+x-app: &app
+  image: distributed-tracing-poc-app
+  pull_policy: never
+  healthcheck:
+    test:
+      - CMD
+      - python
+      - -c
+      - import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=2)
+    interval: 2s
+    timeout: 3s
+    retries: 20
+  restart: unless-stopped
+
+services:
+  app-image:
+    image: distributed-tracing-poc-app
+    build: .
+    profiles:
+      - build
+
+  jaeger:
+    image: jaegertracing/jaeger:2.20.0
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+    restart: unless-stopped
+
+  payments-on:
+    <<: *app
+    depends_on:
+      - jaeger
+    environment:
+      SERVICE_NAME: payments-on
+      PROPAGATION: "on"
+
+  orders-on:
+    <<: *app
+    depends_on:
+      jaeger:
+        condition: service_started
+      payments-on:
+        condition: service_healthy
+    environment:
+      SERVICE_NAME: orders-on
+      NEXT_URL: http://payments-on:8000/work
+      PROPAGATION: "on"
+
+  gateway-on:
+    <<: *app
+    depends_on:
+      jaeger:
+        condition: service_started
+      orders-on:
+        condition: service_healthy
+    environment:
+      SERVICE_NAME: gateway-on
+      NEXT_URL: http://orders-on:8000/work
+      PROPAGATION: "on"
+    ports:
+      - "8001:8000"
+
+  payments-off:
+    <<: *app
+    depends_on:
+      - jaeger
+    environment:
+      SERVICE_NAME: payments-off
+      PROPAGATION: "off"
+
+  orders-off:
+    <<: *app
+    depends_on:
+      jaeger:
+        condition: service_started
+      payments-off:
+        condition: service_healthy
+    environment:
+      SERVICE_NAME: orders-off
+      NEXT_URL: http://payments-off:8000/work
+      PROPAGATION: "off"
+
+  gateway-off:
+    <<: *app
+    depends_on:
+      jaeger:
+        condition: service_started
+      orders-off:
+        condition: service_healthy
+    environment:
+      SERVICE_NAME: gateway-off
+      NEXT_URL: http://orders-off:8000/work
+      PROPAGATION: "off"
+    ports:
+      - "8002:8000"
