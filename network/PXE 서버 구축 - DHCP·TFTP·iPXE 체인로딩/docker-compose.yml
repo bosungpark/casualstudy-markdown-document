@@ -1,0 +1,32 @@
+name: pxe-chainload-poc
+
+services:
+  pxe-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    cap_add:
+      - NET_ADMIN
+    networks:
+      pxe-lab:
+        ipv4_address: 172.30.0.2
+
+  pxe-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    depends_on:
+      pxe-server:
+        condition: service_healthy
+    cap_add:
+      - NET_RAW
+    networks:
+      pxe-lab:
+        ipv4_address: 172.30.0.3
+
+networks:
+  pxe-lab:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

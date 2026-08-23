@@ -1,0 +1,6 @@
+#!ipxe
+
+set base http://172.30.0.2:8080
+kernel ${base}/vmlinuz-virt ip=dhcp alpine_repo=https://dl-cdn.alpinelinux.org/alpine/v3.24/main modloop=${base}/modloop-virt console=ttyS0
+initrd ${base}/initramfs-virt
+boot

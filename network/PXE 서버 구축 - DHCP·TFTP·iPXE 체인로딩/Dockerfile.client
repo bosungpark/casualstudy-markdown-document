@@ -1,0 +1,10 @@
+FROM python:3.13-alpine3.23
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+RUN pip install --no-cache-dir scapy==2.6.1 tftpy==0.8.5
+
+COPY verify.py /verify.py
+
+ENTRYPOINT ["python", "/verify.py"]

@@ -1,0 +1,24 @@
+FROM alpine:3.23
+
+RUN apk add --no-cache ca-certificates darkhttpd dnsmasq wget
+
+RUN mkdir -p /srv/tftp /srv/http
+
+ARG IPXE_URL=https://boot.ipxe.org/undionly.kpxe
+ARG ALPINE_NETBOOT_URL=https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/x86_64/netboot-3.24.1
+
+RUN wget -q -O /srv/tftp/undionly.kpxe "${IPXE_URL}" \
+    && wget -q -O /srv/http/vmlinuz-virt "${ALPINE_NETBOOT_URL}/vmlinuz-virt" \
+    && wget -q -O /srv/http/initramfs-virt "${ALPINE_NETBOOT_URL}/initramfs-virt" \
+    && wget -q -O /srv/http/modloop-virt "${ALPINE_NETBOOT_URL}/modloop-virt"
+
+COPY dnsmasq.conf /etc/dnsmasq.conf
+COPY http/ /srv/http/
+COPY server-entrypoint.sh /usr/local/bin/server-entrypoint
+
+RUN chmod +x /usr/local/bin/server-entrypoint
+
+HEALTHCHECK --interval=30s --timeout=2s --retries=10 \
+    CMD wget -q -O /dev/null http://127.0.0.1:8080/boot.ipxe || exit 1
+
+ENTRYPOINT ["/usr/local/bin/server-entrypoint"]
