@@ -1,0 +1,83 @@
+name: zbx-activepassive-poc
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: zbxpoc-db
+    environment:
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: zabbix
+      POSTGRES_DB: zabbix
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zabbix -d zabbix"]
+      interval: 5s
+      timeout: 3s
+      retries: 40
+
+  zabbix-server:
+    image: zabbix/zabbix-server-pgsql:alpine-7.0-latest
+    container_name: zbxpoc-server
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_SERVER_HOST: db
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: zabbix
+      POSTGRES_DB: zabbix
+      # 실험 회전을 빠르게 하기 위한 값. 프로덕션 기본값이 아니다.
+      ZBX_CACHEUPDATEFREQUENCY: "10"
+      ZBX_UNREACHABLEPERIOD: "15"
+      ZBX_UNREACHABLEDELAY: "5"
+      ZBX_UNAVAILABLEDELAY: "10"
+      ZBX_STARTPOLLERS: "5"
+    ports:
+      - "10051:10051"
+
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-pgsql:alpine-7.0-latest
+    container_name: zbxpoc-web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_SERVER_HOST: db
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: zabbix
+      POSTGRES_DB: zabbix
+      ZBX_SERVER_HOST: zabbix-server
+      PHP_TZ: Asia/Seoul
+    ports:
+      - "8080:8080"
+
+  # 1) passive 전용: 서버가 10050으로 들어와야만 값이 생긴다
+  agent-passive:
+    image: zabbix/zabbix-agent2:alpine-7.0-latest
+    container_name: zbxpoc-agent-passive
+    entrypoint: ["/usr/sbin/zabbix_agent2", "-c", "/etc/zabbix/poc.conf", "-f"]
+    volumes:
+      - ./conf/agent-passive.conf:/etc/zabbix/poc.conf:ro
+
+  # 2) active + 메모리 버퍼만
+  agent-active-mem:
+    image: zabbix/zabbix-agent2:alpine-7.0-latest
+    container_name: zbxpoc-agent-active-mem
+    entrypoint: ["/usr/sbin/zabbix_agent2", "-c", "/etc/zabbix/poc.conf", "-f"]
+    volumes:
+      - ./conf/agent-active-mem.conf:/etc/zabbix/poc.conf:ro
+
+  # 3) active + 디스크 영속 버퍼(SQLite)
+  agent-active-disk:
+    image: zabbix/zabbix-agent2:alpine-7.0-latest
+    container_name: zbxpoc-agent-active-disk
+    entrypoint: ["/usr/sbin/zabbix_agent2", "-c", "/etc/zabbix/poc.conf", "-f"]
+    volumes:
+      - ./conf/agent-active-disk.conf:/etc/zabbix/poc.conf:ro
+
+  # 4) inbound 차단 재현: 루프백에서만 listen 한다 (= 서버가 접속할 수 없다)
+  agent-inbound-blocked:
+    image: zabbix/zabbix-agent2:alpine-7.0-latest
+    container_name: zbxpoc-agent-inbound-blocked
+    entrypoint: ["/usr/sbin/zabbix_agent2", "-c", "/etc/zabbix/poc.conf", "-f"]
+    volumes:
+      - ./conf/agent-inbound-blocked.conf:/etc/zabbix/poc.conf:ro
