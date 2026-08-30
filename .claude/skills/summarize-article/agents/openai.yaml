@@ -1,0 +1,4 @@
+interface:
+  display_name: "Summarize Technical Article"
+  short_description: "기술 아티클 한 편을 한국어 학습 문서로 정리"
+  default_prompt: "Use $summarize-article to research one technical article and write a Korean study note."

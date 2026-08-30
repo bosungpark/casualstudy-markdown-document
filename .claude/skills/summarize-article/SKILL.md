@@ -1,86 +1,74 @@
 ---
 name: summarize-article
-description: Use this skill when the user wants to research a technical topic by searching the web for in-depth articles and summarize them into a Korean markdown document following this repo's template (출처 / AI 요약 / 내가 얻은 인사이트 sections). Trigger on `/summarize-article <topic>` or when the user says things like "이 주제 정리해줘", "기술 아티클 찾아서 정리", "딥다이브 정리해줘" with a technical topic like "AWS Redshift 아키텍처", "Kafka 내부 구조", "PostgreSQL MVCC".
+description: Research one in-depth technical article or paper and summarize it as a Korean Markdown study note following this repository's 출처 / AI 요약 / 내가 얻은 인사이트 structure. Use for `/summarize-article` with a topic, `$summarize-article`, or requests such as "기술 아티클 찾아서 정리", "이 주제 딥다이브", and "아티클 기반 PoC까지 해보자".
 ---
 
 # Summarize Technical Article
 
-기술 아티클/논문을 검색하여 프로젝트 템플릿 형식에 맞게 정리합니다.
+기술 주제를 다루는 아티클 한 편을 선정해 한국어 학습 문서로 정리한다. 사용자가 요청하면 같은 위치에 재현 가능한 PoC도 만든다.
 
-## Arguments
+## 입력
 
-- `$ARGUMENTS`: 정리할 기술 주제 (예: "AWS Redshift 아키텍처", "Kafka 내부 구조", "PostgreSQL MVCC")
+- 명시적 호출의 인자 또는 현재 요청에서 기술 주제를 가져온다.
+- 주제가 불명확할 때만 짧게 질문한다.
 
-## Instructions
+## 작업 순서
 
-### 1단계: 주제 분석 및 검색
-1. `$ARGUMENTS`로 전달받은 주제를 파악합니다.
-2. WebSearch를 사용하여 해당 주제에 대한 심층 기술 아티클을 검색합니다.
-   - 검색 쿼리 예시: `[주제] architecture deep dive internals`
-   - 공식 문서, 기술 블로그, 논문 등을 찾습니다.
+1. 저장소 루트의 `CLAUDE.md`, `AGENTS.md` 등 적용 가능한 작성 규칙을 먼저 확인한다.
+2. 인터넷에서 `[주제] architecture deep dive internals`와 같이 검색한다.
+3. 공식 문서, 원저자 기술 블로그, 논문 등 가장 깊이 있고 신뢰할 수 있는 **아티클 한 편**을 선택해 원문을 읽는다.
+4. 선택한 아티클을 중심으로 핵심 구조, 동작 순서, 트레이드오프를 정리한다.
+5. 기존 카테고리 중 가장 가까운 위치를 선택한다.
+   - 인프라·클라우드·운영: `infra/`
+   - 시스템·분산 시스템: `system_design/`
+   - 네트워크·프로토콜: `network/`
+   - 데이터베이스: `database/`
+   - AI·ML: `ai/`
+6. 문서만 만들면 `[주제 제목].md`로 저장한다.
+7. 실행 코드나 PoC도 만들면 `[주제 제목]/` 디렉터리를 만들고 문서, `README.md`, 실행 파일을 모두 그 안에 둔다. 별도의 범용 `pocs/` 디렉터리를 만들지 않는다.
+8. 링크, 명령어, 코드 문법을 검사한다. PoC를 포함했다면 안전한 격리 환경에서 실제 실행해 핵심 주장을 검증한다.
 
-### 2단계: 아티클 내용 수집
-1. WebFetch를 사용하여 검색된 아티클들의 내용을 가져옵니다.
-2. 가장 포괄적이고 깊이 있는 내용을 가진 아티클을 선택합니다.
-3. 필요시 여러 소스를 조합합니다.
+## 단일 출처 원칙
 
-### 3단계: 템플릿 형식으로 현재 존재하는 디렉터리에 정리
+- 한 문서의 `출처`에는 아티클·논문·챕터 하나만 둔다.
+- 여러 아티클의 내용을 하나의 요약처럼 섞지 않는다.
+- 보조 자료로 사실을 검증하더라도 선택한 원문의 주장과 자신의 해석을 구분한다.
+- 여러 자료를 각각 정리해야 한다면 문서를 분리한다.
 
-현재 존재하는 디렉터리에 다음 템플릿 구조를 따라 마크다운 문서를 작성합니다:
+## 문서 템플릿
 
 ```markdown
 # [주제 제목]
 
 ## 출처
-- **아티클/논문**: [아티클 제목]
-- **저자/출처**: [저자 또는 사이트명]
-- **링크**: [URL]
+- **아티클/논문**: [정확한 제목]
+- **저자/출처**: [저자 또는 사이트]
+- **링크**: [원문 URL]
 
 ---
 
 ## AI 요약
 
 ### 1. [주제]란?
-[주제에 대한 간단한 설명과 핵심 특성 표]
+[핵심 정의와 범위]
 
-### 2~N. [핵심 개념들]
-- ASCII 다이어그램 활용
-- 표로 정보 정리
-- 코드 예시 포함 (해당되는 경우)
+### 2~N. [핵심 개념]
+[필요한 표, ASCII 흐름도, 짧은 코드 예시]
 
 ---
 
 ## 내가 얻은 인사이트
 
-### [관점 1] 관점
+### [관점]
 1. **[인사이트 제목]**
-   - 상세 설명
-
-### [관점 2] 관점
-...
+   - 원문에서 도출한 실무적 의미와 트레이드오프
 ```
 
-### 4단계: 파일 저장
-1. 적절한 하위 디렉토리를 결정합니다:
-   - `database/` : 데이터베이스 관련
-   - `system/` : 시스템 설계, 분산 시스템
-   - `cloud/` : 클라우드 서비스
-   - 기타 주제에 맞는 디렉토리
-2. 파일명은 `[주제 제목].md` 형식으로 작성합니다.
-3. Write 도구를 사용하여 파일을 저장합니다.
+## 작성 기준
 
-## 작성 가이드라인
-
-1. **다이어그램**: ASCII art로 아키텍처, 흐름도 등을 시각화
-2. **표**: 비교, 특성, 옵션 등은 표로 정리
-3. **코드**: 핵심 개념 설명에 필요한 경우 코드 블록 포함
-4. **인사이트**: 실무 적용, 설계 원칙, 트레이드오프 등 개인적 통찰 포함
-5. **한국어**: 전체 내용은 한국어로 작성 (기술 용어는 영어 병기 가능)
-
-## 예시
-
-```
-/summarize-article AWS Lambda Cold Start
-/summarize-article PostgreSQL MVCC 동작 원리
-/summarize-article Kubernetes Pod Scheduling
-```
+- 전체 설명은 한국어로 쓰고 필요한 기술 용어는 영어를 병기한다.
+- 구조·흐름을 이해하는 데 도움이 될 때만 ASCII 다이어그램이나 표를 사용한다.
+- 원문 요약과 직접 실험 결과를 명확히 구분한다.
+- 시간에 따라 변할 수 있는 버전, 명령어, 지원 상태는 현재 공식 자료에서 확인한다.
+- 긴 원문 인용 대신 간결한 의역을 사용한다.
+- 출처에 없는 사실을 원문의 주장처럼 쓰지 않는다.
