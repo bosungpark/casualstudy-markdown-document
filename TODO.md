@@ -200,3 +200,87 @@
 | 운영 중 서버 디스크가 100% 찼을 때 점검 순서                     | 디스크 풀 진단 절차             |
 | 스토리지 서버에 마운트된 디스크가 접근되지 않을 때 조치           | 마운트 장애 복구               |
 | 스토리지 장애 발생 시 데이터 무결성 검증 방법                    | 체크섬, 정합성 검사            |
+
+---
+
+# XI. Operating Systems (OS 기초 → 커널 내부)
+
+> **커리큘럼 원칙**: 주교재는 무료 공개된 **OSTEP (Operating Systems: Three Easy Pieces)**. 세 덩어리(가상화 → 동시성 → 영속성) 순서를 그대로 따라가고, 각 단계 끝에서 Linux 실물 문서/커널 문서로 "교과서 개념 ↔ 실제 구현"을 대조한다. 한 문서에 한 챕터만 정리한다.
+>
+> **권장 순서**: XI-1 → XI-2 → XI-3 → XI-4 → XI-5 → XI-6
+
+## XI-1. 1단계: CPU 가상화 (프로세스 / 스케줄링) — 가장 쉬운 진입점
+
+| 우선순위 | 제목                                              | 링크                                                                                                   | 핵심 주제                        |
+| ---- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------- |
+| ★★★  | OSTEP Ch.6 Mechanism: Limited Direct Execution  | [cpu-mechanisms.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-mechanisms.pdf)                       | 유저/커널 모드, 트랩, 컨텍스트 스위치       |
+| ★★★  | OSTEP Ch.7 Scheduling: Introduction             | [cpu-sched.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched.pdf)                                 | FIFO/SJF/STCF, turnaround vs response |
+| ★★☆  | OSTEP Ch.8 Multi-Level Feedback Queue           | [cpu-sched-mlfq.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-mlfq.pdf)                       | MLFQ, 우선순위 부스팅, 게이밍 방지       |
+| ★★☆  | OSTEP Ch.9 Proportional Share (Lottery/Stride)  | [cpu-sched-lottery.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-lottery.pdf)                 | 비례 지분 스케줄링, CFS의 뿌리          |
+| ★★☆  | OSTEP Ch.10 Multiprocessor Scheduling           | [cpu-sched-multi.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-multi.pdf)                     | 캐시 어피니티, 로드 밸런싱             |
+| ★★★  | Linux CFS Scheduler Design                      | [sched-design-CFS](https://docs.kernel.org/scheduler/sched-design-CFS.html)                           | vruntime, 레드블랙 트리 (교과서 ↔ 실물) |
+| ★★☆  | Linux EEVDF Scheduler                           | [sched-eevdf](https://docs.kernel.org/scheduler/sched-eevdf.html)                                     | 6.6부터 CFS를 대체한 최신 스케줄러       |
+
+## XI-2. 2단계: 메모리 가상화 (주소 공간 / 페이징)
+
+| 우선순위 | 제목                                          | 링크                                                                                                   | 핵심 주제                    |
+| ---- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------ |
+| ★★★  | OSTEP Ch.13 The Abstraction: Address Spaces | [vm-intro.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-intro.pdf)                                   | 주소 공간, 가상 주소의 의미         |
+| ★★☆  | OSTEP Ch.14 Interlude: Memory API           | [vm-api.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-api.pdf)                                       | malloc/free, 흔한 메모리 버그   |
+| ★★★  | OSTEP Ch.15 Mechanism: Address Translation  | [vm-mechanism.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-mechanism.pdf)                           | 하드웨어 기반 주소 변환, base/bound |
+| ★★☆  | OSTEP Ch.16 Segmentation                    | [vm-segmentation.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-segmentation.pdf)                     | 세그멘테이션, 외부 단편화           |
+| ★★☆  | OSTEP Ch.17 Free-Space Management           | [vm-freespace.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-freespace.pdf)                           | 할당기 내부, 단편화 전략           |
+| ★★★  | OSTEP Ch.18 Paging: Introduction            | [vm-paging.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf)                                 | 페이지 테이블, PTE 구조          |
+| ★★★  | OSTEP Ch.19 Paging: Faster Translations(TLB)| [vm-tlbs.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf)                                     | TLB 히트/미스, 공간 지역성        |
+| ★★☆  | OSTEP Ch.20 Paging: Smaller Tables          | [vm-smalltables.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-smalltables.pdf)                       | 멀티레벨 페이지 테이블            |
+| ★★★  | OSTEP Ch.21-22 Swapping & Policies          | [vm-beyondphys.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys.pdf)                         | 스왑, LRU/클럭, 스래싱          |
+| ★★☆  | What Every Programmer Should Know About Memory | [cpumemory.pdf](https://people.freebsd.org/~lstewart/articles/cpumemory.pdf)                       | 캐시 계층, NUMA (Drepper 고전)  |
+| ★☆☆  | Understanding the Linux Virtual Memory Manager | [understand.pdf](https://www.kernel.org/doc/gorman/pdf/understand.pdf)                             | Linux VM 실제 구현 (Gorman)   |
+
+## XI-3. 3단계: 동시성 (스레드 / 락 / 조건변수)
+
+| 우선순위 | 제목                                               | 링크                                                                                                   | 핵심 주제                     |
+| ---- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- | ------------------------- |
+| ★★★  | OSTEP Ch.26 Concurrency: An Introduction         | [threads-intro.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf)                         | 스레드, 경쟁 조건, 임계 영역         |
+| ★★☆  | OSTEP Ch.27 Interlude: Thread API                | [threads-api.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-api.pdf)                             | pthread 생성/조인/락 API       |
+| ★★★  | OSTEP Ch.28 Locks                                | [threads-locks.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-locks.pdf)                         | 스핀락, test-and-set, 공정성    |
+| ★★☆  | OSTEP Ch.29 Lock-based Concurrent Data Structures| [threads-locks-usage.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-locks-usage.pdf)             | 동시성 자료구조, 락 세분화           |
+| ★★★  | OSTEP Ch.30 Condition Variables                  | [threads-cv.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-cv.pdf)                               | 생산자-소비자, wait/signal 규칙   |
+| ★★☆  | OSTEP Ch.31 Semaphores                           | [threads-sema.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-sema.pdf)                           | 세마포어, reader-writer 락     |
+| ★★★  | OSTEP Ch.32 Common Concurrency Problems          | [threads-bugs.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-bugs.pdf)                           | 데드락 4조건, atomicity 버그     |
+| ★★☆  | OSTEP Ch.33 Event-based Concurrency              | [threads-events.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-events.pdf)                       | 이벤트 루프, select/epoll 모델   |
+| ★★☆  | Futexes Are Tricky                               | [futex.pdf](https://www.akkadia.org/drepper/futex.pdf)                                                | Linux 락의 실제 구현 (Drepper)  |
+
+## XI-4. 4단계: 영속성 (I/O / 파일시스템)
+
+| 우선순위 | 제목                                              | 링크                                                                                                   | 핵심 주제                   |
+| ---- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------- |
+| ★★★  | OSTEP Ch.36 I/O Devices                         | [file-devices.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-devices.pdf)                           | 폴링 vs 인터럽트, DMA, 디바이스 드라이버 |
+| ★★☆  | OSTEP Ch.37 Hard Disk Drives                    | [file-disks.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-disks.pdf)                               | 탐색/회전 지연, 디스크 스케줄링      |
+| ★★☆  | OSTEP Ch.38 RAID                                | [file-raid.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-raid.pdf)                                 | RAID 레벨별 성능·신뢰성 트레이드오프  |
+| ★★★  | OSTEP Ch.39 Interlude: Files and Directories    | [file-intro.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf)                               | inode, 하드/심볼릭 링크, fsync |
+| ★★★  | OSTEP Ch.40 File System Implementation          | [file-implementation.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf)             | vsfs, 슈퍼블록/비트맵/inode 테이블 |
+| ★★☆  | OSTEP Ch.41 Locality and The Fast File System   | [file-ffs.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-ffs.pdf)                                   | 실린더 그룹, 디스크 지역성         |
+| ★★★  | OSTEP Ch.42 Crash Consistency: FSCK & Journaling| [file-journaling.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-journaling.pdf)                     | 저널링, WAL, ordered mode   |
+| ★★☆  | OSTEP Ch.43 Log-structured File System          | [file-lfs.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-lfs.pdf)                                   | LFS, 세그먼트 클리닝 (LSM의 조상) |
+| ★★☆  | OSTEP Ch.44 Flash-based SSDs                    | [file-ssd.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-ssd.pdf)                                   | FTL, 웨어 레벨링, 쓰기 증폭      |
+| ★☆☆  | OSTEP Ch.45 Data Integrity and Protection       | [file-integrity.pdf](https://pages.cs.wisc.edu/~remzi/OSTEP/file-integrity.pdf)                       | 체크섬, silent corruption   |
+
+## XI-5. 5단계: 커널 실물 / 시스템 콜 경계
+
+| 우선순위 | 제목                                  | 링크                                                                                                   | 핵심 주제                        |
+| ---- | ----------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------- |
+| ★★★  | The UNIX Time-Sharing System        | [unix.pdf](https://dsf.berkeley.edu/cs262/unix.pdf)                                                   | Ritchie & Thompson 원전, UNIX 설계 철학 |
+| ★★★  | xv6: a simple, Unix-like OS (book)  | [book-riscv-rev4.pdf](https://pdos.csail.mit.edu/6.828/2024/xv6/book-riscv-rev4.pdf)                  | 실제로 읽히는 6천 줄짜리 커널 전체         |
+| ★★☆  | xv6 source code                     | [mit-pdos/xv6-public](https://github.com/mit-pdos/xv6-public)                                         | OSTEP 예제의 원본 코드 읽기           |
+| ★★☆  | syscalls(2) — Linux 시스템 콜 목록        | [syscalls.2](https://man7.org/linux/man-pages/man2/syscalls.2.html)                                   | 유저-커널 경계에 실제로 뭐가 있는지         |
+| ★★☆  | The Linux Kernel Documentation      | [docs.kernel.org](https://docs.kernel.org/)                                                           | 커널 서브시스템 공식 문서 진입점           |
+
+## XI-6. 6단계: 인프라 실무와 연결 (컨테이너 = OS 기능의 조합)
+
+| 우선순위 | 제목                        | 링크                                                                                       | 핵심 주제                          |
+| ---- | ------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------ |
+| ★★★  | namespaces(7)             | [namespaces.7](https://man7.org/linux/man-pages/man7/namespaces.7.html)                   | PID/NET/MNT 네임스페이스 = 컨테이너 격리 |
+| ★★★  | Control Group v2          | [cgroup-v2](https://docs.kernel.org/admin-guide/cgroup-v2.html)                            | CPU/메모리 제한, OOM, 파드 리소스의 실체  |
+| ★★☆  | BPF Documentation         | [docs.kernel.org/bpf](https://docs.kernel.org/bpf/index.html)                              | eBPF 기반 커널 관측·네트워킹           |
+| ★★☆  | capabilities(7)           | [capabilities.7](https://man7.org/linux/man-pages/man7/capabilities.7.html)                | root 권한 분해, 컨테이너 보안 설정       |
