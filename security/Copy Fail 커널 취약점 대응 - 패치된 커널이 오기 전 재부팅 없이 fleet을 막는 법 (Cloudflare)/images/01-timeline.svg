@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 350" width="900" height="350" role="img" aria-label="Copy Fail 대응 타임라인: 공개 후 7시간에 탐지 확인, 약 1일에 전 fleet 입구 차단, 5일째 패치 커널 롤아웃 재개">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; fill: #1F2937; }
+    .title { font-size: 19px; font-weight: 700; }
+    .rel { font-size: 15px; font-weight: 700; text-anchor: middle; }
+    .ev { font-size: 13px; text-anchor: middle; }
+    .date { font-size: 12px; fill: #6B7280; text-anchor: middle; }
+    .band { font-size: 14px; font-weight: 600; }
+    .note { font-size: 13px; fill: #4B5563; }
+  </style>
+  <defs>
+    <marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#374151"/>
+    </marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="899" height="349" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">Copy Fail 대응 타임라인 — 방어가 한 겹씩 늘어난 순서</text>
+
+  <!-- event labels -->
+  <text x="110" y="78" class="rel">공개</text>
+  <text x="110" y="97" class="ev">Copy Fail 공개</text>
+  <text x="110" y="114" class="date">04-29 16:00</text>
+
+  <text x="290" y="78" class="rel">+7시간</text>
+  <text x="290" y="97" class="ev">탐지 커버리지 확인</text>
+  <text x="290" y="114" class="date">04-29 22:52</text>
+
+  <text x="470" y="78" class="rel">+약 1일</text>
+  <text x="470" y="97" class="ev">전 fleet 입구 차단</text>
+  <text x="470" y="114" class="date">04-30 저녁</text>
+
+  <text x="650" y="78" class="rel">+5일</text>
+  <text x="650" y="97" class="ev">패치 커널 롤아웃 재개</text>
+  <text x="650" y="114" class="date">05-04 아침</text>
+
+  <text x="820" y="78" class="rel">완료</text>
+  <text x="820" y="97" class="ev">모든 서버 보호</text>
+  <text x="820" y="114" class="date">패치 커널 또는 bpf-lsm</text>
+
+  <!-- axis -->
+  <line x1="50" y1="138" x2="872" y2="138" stroke="#374151" stroke-width="2" marker-end="url(#ax)"/>
+  <g stroke="#D1D5DB" stroke-dasharray="3 4">
+    <line x1="110" y1="146" x2="110" y2="294"/>
+    <line x1="290" y1="146" x2="290" y2="294"/>
+    <line x1="470" y1="146" x2="470" y2="294"/>
+    <line x1="650" y1="146" x2="650" y2="294"/>
+    <line x1="820" y1="146" x2="820" y2="294"/>
+  </g>
+  <g fill="#FFFFFF" stroke="#374151" stroke-width="2.5">
+    <circle cx="110" cy="138" r="7"/>
+    <circle cx="290" cy="138" r="7"/>
+    <circle cx="470" cy="138" r="7"/>
+    <circle cx="650" cy="138" r="7"/>
+    <circle cx="820" cy="138" r="7"/>
+  </g>
+
+  <!-- band 1: detection (existed before incident) -->
+  <rect x="50" y="162" width="818" height="36" rx="6" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="64" y="186" class="band">탐지 — 행위 기반 탐지 (사고 전부터 운영 중)</text>
+
+  <!-- gap: no prevention -->
+  <rect x="50" y="208" width="420" height="80" rx="6" fill="#FEF2F2" stroke="#DC2626" stroke-dasharray="6 4"/>
+  <text x="260" y="244" class="band" text-anchor="middle" fill="#B91C1C">예방 수단 0겹</text>
+  <text x="260" y="266" class="note" text-anchor="middle">패치는 아직 없고, 탐지만 있는 구간</text>
+
+  <!-- band 2: bpf-lsm -->
+  <rect x="470" y="208" width="398" height="36" rx="6" fill="#DBEAFE" stroke="#2563EB"/>
+  <text x="484" y="232" class="band">예방 ① 입구 차단 (bpf-lsm)</text>
+
+  <!-- band 3: patched kernel -->
+  <rect x="650" y="252" width="218" height="36" rx="6" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="664" y="276" class="band">예방 ② 패치 커널로 교체</text>
+
+  <text x="32" y="326" class="note">막대는 그 시점에 fleet에 깔려 있던 방어 수단이다. 시간 간격은 실제 비율이 아니다.</text>
+</svg>

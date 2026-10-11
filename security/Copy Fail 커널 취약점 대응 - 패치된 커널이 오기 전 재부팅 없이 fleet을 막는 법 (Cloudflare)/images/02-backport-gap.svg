@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" width="900" height="360" role="img" aria-label="백포트 틈: 수정은 mainline에 약 한 달 전에 들어갔지만 서버 대부분이 쓰는 6.12 LTS에는 백포트되지 않아, 패치 파이프라인이 정상으로 돌아도 가져올 수정이 없었다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; fill: #1F2937; }
+    .title { font-size: 19px; font-weight: 700; }
+    .h { font-size: 15px; font-weight: 700; }
+    .b { font-size: 13px; }
+    .m { font-size: 12px; fill: #6B7280; }
+    .lbl { font-size: 12px; font-weight: 600; }
+  </style>
+  <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/>
+    </marker>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/>
+    </marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="899" height="359" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">왜 매주 패치하는데도 취약했나 — 백포트 틈</text>
+
+  <!-- mainline -->
+  <rect x="40" y="84" width="240" height="76" rx="8" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="58" y="112" class="h">mainline</text>
+  <text x="58" y="134" class="b">수정 반영됨 ✓</text>
+  <text x="58" y="151" class="m">공개 약 한 달 전</text>
+
+  <!-- LTS 6.12 -->
+  <rect x="420" y="66" width="270" height="62" rx="8" fill="#FEF2F2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="438" y="92" class="h">6.12 LTS · 서버 대부분</text>
+  <text x="438" y="114" class="b" fill="#B91C1C">백포트 안 됨 ✗ → 취약</text>
+
+  <!-- LTS 6.18 -->
+  <rect x="420" y="142" width="270" height="50" rx="8" fill="#F9FAFB" stroke="#9CA3AF"/>
+  <text x="438" y="172" class="b">6.18 LTS · 일부 서버 (전환 중)</text>
+
+  <!-- arrows mainline -> LTS -->
+  <path d="M280,110 C340,110 360,97 414,97" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#ar)"/>
+  <text x="300" y="92" class="lbl" fill="#B91C1C">백포트 필요</text>
+  <path d="M280,138 C340,138 360,167 414,167" fill="none" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ag)"/>
+
+  <!-- pipeline -->
+  <text x="170" y="246" class="h">Cloudflare 패치 파이프라인 — 정상 동작 중</text>
+  <rect x="40" y="260" width="200" height="50" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="140" y="290" class="b" text-anchor="middle">주간 자동 빌드</text>
+  <rect x="300" y="260" width="200" height="50" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="400" y="290" class="b" text-anchor="middle">스테이징 테스트</text>
+  <rect x="560" y="260" width="200" height="50" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="660" y="290" class="b" text-anchor="middle">4주 주기 재부팅 (ERR)</text>
+  <line x1="240" y1="285" x2="294" y2="285" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ag)"/>
+  <line x1="500" y1="285" x2="554" y2="285" stroke="#6B7280" stroke-width="1.5" marker-end="url(#ag)"/>
+
+  <!-- 6.12 feeds pipeline: nothing to pull -->
+  <path d="M690,97 H750 V220 H140 V254" fill="none" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+  <text x="764" y="162" class="lbl" fill="#B91C1C">가져올</text>
+  <text x="764" y="179" class="lbl" fill="#B91C1C">수정 없음</text>
+
+  <text x="40" y="340" class="m">파이프라인 속도가 아니라, 수정이 내가 쓰는 계열까지 내려왔는지가 문제였다.</text>
+</svg>

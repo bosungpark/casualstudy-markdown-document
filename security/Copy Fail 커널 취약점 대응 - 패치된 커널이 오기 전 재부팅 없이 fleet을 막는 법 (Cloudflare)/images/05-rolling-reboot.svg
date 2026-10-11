@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 336" width="900" height="336" role="img" aria-label="롤링 재부팅의 함정: 패치 커널이 준비되기 직전에 이미 재부팅한 서버는 다음 차례까지 약 4주를 기다려야 해서 수동으로 다시 재부팅했다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; fill: #1F2937; }
+    .title { font-size: 19px; font-weight: 700; }
+    .wk { font-size: 13px; font-weight: 600; fill: #4B5563; text-anchor: middle; }
+    .c { font-size: 13px; font-weight: 600; text-anchor: middle; }
+    .s { font-size: 12px; text-anchor: middle; }
+    .mk { font-size: 12px; font-weight: 700; fill: #1D4ED8; }
+    .lbl { font-size: 13px; font-weight: 600; }
+    .note { font-size: 13px; }
+    .foot { font-size: 12px; fill: #6B7280; }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/>
+    </marker>
+    <marker id="agr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/>
+    </marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="899" height="335" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">롤링 재부팅의 함정 — 이번 주기에 이미 지나간 서버</text>
+
+  <!-- patched kernel ready marker -->
+  <text x="140" y="76" class="mk">← 패치 커널 준비 (05-04)</text>
+  <line x1="132" y1="64" x2="132" y2="145" stroke="#2563EB" stroke-width="2"/>
+
+  <!-- week 1 split -->
+  <rect x="50" y="88" width="78" height="54" rx="6" fill="#FEE2E2" stroke="#DC2626"/>
+  <text x="89" y="111" class="s" fill="#991B1B">이미 재부팅</text>
+  <text x="89" y="129" class="s" fill="#991B1B">(패치 전)</text>
+  <rect x="136" y="88" width="74" height="54" rx="6" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="173" y="120" class="s">패치 커널</text>
+
+  <!-- weeks 2-4 -->
+  <rect x="214" y="88" width="152" height="54" rx="6" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="290" y="120" class="c">그룹 2 · 패치 커널</text>
+  <rect x="374" y="88" width="152" height="54" rx="6" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="450" y="120" class="c">그룹 3 · 패치 커널</text>
+  <rect x="534" y="88" width="152" height="54" rx="6" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="610" y="120" class="c">그룹 4 · 패치 커널</text>
+
+  <!-- next cycle -->
+  <rect x="694" y="88" width="152" height="54" rx="6" fill="#F9FAFB" stroke="#9CA3AF" stroke-dasharray="5 4"/>
+  <text x="770" y="120" class="c" fill="#6B7280">그룹 1 다음 차례</text>
+
+  <!-- week headers (below bars) -->
+  <text x="130" y="162" class="wk">1주차</text>
+  <text x="290" y="162" class="wk">2주차</text>
+  <text x="450" y="162" class="wk">3주차</text>
+  <text x="610" y="162" class="wk">4주차</text>
+  <text x="770" y="162" class="wk">다음 주기 1주차</text>
+
+  <!-- waiting path -->
+  <path d="M100,142 V196 H832 V148" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+  <text x="466" y="188" class="lbl" fill="#B91C1C" text-anchor="middle">그대로 두면 다음 차례까지 약 4주</text>
+
+  <!-- manual reboot -->
+  <line x1="70" y1="142" x2="70" y2="234" stroke="#16A34A" stroke-width="2" marker-end="url(#agr)"/>
+  <rect x="40" y="238" width="330" height="44" rx="8" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="56" y="265" class="lbl" fill="#166534">Cloudflare의 선택: 수동 재부팅으로 바로 교체</text>
+
+  <rect x="400" y="238" width="446" height="44" rx="8" fill="#EFF6FF" stroke="#93C5FD"/>
+  <text x="416" y="265" class="note">그 사이에도 bpf-lsm이 입구를 막고 있어 보호는 끊기지 않는다</text>
+
+  <text x="40" y="314" class="foot">그룹 구성은 설명을 위한 예시다. 실제 ERR 파이프라인은 4주 주기로 서버를 차례로 재부팅한다.</text>
+</svg>

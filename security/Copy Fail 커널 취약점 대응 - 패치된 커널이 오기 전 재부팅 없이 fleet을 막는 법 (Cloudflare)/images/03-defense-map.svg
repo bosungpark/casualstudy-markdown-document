@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" role="img" aria-label="공격 사슬의 각 고리에 서로 다른 방어를 붙인 지도: 입구는 공격 표면 축소와 bpf-lsm, 버그는 패치 커널, root 획득은 행위 기반 탐지, 흔적은 위협 헌팅이 맡는다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; fill: #1F2937; }
+    .title { font-size: 19px; font-weight: 700; }
+    .col { font-size: 14px; font-weight: 700; fill: #4B5563; text-anchor: middle; }
+    .atk { font-size: 15px; font-weight: 600; }
+    .def { font-size: 15px; font-weight: 700; }
+    .tag { font-size: 12px; fill: #4B5563; }
+    .cut { font-size: 12px; font-weight: 700; text-anchor: middle; }
+    .lg { font-size: 13px; }
+  </style>
+  <defs>
+    <marker id="pb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/>
+    </marker>
+    <marker id="pa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#D97706"/>
+    </marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="899" height="559" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">방어 지도 — 공격 사슬의 고리마다 다른 방어를 붙인다</text>
+
+  <text x="190" y="74" class="col">공격 사슬</text>
+  <text x="665" y="74" class="col">방어 (끊는 수단)</text>
+
+  <!-- ⓪ foothold -->
+  <rect x="40" y="88" width="300" height="50" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="58" y="119" class="atk" fill="#4B5563">⓪ 일반 권한으로 코드 실행</text>
+  <rect x="470" y="88" width="390" height="50" rx="8" fill="#F9FAFB" stroke="#D1D5DB" stroke-dasharray="5 4"/>
+  <text x="488" y="119" class="tag">다른 방어층의 몫 (이 글의 범위 밖)</text>
+
+  <!-- ① entry -->
+  <rect x="40" y="158" width="300" height="104" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="58" y="204" class="atk">① 입구</text>
+  <text x="58" y="226" class="tag">커널 암호화 소켓(AF_ALG) 사용</text>
+
+  <rect x="470" y="158" width="390" height="48" rx="8" fill="#EFF6FF" stroke="#93C5FD" stroke-dasharray="5 4"/>
+  <text x="488" y="180" class="def">공격 표면 축소</text>
+  <text x="488" y="198" class="tag">안 쓰는 모듈을 빌드에서 제외 · 후속 과제</text>
+
+  <rect x="470" y="214" width="390" height="48" rx="8" fill="#DBEAFE" stroke="#2563EB"/>
+  <text x="488" y="236" class="def">bpf-lsm 입구 차단</text>
+  <text x="488" y="254" class="tag">허용 목록 밖 거부 · 공개 후 약 1일</text>
+
+  <!-- ② bug -->
+  <rect x="40" y="282" width="300" height="56" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="58" y="307" class="atk">② 버그</text>
+  <text x="58" y="327" class="tag">page cache(파일의 메모리 사본) 변조</text>
+  <rect x="470" y="282" width="390" height="56" rx="8" fill="#DBEAFE" stroke="#2563EB"/>
+  <text x="488" y="307" class="def">패치 커널</text>
+  <text x="488" y="327" class="tag">버그 자체를 제거 · 백포트 대기 후 5일째부터</text>
+
+  <!-- ③ root -->
+  <rect x="40" y="358" width="300" height="56" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="58" y="383" class="atk">③ root 권한 획득</text>
+  <text x="58" y="403" class="tag">root로 도는 프로그램 실행</text>
+  <rect x="470" y="358" width="390" height="56" rx="8" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="488" y="383" class="def">행위 기반 탐지</text>
+  <text x="488" y="403" class="tag">실행 흐름 전체를 엮어 판정 · 사고 전부터 운영</text>
+
+  <!-- ④ traces -->
+  <rect x="40" y="434" width="300" height="56" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="58" y="459" class="atk">④ 침해 흔적</text>
+  <text x="58" y="479" class="tag">로그 · 바이너리 · 접속 기록</text>
+  <rect x="470" y="434" width="390" height="56" rx="8" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="488" y="459" class="def">위협 헌팅</text>
+  <text x="488" y="479" class="tag">커널 로그 · 해시 · 접근 로그 대조 · 몇 시간</text>
+
+  <!-- attack flow arrows -->
+  <g fill="#9CA3AF">
+    <polygon points="182,142 198,142 190,154"/>
+    <polygon points="182,266 198,266 190,278"/>
+    <polygon points="182,342 198,342 190,354"/>
+    <polygon points="182,418 198,418 190,430"/>
+  </g>
+
+  <!-- defense connectors -->
+  <g stroke-width="2">
+    <line x1="470" y1="182" x2="346" y2="182" stroke="#93C5FD" stroke-dasharray="5 4" marker-end="url(#pb)"/>
+    <line x1="470" y1="238" x2="346" y2="238" stroke="#2563EB" marker-end="url(#pb)"/>
+    <line x1="470" y1="310" x2="346" y2="310" stroke="#2563EB" marker-end="url(#pb)"/>
+    <line x1="470" y1="386" x2="346" y2="386" stroke="#D97706" marker-end="url(#pa)"/>
+    <line x1="470" y1="462" x2="346" y2="462" stroke="#D97706" marker-end="url(#pa)"/>
+  </g>
+  <text x="408" y="230" class="cut" fill="#1D4ED8">끊음</text>
+  <text x="408" y="302" class="cut" fill="#1D4ED8">끊음</text>
+  <text x="408" y="378" class="cut" fill="#B45309">감지</text>
+  <text x="408" y="454" class="cut" fill="#B45309">감지</text>
+
+  <!-- legend -->
+  <rect x="40" y="512" width="16" height="16" rx="3" fill="#DBEAFE" stroke="#2563EB"/>
+  <text x="64" y="525" class="lg">예방 — 공격이 다음 고리로 못 가게 끊는다</text>
+  <rect x="440" y="512" width="16" height="16" rx="3" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="464" y="525" class="lg">탐지 — 공격이 일어났는지 알아낸다</text>
+</svg>
