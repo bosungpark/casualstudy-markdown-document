@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="540" viewBox="0 0 900 540" role="img" aria-label="group_left — 매칭 키 하나당 오른쪽이 반드시 하나여야 한다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="538" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">group_left — 매칭 키 하나당 오른쪽이 반드시 하나여야 한다</text>
+<rect x="25" y="80" width="410" height="375" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<rect x="465" y="80" width="410" height="375" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+<text x="45" y="111" font-size="16" font-weight="700">정상: 디스크(다) × VM 정보(1)</text>
+<text x="485" y="111" font-size="16" font-weight="700">오류: VM 정보(1) × 디스크(다)</text>
+<rect x="45" y="145" width="165" height="130" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="60" y="172" font-size="14" font-weight="700">왼쪽: disk_usage</text>
+<text x="60" y="196" font-size="14" font-weight="400">disk1 / vm1</text>
+<text x="60" y="220" font-size="14" font-weight="400">disk2 / vm1</text>
+<text x="60" y="244" font-size="14" font-weight="400">키 vm1에 2개</text>
+<rect x="255" y="145" width="160" height="130" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="270" y="172" font-size="14" font-weight="700">오른쪽: vm_info</text>
+<text x="270" y="196" font-size="14" font-weight="400">vm1 / linux</text>
+<text x="270" y="220" font-size="14" font-weight="400">값 = 1</text>
+<text x="270" y="244" font-size="14" font-weight="400">키 vm1에 1개</text>
+<line x1="210" y1="205" x2="255" y2="205" stroke="#6B7280" stroke-width="2"/>
+<polygon points="255,205 246,200 246,210" fill="#6B7280"/>
+<text x="218" y="192" font-size="12" font-weight="400">vm1</text>
+<rect x="485" y="145" width="160" height="130" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="500" y="172" font-size="14" font-weight="700">왼쪽: vm_info</text>
+<text x="500" y="196" font-size="14" font-weight="400">vm1 / linux</text>
+<text x="500" y="220" font-size="14" font-weight="400">값 = 1</text>
+<text x="500" y="244" font-size="14" font-weight="400">키 vm1에 1개</text>
+<rect x="690" y="145" width="165" height="130" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="705" y="172" font-size="14" font-weight="700">오른쪽: disk_usage</text>
+<text x="705" y="196" font-size="14" font-weight="400">disk1 / vm1</text>
+<text x="705" y="220" font-size="14" font-weight="400">disk2 / vm1</text>
+<text x="705" y="244" font-size="14" font-weight="400">키 vm1에 2개</text>
+<line x1="645" y1="205" x2="690" y2="205" stroke="#6B7280" stroke-width="2"/>
+<polygon points="690,205 681,200 681,210" fill="#6B7280"/>
+<text x="650" y="192" font-size="12" font-weight="400">vm1</text>
+<text x="45" y="315" font-size="14" font-weight="700">disk_usage * on(vm)</text>
+<text x="45" y="341" font-size="14" font-weight="700">group_left(os) vm_info</text>
+<text x="45" y="388" font-size="14" font-weight="400">disk1 / os=linux → 100</text>
+<text x="45" y="414" font-size="14" font-weight="400">disk2 / os=linux → 200</text>
+<text x="485" y="315" font-size="14" font-weight="700">vm_info * on(vm)</text>
+<text x="485" y="341" font-size="14" font-weight="700">group_left(disk) disk_usage</text>
+<text x="485" y="388" font-size="14" font-weight="700" fill="#DC2626">found duplicate series ...</text>
+<text x="485" y="414" font-size="14" font-weight="400">오른쪽이 유일하지 않아서 거부</text>
+<text x="30" y="492" font-size="15" font-weight="700">순서를 뒤집고 싶다면: vm_info * on(vm) group_right(os) disk_usage</text>
+<text x="28" y="520" font-size="12" font-weight="400" fill="#6B7280">‘다’와 ‘1’은 벡터 전체 개수가 아닌 매칭 키(vm)별 시리즈 수다. 그림은 vm1 한 키만 펼쳤다.</text>
+</svg>

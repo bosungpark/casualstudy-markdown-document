@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="595" viewBox="0 0 900 595" role="img" aria-label="집계 순서 — 조인에 쓸 키를 남긴 상태에서 먼저 대상을 고른다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="593" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">집계 순서 — 조인에 쓸 키를 남긴 상태에서 먼저 대상을 고른다</text>
+<text x="30" y="91" font-size="16" font-weight="700">정상: 필터 → 집계</text>
+<rect x="30" y="115" width="400" height="94" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="45" y="142" font-size="14" font-weight="700">컨테이너 메모리</text>
+<text x="45" y="166" font-size="14" font-weight="400">team-a / portal / app → 120</text>
+<text x="45" y="190" font-size="14" font-weight="400">team-a / portal / sidecar → 30</text>
+<rect x="30" y="265" width="400" height="94" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="45" y="292" font-size="14" font-weight="700">on(namespace,pod)로 라벨 조인</text>
+<text x="45" y="316" font-size="14" font-weight="400">frontend-server인 파드 선택</text>
+<text x="45" y="340" font-size="14" font-weight="400">두 컨테이너 모두 portal에 매칭</text>
+<rect x="30" y="415" width="400" height="94" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="45" y="442" font-size="14" font-weight="700">sum by(namespace,pod)</text>
+<text x="45" y="466" font-size="14" font-weight="400">team-a / portal → 150</text>
+<text x="45" y="490" font-size="14" font-weight="400">원하는 파드의 컨테이너만 합산</text>
+<line x1="220" y1="209" x2="220" y2="265" stroke="#6B7280" stroke-width="2"/>
+<polygon points="220,265 215,256 225,256" fill="#6B7280"/>
+<text x="235" y="242" font-size="12" font-weight="400">다음 단계</text>
+<line x1="220" y1="359" x2="220" y2="415" stroke="#6B7280" stroke-width="2"/>
+<polygon points="220,415 215,406 225,406" fill="#6B7280"/>
+<text x="235" y="392" font-size="12" font-weight="400">다음 단계</text>
+<text x="470" y="91" font-size="16" font-weight="700">빈 결과: 키 제거 → 조인</text>
+<rect x="470" y="115" width="400" height="94" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="485" y="142" font-size="14" font-weight="700">컨테이너 메모리</text>
+<text x="485" y="166" font-size="14" font-weight="400">team-a / portal / app → 120</text>
+<text x="485" y="190" font-size="14" font-weight="400">team-a / portal / sidecar → 30</text>
+<rect x="470" y="265" width="400" height="94" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+<text x="485" y="292" font-size="14" font-weight="700">sum by(namespace)</text>
+<text x="485" y="316" font-size="14" font-weight="400">team-a → 150</text>
+<text x="485" y="340" font-size="14" font-weight="400">pod 키가 사라짐</text>
+<rect x="470" y="415" width="400" height="94" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+<text x="485" y="442" font-size="14" font-weight="700">on(namespace,pod)로 조인 시도</text>
+<text x="485" y="466" font-size="14" font-weight="400">왼쪽에 pod 키가 없어 짝이 없음</text>
+<text x="485" y="490" font-size="14" font-weight="400">결과: 빈 벡터</text>
+<line x1="660" y1="209" x2="660" y2="265" stroke="#6B7280" stroke-width="2"/>
+<polygon points="660,265 655,256 665,256" fill="#6B7280"/>
+<text x="675" y="242" font-size="12" font-weight="400">다음 단계</text>
+<line x1="660" y1="359" x2="660" y2="415" stroke="#6B7280" stroke-width="2"/>
+<polygon points="660,415 655,406 665,406" fill="#6B7280"/>
+<text x="675" y="392" font-size="12" font-weight="400">다음 단계</text>
+<text x="30" y="550" font-size="14" font-weight="700">집계를 먼저 해도 namespace·pod를 보존했다면 조인 가능하다. 핵심은 키의 생존 여부다.</text>
+<text x="28" y="575" font-size="12" font-weight="400" fill="#6B7280">메모리 값은 원리를 확인하는 합성 값이다. 다른 namespace의 동명 파드를 구별하려면 (namespace, pod)를 함께 쓴다.</text>
+</svg>

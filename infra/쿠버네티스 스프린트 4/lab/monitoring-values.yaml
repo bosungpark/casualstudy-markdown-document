@@ -1,0 +1,90 @@
+# 전용 kind 실습용. 운영 환경에 적용하는 values가 아니다.
+fullnameOverride: monitoring
+alertmanager:
+  enabled: false
+defaultRules:
+  create: false
+kubeEtcd:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+grafana:
+  adminUser: admin
+  adminPassword: study-local-only
+  defaultDashboardsEnabled: false
+  persistence:
+    enabled: false
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: monitoring
+    datasources:
+      uid: prometheus
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 384Mi
+prometheusOperator:
+  kubeletEndpointSliceEnabled: true
+  tls:
+    enabled: false
+  admissionWebhooks:
+    enabled: false
+    patch:
+      enabled: false
+  resources:
+    requests:
+      cpu: 50m
+      memory: 96Mi
+    limits:
+      memory: 256Mi
+prometheus:
+  prometheusSpec:
+    retention: 6h
+    scrapeInterval: 5s
+    evaluationInterval: 5s
+    serviceDiscoveryRole: EndpointSlice
+    # 짧은 간격으로 설정을 바꾸는 로컬 실습용. 고정한 Operator 0.85.0의 인수를 유지한다.
+    containers:
+      - name: config-reloader
+        args:
+          - --listen-address=:8080
+          - --reload-url=http://127.0.0.1:9090/-/reload
+          - --config-file=/etc/prometheus/config/prometheus.yaml.gz
+          - --config-envsubst-file=/etc/prometheus/config_out/prometheus.env.yaml
+          - --watched-dir=/etc/prometheus/rules/prometheus-monitoring-prometheus-rulefiles-0
+          - --watch-interval=5s
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector:
+      matchLabels:
+        release: monitoring
+    serviceMonitorNamespaceSelector: {}
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 1Gi
+kube-state-metrics:
+  metricLabelsAllowlist:
+    - 'nodes=[resource]'
+    - 'pods=[app,component]'
+  resources:
+    requests:
+      cpu: 30m
+      memory: 64Mi
+    limits:
+      memory: 192Mi
+prometheus-node-exporter:
+  resources:
+    requests:
+      cpu: 20m
+      memory: 32Mi
+    limits:
+      memory: 96Mi

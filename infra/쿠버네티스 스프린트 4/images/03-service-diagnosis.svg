@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" role="img" aria-label="장애 위치 — 대상 없음·수집 실패·조회 실패는 해결 방법이 다르다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="558" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">장애 위치 — 대상 없음·수집 실패·조회 실패는 해결 방법이 다르다</text>
+<rect x="30" y="90" width="260" height="260" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="45" y="117" font-size="14" font-weight="700">① 활성 대상 없음</text>
+<text x="45" y="141" font-size="14" font-weight="400">up 시계열: 없음</text>
+<text x="45" y="165" font-size="14" font-weight="400">SM이 선택됐는가?</text>
+<text x="45" y="189" font-size="14" font-weight="400">Service·포트가 맞는가?</text>
+<text x="45" y="213" font-size="14" font-weight="400">설정·RBAC·drop 확인</text>
+<rect x="320" y="90" width="260" height="260" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+<text x="335" y="117" font-size="14" font-weight="700">② 대상은 있으나 DOWN</text>
+<text x="335" y="141" font-size="14" font-weight="400">up = 0</text>
+<text x="335" y="165" font-size="14" font-weight="400">HTTP 요청 실패</text>
+<text x="335" y="189" font-size="14" font-weight="400">Targets의 lastError 확인</text>
+<text x="335" y="213" font-size="14" font-weight="400">404·timeout·인증·TLS 구분</text>
+<rect x="610" y="90" width="260" height="260" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="625" y="117" font-size="14" font-weight="700">③ UP인데 패널이 빈다</text>
+<text x="625" y="141" font-size="14" font-weight="400">up = 1</text>
+<text x="625" y="165" font-size="14" font-weight="400">수집 요청은 성공</text>
+<text x="625" y="189" font-size="14" font-weight="400">메트릭 이름·라벨·시간 확인</text>
+<text x="625" y="213" font-size="14" font-weight="400">Grafana 변수·데이터소스 확인</text>
+<rect x="30" y="390" width="840" height="105" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="45" y="417" font-size="14" font-weight="700">주의: Failed 파드 직접 수집을 drop해도, 그 파드의 상태까지 사라지는 것은 아니다.</text>
+<text x="45" y="441" font-size="14" font-weight="400">종료된 앱 /metrics → 수집 대상에서 제외</text>
+<text x="45" y="465" font-size="14" font-weight="400">실행 중인 kube-state-metrics → API 서버에서 Failed 상태를 읽어 메트릭으로 제공</text>
+<text x="28" y="540" font-size="12" font-weight="400" fill="#6B7280">현재 시점 기준이다. 과거 샘플은 남을 수 있으며, 대상 제거와 장애 감지 시점은 탐색·수집 주기에 따라 달라진다.</text>
+</svg>

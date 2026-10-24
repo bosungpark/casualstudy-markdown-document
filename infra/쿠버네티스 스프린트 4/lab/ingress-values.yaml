@@ -1,0 +1,19 @@
+# 원문과 같은 ingress-nginx의 수집 연결을 전용 로컬 클러스터에서 재현한다.
+controller:
+  replicaCount: 1
+  service:
+    type: ClusterIP
+  publishService:
+    enabled: false
+  admissionWebhooks:
+    enabled: false
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false  # 실습 중 사용자가 직접 생성한다.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 96Mi
+    limits:
+      memory: 384Mi

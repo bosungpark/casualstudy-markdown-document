@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="635" viewBox="0 0 900 635" role="img" aria-label="선택 관계 — namespace 두 곳과 selector 세 곳을 구분한다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="633" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">선택 관계 — namespace 두 곳과 selector 세 곳을 구분한다</text>
+<rect x="25" y="75" width="400" height="450" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<rect x="475" y="75" width="400" height="450" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="45" y="105" font-size="15" font-weight="700">namespace: monitoring</text>
+<text x="495" y="105" font-size="15" font-weight="700">namespace: ingress-nginx</text>
+<rect x="50" y="130" width="350" height="112" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="65" y="157" font-size="14" font-weight="700">Prometheus CR</text>
+<text x="65" y="181" font-size="14" font-weight="400">serviceMonitorNamespaceSelector → SM의 NS</text>
+<text x="65" y="205" font-size="14" font-weight="400">serviceMonitorSelector → SM의 라벨</text>
+<rect x="50" y="305" width="350" height="155" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="65" y="332" font-size="14" font-weight="700">ServiceMonitor (SM)</text>
+<text x="65" y="356" font-size="14" font-weight="400">metadata.labels: release=monitoring</text>
+<text x="65" y="380" font-size="14" font-weight="400">namespaceSelector: ingress-nginx</text>
+<text x="65" y="404" font-size="14" font-weight="400">selector: component=controller</text>
+<text x="65" y="428" font-size="14" font-weight="400">endpoints.port: metrics</text>
+<line x1="210" y1="242" x2="210" y2="305" stroke="#6B7280" stroke-width="2"/>
+<polygon points="210,305 205,296 215,296" fill="#6B7280"/>
+<text x="225" y="278" font-size="12" font-weight="400">SM 선택</text>
+<rect x="500" y="305" width="350" height="92" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="515" y="332" font-size="14" font-weight="700">Service</text>
+<text x="515" y="356" font-size="14" font-weight="400">metadata.labels: component=controller</text>
+<text x="515" y="380" font-size="14" font-weight="400">ports.name: metrics / targetPort: metrics</text>
+<line x1="400" y1="350" x2="500" y2="350" stroke="#6B7280" stroke-width="2"/>
+<polygon points="500,350 491,345 491,355" fill="#6B7280"/>
+<text x="435" y="340" font-size="12" font-weight="400">선택</text>
+<rect x="500" y="455" width="350" height="54" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="515" y="482" font-size="14" font-weight="700">파드: labels app=nginx / port metrics:10254</text>
+<line x1="675" y1="397" x2="675" y2="455" stroke="#6B7280" stroke-width="2"/>
+<polygon points="675,455 670,446 680,446" fill="#6B7280"/>
+<text x="500" y="430" font-size="12" font-weight="400">Service.spec.selector로 파드 선택</text>
+<text x="50" y="495" font-size="13" font-weight="700">SM은 파드 라벨을 직접 선택하지 않는다.</text>
+<text x="30" y="560" font-size="14" font-weight="700">포트 연결:  SM.port=metrics  →  Service.name=metrics  →  targetPort=metrics  →  Pod:10254</text>
+<text x="30" y="589" font-size="14" font-weight="400">release=monitoring은 강의의 셀렉터 값이다. 실제 Prometheus CR을 보고 맞춘다.</text>
+<text x="28" y="615" font-size="12" font-weight="400" fill="#6B7280">예시 환경: Prometheus·ServiceMonitor는 monitoring, Service·파드는 ingress-nginx에 있다.</text>
+</svg>

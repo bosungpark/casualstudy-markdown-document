@@ -1,0 +1,212 @@
+{
+  "checked_at": "2026-10-24",
+  "platform": "macOS arm64 / Docker Engine 27.4.0 / Kubernetes 1.34.0",
+  "note": "이 실행의 실제 파드명·IP이며 재실행 시 달라진다. 브라우저 클릭 검수는 수행하지 않았다.",
+  "scenarios": [
+    {
+      "scenario": "메트릭은 노출되지만 SM 없이 job·활성 대상 없음",
+      "observed": {
+        "request_metric_exposed": true,
+        "job": false,
+        "active": 0
+      }
+    },
+    {
+      "scenario": "틀린 release: SM은 있지만 job 없음",
+      "observed": {
+        "job": false
+      }
+    },
+    {
+      "scenario": "release 수정: 실제 Operator 반영 후 UP",
+      "observed": {
+        "health": "up",
+        "url": "http://10.244.1.6:10254/metrics"
+      }
+    },
+    {
+      "scenario": "실제 Ingress 요청 메트릭 수집",
+      "observed": [
+        {
+          "pod": "ingress-nginx-controller-777895f975-86xg6",
+          "value": "40"
+        }
+      ]
+    },
+    {
+      "scenario": "잘못된 port: job은 남고 활성 대상 0개",
+      "observed": {
+        "job": true,
+        "active": 0
+      }
+    },
+    {
+      "scenario": "port 생략: 여러 포트가 대상이 되고 UP·DOWN 혼재",
+      "observed": [
+        {
+          "health": "unknown",
+          "url": "http://10.244.1.6:80/metrics"
+        },
+        {
+          "health": "unknown",
+          "url": "http://10.244.1.6:443/metrics"
+        },
+        {
+          "health": "unknown",
+          "url": "http://10.244.1.6:443/metrics"
+        },
+        {
+          "health": "down",
+          "url": "http://10.244.1.6:80/metrics"
+        },
+        {
+          "health": "unknown",
+          "url": "http://10.244.1.6:10254/metrics"
+        },
+        {
+          "health": "up",
+          "url": "http://10.244.1.6:10254/metrics"
+        }
+      ]
+    },
+    {
+      "scenario": "잘못된 path: 대상 DOWN·HTTP 404",
+      "observed": {
+        "health": "down",
+        "error": "server returned HTTP status 404 Not Found"
+      }
+    },
+    {
+      "scenario": "경로 복구: 다시 UP",
+      "observed": {
+        "health": "up",
+        "url": "http://10.244.1.6:10254/metrics"
+      }
+    },
+    {
+      "scenario": "잘못된 Service namespace: 활성 대상 없음",
+      "observed": {
+        "job": true,
+        "active": 0
+      }
+    },
+    {
+      "scenario": "namespace 복구: 다시 UP",
+      "observed": {
+        "health": "up",
+        "url": "http://10.244.1.6:10254/metrics"
+      }
+    },
+    {
+      "scenario": "node-exporter 실제 값에 nodename 부착",
+      "observed": [
+        {
+          "nodename": "sprint4-monitoring-worker",
+          "instance": "172.31.0.2:9100"
+        },
+        {
+          "nodename": "sprint4-monitoring-control-plane",
+          "instance": "172.31.0.3:9100"
+        }
+      ]
+    },
+    {
+      "scenario": "실제 kubelet 메모리: 전체 앱 파드 3개",
+      "observed": {
+        "pods": [
+          "api-7bd8686d9-qhqxh",
+          "portal-559ff9d865-vlvgl",
+          "portal-559ff9d865-fwzzk"
+        ]
+      }
+    },
+    {
+      "scenario": "실제 KSM 라벨 조인: frontend 파드 2개",
+      "observed": {
+        "pods": [
+          "portal-559ff9d865-vlvgl",
+          "portal-559ff9d865-fwzzk"
+        ]
+      }
+    },
+    {
+      "scenario": "Deployment 라벨 변경: 쿼리 그대로 frontend 대상 3개",
+      "observed": {
+        "pods": [
+          "portal-559ff9d865-vlvgl",
+          "portal-559ff9d865-fwzzk",
+          "api-7d9875c775-zl2sj"
+        ]
+      }
+    },
+    {
+      "scenario": "라벨 복구: frontend 2개",
+      "observed": {
+        "count": 2
+      }
+    },
+    {
+      "scenario": "포탈 scale-out: 쿼리 그대로 frontend 대상 3개",
+      "observed": {
+        "pods": [
+          "portal-559ff9d865-vlvgl",
+          "portal-559ff9d865-fwzzk",
+          "portal-559ff9d865-psnb4"
+        ]
+      }
+    },
+    {
+      "scenario": "레플리카 복구: frontend 2개",
+      "observed": {
+        "count": 2
+      }
+    },
+    {
+      "scenario": "high-spec 노드 최초 1개",
+      "observed": {
+        "nodes": [
+          "sprint4-monitoring-control-plane"
+        ]
+      }
+    },
+    {
+      "scenario": "노드 라벨 변경: high-spec 패널 대상 2개",
+      "observed": {
+        "nodes": [
+          "sprint4-monitoring-control-plane",
+          "sprint4-monitoring-worker"
+        ]
+      }
+    },
+    {
+      "scenario": "노드 라벨 복구: 1개",
+      "observed": {
+        "count": 1
+      }
+    },
+    {
+      "scenario": "Grafana 실제 대시보드 4개 패널 로드",
+      "observed": {
+        "title": "Sprint 4 - 직접 바꾸는 모니터링",
+        "panels": 4
+      }
+    },
+    {
+      "scenario": "Grafana 실제 Prometheus 데이터소스 연결",
+      "observed": {
+        "details": {
+          "application": "Prometheus",
+          "features": {
+            "rulerApiEnabled": false
+          }
+        },
+        "message": "Successfully queried the Prometheus API.",
+        "status": "OK"
+      }
+    }
+  ],
+  "additional_grafana_api_checks": [
+    "실제 Prometheus 데이터소스로 노드 이름 조인 질의: HTTP 200, 노드 2개 프레임",
+    "사본 대시보드 생성·저장·조회 후 임시 사본 삭제 성공"
+  ]
+}

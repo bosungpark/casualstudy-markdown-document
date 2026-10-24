@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="530" viewBox="0 0 900 530" role="img" aria-label="PromQL 조인 — 숫자는 계산하고, 라벨은 선택해서 붙인다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="528" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">PromQL 조인 — 숫자는 계산하고, 라벨은 선택해서 붙인다</text>
+<rect x="30" y="90" width="250" height="150" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="45" y="117" font-size="14" font-weight="700">disk_usage</text>
+<text x="45" y="141" font-size="14" font-weight="400">disk1 / vm1 → 100</text>
+<text x="45" y="165" font-size="14" font-weight="400">disk2 / vm1 → 200</text>
+<text x="45" y="189" font-size="14" font-weight="400">disk4 / vm3 → 400</text>
+<rect x="340" y="90" width="220" height="150" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="355" y="117" font-size="14" font-weight="700">on(vm)</text>
+<text x="355" y="141" font-size="14" font-weight="400">vm 값으로 짝짓기</text>
+<text x="355" y="165" font-size="14" font-weight="400">group_left(os)</text>
+<text x="355" y="189" font-size="14" font-weight="400">오른쪽에서 os를 가져오기</text>
+<rect x="620" y="90" width="250" height="150" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="635" y="117" font-size="14" font-weight="700">vm_info</text>
+<text x="635" y="141" font-size="14" font-weight="400">vm1 / os=linux → 1</text>
+<text x="635" y="165" font-size="14" font-weight="400">값 1을 실제로 내보낸다</text>
+<text x="635" y="189" font-size="14" font-weight="400">vm3 정보는 없음</text>
+<line x1="280" y1="172" x2="340" y2="172" stroke="#6B7280" stroke-width="2"/>
+<polygon points="340,172 331,167 331,177" fill="#6B7280"/>
+<text x="298" y="162" font-size="12" font-weight="400">키</text>
+<line x1="620" y1="172" x2="560" y2="172" stroke="#6B7280" stroke-width="2"/>
+<polygon points="560,172 569,167 569,177" fill="#6B7280"/>
+<text x="582" y="162" font-size="12" font-weight="400">키</text>
+<line x1="450" y1="240" x2="450" y2="305" stroke="#6B7280" stroke-width="2"/>
+<polygon points="450,305 445,296 455,296" fill="#6B7280"/>
+<text x="468" y="279" font-size="12" font-weight="400">곱셈 결과</text>
+<rect x="30" y="305" width="840" height="145" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="45" y="332" font-size="14" font-weight="700">결과: 디스크 값은 유지되고 OS 라벨이 추가된다</text>
+<text x="45" y="356" font-size="14" font-weight="400">disk1 / vm1 / os=linux → 100 × 1 = 100</text>
+<text x="45" y="380" font-size="14" font-weight="400">disk2 / vm1 / os=linux → 200 × 1 = 200</text>
+<text x="45" y="404" font-size="14" font-weight="400">disk4 / vm3 → 짝이 없어 결과에서 제외된다</text>
+<text x="30" y="484" font-size="15" font-weight="700" fill="#DC2626">SQL LEFT JOIN처럼 왼쪽의 모든 행을 보존하지 않는다.</text>
+<text x="28" y="510" font-size="12" font-weight="400" fill="#6B7280">예제는 합성 데이터 일부다. *는 실제 곱셈이며, 짝이 없는 disk4가 0으로 남는 것이 아니다.</text>
+</svg>

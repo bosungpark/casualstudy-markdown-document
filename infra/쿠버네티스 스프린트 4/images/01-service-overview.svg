@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="490" viewBox="0 0 900 490" role="img" aria-label="메트릭 수집 — 설정을 만드는 쪽과 데이터를 가져오는 쪽이 다르다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="488" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">메트릭 수집 — 설정을 만드는 쪽과 데이터를 가져오는 쪽이 다르다</text>
+<text x="30" y="77" font-size="15" font-weight="700">① 설정: 무엇을 어디서 수집할지 정한다</text>
+<rect x="30" y="100" width="235" height="106" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="45" y="127" font-size="14" font-weight="700">ServiceMonitor</text>
+<text x="45" y="151" font-size="14" font-weight="400">대상 Service·포트·주기</text>
+<text x="45" y="175" font-size="14" font-weight="400">라벨로 Prometheus에 선택됨</text>
+<rect x="335" y="100" width="230" height="106" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="350" y="127" font-size="14" font-weight="700">Operator</text>
+<text x="350" y="151" font-size="14" font-weight="400">선택한 설정을 합쳐</text>
+<text x="350" y="175" font-size="14" font-weight="400">scrape config 생성</text>
+<rect x="635" y="100" width="235" height="106" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="650" y="127" font-size="14" font-weight="700">Prometheus</text>
+<text x="650" y="151" font-size="14" font-weight="400">설정을 읽고</text>
+<text x="650" y="175" font-size="14" font-weight="400">수집 대상을 발견</text>
+<line x1="265" y1="150" x2="335" y2="150" stroke="#6B7280" stroke-width="2"/>
+<polygon points="335,150 326,145 326,155" fill="#6B7280"/>
+<text x="282" y="140" font-size="12" font-weight="400">감지</text>
+<line x1="565" y1="150" x2="635" y2="150" stroke="#6B7280" stroke-width="2"/>
+<polygon points="635,150 626,145 626,155" fill="#6B7280"/>
+<text x="582" y="140" font-size="12" font-weight="400">반영</text>
+<text x="30" y="256" font-size="15" font-weight="700">② 데이터: 파드의 값을 저장하고 조회한다</text>
+<rect x="30" y="285" width="235" height="110" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="45" y="312" font-size="14" font-weight="700">NGINX 파드</text>
+<text x="45" y="336" font-size="14" font-weight="400">/metrics :10254</text>
+<text x="45" y="360" font-size="14" font-weight="400">메트릭·라벨·숫자 값</text>
+<rect x="335" y="285" width="230" height="110" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="350" y="312" font-size="14" font-weight="700">Prometheus</text>
+<text x="350" y="336" font-size="14" font-weight="400">직접 HTTP로 수집</text>
+<text x="350" y="360" font-size="14" font-weight="400">시계열 DB에 저장</text>
+<rect x="635" y="285" width="235" height="110" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="650" y="312" font-size="14" font-weight="700">Grafana</text>
+<text x="650" y="336" font-size="14" font-weight="400">PromQL로 질의</text>
+<text x="650" y="360" font-size="14" font-weight="400">패널·레전드로 표시</text>
+<line x1="265" y1="335" x2="335" y2="335" stroke="#6B7280" stroke-width="2"/>
+<polygon points="335,335 326,330 326,340" fill="#6B7280"/>
+<text x="282" y="325" font-size="12" font-weight="400">응답</text>
+<line x1="565" y1="335" x2="635" y2="335" stroke="#6B7280" stroke-width="2"/>
+<polygon points="635,335 626,330 626,340" fill="#6B7280"/>
+<text x="582" y="325" font-size="12" font-weight="400">결과</text>
+<text x="30" y="431" font-size="15" font-weight="700">ServiceMonitor와 Operator는 메트릭 데이터가 통과하는 중계 서버가 아니다.</text>
+<text x="28" y="470" font-size="12" font-weight="400" fill="#6B7280">화살표는 설정 전달·데이터 응답 방향이다. 실제 수집 요청은 Prometheus → 파드로 간다.</text>
+</svg>

@@ -1,0 +1,22 @@
+# 의도한 최초 상태: release 라벨이 틀려 Prometheus가 이 모니터를 선택하지 않는다.
+# 실습서 2단계에서 release: monitoring으로 직접 수정한다.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nginx-metrics
+  namespace: monitoring
+  labels:
+    release: not-selected
+spec:
+  namespaceSelector:
+    matchNames:
+      - ingress-nginx
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ingress-nginx
+      app.kubernetes.io/instance: ingress-nginx
+      app.kubernetes.io/component: controller
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 5s
