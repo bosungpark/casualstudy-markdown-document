@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="#1F2937" viewBox="0 0 900 428" width="900" height="428" role="img" aria-label="quota와 cpuset 비교: quota는 컨테이너가 모든 코어로 몰아 쓰다가 quota를 다 쓰면 주기 끝까지 멈추고, cpuset은 컨테이너마다 코어를 고정해 몰아 쓰지 못하는 대신 멈추지 않는다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; }
+    .title { font-size: 19px; font-weight: 700; }
+    .sub { font-size: 14px; fill: #374151; }
+    .h { font-size: 15px; font-weight: 700; }
+    .hblue { font-size: 15px; font-weight: 700; fill: #1D4ED8; }
+    .row { font-size: 12px; fill: #4B5563; text-anchor: end; }
+    .in { font-size: 12px; text-anchor: middle; }
+    .inr { font-size: 12px; fill: #991B1B; text-anchor: middle; }
+    .ing { font-size: 12px; fill: #166534; text-anchor: middle; }
+    .tick { font-size: 12px; fill: #4B5563; text-anchor: middle; }
+    .pc { font-size: 14px; }
+    .ok { fill: #16A34A; font-weight: 700; }
+    .ng { fill: #DC2626; font-weight: 700; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="899" height="427" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">quota vs cpuset — 시간을 나눌까, 코어를 나눌까</text>
+  <text x="32" y="66" class="sub">단순화한 예: 코어 4개 호스트에 2코어짜리 컨테이너 A·B. 100ms 한 주기만 그렸다.</text>
+
+  <!-- ===== left: quota ===== -->
+  <rect x="32" y="84" width="400" height="300" rx="10" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="52" y="112" class="h">quota — 얼마나 오래 쓸지 제한</text>
+
+  <text x="94" y="138" class="row">A 상태</text>
+  <rect x="104" y="126" width="150" height="16" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="179" y="139" class="ing">실행</text>
+  <rect x="254" y="126" width="150" height="16" fill="#FEE2E2" stroke="#DC2626"/>
+  <text x="329" y="139" class="inr">정지 (quota 소진)</text>
+
+  <text x="94" y="170" class="row">코어 0</text>
+  <text x="94" y="198" class="row">코어 1</text>
+  <text x="94" y="226" class="row">코어 2</text>
+  <text x="94" y="254" class="row">코어 3</text>
+  <g fill="#D1D5DB" stroke="#6B7280">
+    <rect x="104" y="154" width="150" height="22"/>
+    <rect x="104" y="182" width="150" height="22"/>
+    <rect x="104" y="210" width="150" height="22"/>
+    <rect x="104" y="238" width="150" height="22"/>
+  </g>
+  <g fill="#F3F4F6" stroke="#9CA3AF">
+    <rect x="254" y="154" width="150" height="22"/>
+    <rect x="254" y="182" width="150" height="22"/>
+    <rect x="254" y="210" width="150" height="22"/>
+    <rect x="254" y="238" width="150" height="22"/>
+  </g>
+  <text x="179" y="170" class="in">A</text><text x="329" y="170" class="in">B</text>
+  <text x="179" y="198" class="in">A</text><text x="329" y="198" class="in">B</text>
+  <text x="179" y="226" class="in">A</text><text x="329" y="226" class="in">B</text>
+  <text x="179" y="254" class="in">A</text><text x="329" y="254" class="in">B</text>
+
+  <line x1="104" y1="272" x2="404" y2="272" stroke="#374151" stroke-width="1.5"/>
+  <g stroke="#374151" stroke-width="1.5">
+    <line x1="104" y1="268" x2="104" y2="276"/>
+    <line x1="254" y1="268" x2="254" y2="276"/>
+    <line x1="404" y1="268" x2="404" y2="276"/>
+  </g>
+  <text x="104" y="290" class="tick">0</text>
+  <text x="254" y="290" class="tick">50ms</text>
+  <text x="398" y="290" class="tick">100ms</text>
+
+  <text x="52" y="318" class="pc"><tspan class="ok">✓</tspan> 남는 코어로 몰아 쓰기(버스트) → P50 낮음</text>
+  <text x="52" y="342" class="pc"><tspan class="ng">✗</tspan> 주기 후반에 정지 → P99 흔들림</text>
+  <text x="52" y="366" class="pc"><tspan class="ok">✓</tspan> 0.5코어 같은 소수 할당 가능</text>
+
+  <!-- ===== right: cpuset ===== -->
+  <rect x="468" y="84" width="400" height="300" rx="10" fill="#FFFFFF" stroke="#2563EB"/>
+  <text x="488" y="112" class="hblue">cpuset — 어느 코어를 쓸지 제한</text>
+
+  <text x="530" y="138" class="row">A 상태</text>
+  <rect x="540" y="126" width="300" height="16" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="690" y="139" class="ing">실행 — 멈추지 않음</text>
+
+  <text x="530" y="170" class="row">코어 0</text>
+  <text x="530" y="198" class="row">코어 1</text>
+  <text x="530" y="226" class="row">코어 2</text>
+  <text x="530" y="254" class="row">코어 3</text>
+  <g fill="#D1D5DB" stroke="#6B7280">
+    <rect x="540" y="154" width="300" height="22"/>
+    <rect x="540" y="182" width="300" height="22"/>
+  </g>
+  <g fill="#F3F4F6" stroke="#9CA3AF">
+    <rect x="540" y="210" width="300" height="22"/>
+    <rect x="540" y="238" width="300" height="22"/>
+  </g>
+  <text x="690" y="170" class="in">A (코어 0·1 고정)</text>
+  <text x="690" y="198" class="in">A</text>
+  <text x="690" y="226" class="in">B (코어 2·3 고정)</text>
+  <text x="690" y="254" class="in">B</text>
+
+  <line x1="540" y1="272" x2="840" y2="272" stroke="#374151" stroke-width="1.5"/>
+  <g stroke="#374151" stroke-width="1.5">
+    <line x1="540" y1="268" x2="540" y2="276"/>
+    <line x1="690" y1="268" x2="690" y2="276"/>
+    <line x1="840" y1="268" x2="840" y2="276"/>
+  </g>
+  <text x="540" y="290" class="tick">0</text>
+  <text x="690" y="290" class="tick">50ms</text>
+  <text x="834" y="290" class="tick">100ms</text>
+
+  <text x="488" y="318" class="pc"><tspan class="ng">✗</tspan> 몰아 쓰기 불가 → P50 조금↑</text>
+  <text x="488" y="342" class="pc"><tspan class="ok">✓</tspan> 정지 없음 → P99 안정</text>
+  <text x="488" y="366" class="pc"><tspan class="ng">✗</tspan> 코어 배치·조각 모음을 관리해야 함</text>
+
+  <text x="32" y="410" class="note">A·B를 반씩 나눠 그린 것은 단순화다. 실제 스케줄러는 더 잘게 섞지만, quota를 다 쓴 컨테이너가 주기 끝까지 멈추는 점은 같다.</text>
+</svg>

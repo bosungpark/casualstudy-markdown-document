@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="#1F2937" viewBox="0 0 900 436" width="900" height="436" role="img" aria-label="cpuset의 함정: CPU 번호 순서대로 0부터 3을 주면 두 소켓에 걸쳐 L3 캐시를 나눠 쓰게 되고, 토폴로지를 읽어 한 소켓 안의 코어를 주면 그렇지 않다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; }
+    .title { font-size: 19px; font-weight: 700; }
+    .hred { font-size: 15px; font-weight: 700; fill: #B91C1C; }
+    .hblue { font-size: 15px; font-weight: 700; fill: #1D4ED8; }
+    .sk { font-size: 13px; font-weight: 700; }
+    .l3 { font-size: 12px; fill: #4B5563; text-anchor: middle; }
+    .core { font-size: 12px; fill: #4B5563; text-anchor: middle; }
+    .num { font-size: 13px; text-anchor: middle; }
+    .numb { font-size: 13px; font-weight: 700; text-anchor: middle; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="899" height="435" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">cpuset의 함정 — CPU 번호 순서는 물리 위치가 아니다</text>
+
+  <!-- panel 1: naive numbering -->
+  <text x="32" y="74" class="hred">✗ 번호순으로 0-3을 주면 → 두 소켓에 걸친다 (원문 관측: P99 최대 500% 악화)</text>
+  <rect x="32" y="88" width="392" height="114" rx="10" fill="#F9FAFB" stroke="#9CA3AF"/>
+  <text x="46" y="112" class="sk">소켓 0</text>
+  <rect x="112" y="97" width="298" height="20" rx="4" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="261" y="111" class="l3">L3 캐시 (소켓마다 따로)</text>
+  <rect x="44" y="126" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="87" y="142" class="core">코어 0</text>
+  <rect x="51" y="150" width="34" height="30" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="68" y="170" class="numb">0</text>
+  <rect x="89" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="106" y="170" class="num">8</text>
+  <rect x="138" y="126" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="181" y="142" class="core">코어 1</text>
+  <rect x="145" y="150" width="34" height="30" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="162" y="170" class="numb">2</text>
+  <rect x="183" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="200" y="170" class="num">10</text>
+  <rect x="232" y="126" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="275" y="142" class="core">코어 2</text>
+  <rect x="239" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="256" y="170" class="num">4</text>
+  <rect x="277" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="294" y="170" class="num">12</text>
+  <rect x="326" y="126" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="369" y="142" class="core">코어 3</text>
+  <rect x="333" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="350" y="170" class="num">6</text>
+  <rect x="371" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="388" y="170" class="num">14</text>
+  <rect x="476" y="88" width="392" height="114" rx="10" fill="#F9FAFB" stroke="#9CA3AF"/>
+  <text x="490" y="112" class="sk">소켓 1</text>
+  <rect x="556" y="97" width="298" height="20" rx="4" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="705" y="111" class="l3">L3 캐시 (소켓마다 따로)</text>
+  <rect x="488" y="126" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="531" y="142" class="core">코어 0</text>
+  <rect x="495" y="150" width="34" height="30" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="512" y="170" class="numb">1</text>
+  <rect x="533" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="550" y="170" class="num">9</text>
+  <rect x="582" y="126" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="625" y="142" class="core">코어 1</text>
+  <rect x="589" y="150" width="34" height="30" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+  <text x="606" y="170" class="numb">3</text>
+  <rect x="627" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="644" y="170" class="num">11</text>
+  <rect x="676" y="126" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="719" y="142" class="core">코어 2</text>
+  <rect x="683" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="700" y="170" class="num">5</text>
+  <rect x="721" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="738" y="170" class="num">13</text>
+  <rect x="770" y="126" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="813" y="142" class="core">코어 3</text>
+  <rect x="777" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="794" y="170" class="num">7</text>
+  <rect x="815" y="150" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="832" y="170" class="num">15</text>
+  <!-- panel 2: topology-aware -->
+  <text x="32" y="240" class="hblue">✓ 토폴로지를 읽고 0, 2, 4, 6을 주면 → 한 소켓 안의 서로 다른 코어 4개</text>
+  <rect x="32" y="254" width="392" height="114" rx="10" fill="#F9FAFB" stroke="#9CA3AF"/>
+  <text x="46" y="278" class="sk">소켓 0</text>
+  <rect x="112" y="263" width="298" height="20" rx="4" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="261" y="277" class="l3">L3 캐시 (소켓마다 따로)</text>
+  <rect x="44" y="292" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="87" y="308" class="core">코어 0</text>
+  <rect x="51" y="316" width="34" height="30" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="68" y="336" class="numb">0</text>
+  <rect x="89" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="106" y="336" class="num">8</text>
+  <rect x="138" y="292" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="181" y="308" class="core">코어 1</text>
+  <rect x="145" y="316" width="34" height="30" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="162" y="336" class="numb">2</text>
+  <rect x="183" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="200" y="336" class="num">10</text>
+  <rect x="232" y="292" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="275" y="308" class="core">코어 2</text>
+  <rect x="239" y="316" width="34" height="30" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="256" y="336" class="numb">4</text>
+  <rect x="277" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="294" y="336" class="num">12</text>
+  <rect x="326" y="292" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="369" y="308" class="core">코어 3</text>
+  <rect x="333" y="316" width="34" height="30" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+  <text x="350" y="336" class="numb">6</text>
+  <rect x="371" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="388" y="336" class="num">14</text>
+  <rect x="476" y="254" width="392" height="114" rx="10" fill="#F9FAFB" stroke="#9CA3AF"/>
+  <text x="490" y="278" class="sk">소켓 1</text>
+  <rect x="556" y="263" width="298" height="20" rx="4" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="705" y="277" class="l3">L3 캐시 (소켓마다 따로)</text>
+  <rect x="488" y="292" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="531" y="308" class="core">코어 0</text>
+  <rect x="495" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="512" y="336" class="num">1</text>
+  <rect x="533" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="550" y="336" class="num">9</text>
+  <rect x="582" y="292" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="625" y="308" class="core">코어 1</text>
+  <rect x="589" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="606" y="336" class="num">3</text>
+  <rect x="627" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="644" y="336" class="num">11</text>
+  <rect x="676" y="292" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="719" y="308" class="core">코어 2</text>
+  <rect x="683" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="700" y="336" class="num">5</text>
+  <rect x="721" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="738" y="336" class="num">13</text>
+  <rect x="770" y="292" width="86" height="66" rx="6" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="813" y="308" class="core">코어 3</text>
+  <rect x="777" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="794" y="336" class="num">7</text>
+  <rect x="815" y="316" width="34" height="30" rx="4" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="832" y="336" class="num">15</text>
+  <text x="32" y="398" class="note">칸 안의 숫자는 리눅스가 붙인 논리 CPU 번호다. 코어 하나에 하이퍼스레드 두 개(번호 두 개)가 있다. 번호 배치는 설명용 예시다.</text>
+  <text x="32" y="417" class="note">원문: 번호는 연속적이지 않고 늘 같다는 보장도 없다. 하이퍼스레드를 1개 대신 2개 줘도 성능은 약 1.3배에 그칠 수 있다.</text>
+</svg>

@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="#1F2937" viewBox="0 0 900 420" width="900" height="420" role="img" aria-label="CPU 스로틀링 사례 요약: 몇 ms 요청이 100ms를 넘는 증상을 스로틀링 횟수로 측정해 quota 소진을 병목으로 찾았다. 단기에는 CPU 추가 할당과 스레드 수 조정, 장기에는 cpuset 전환으로 P99를 약 50% 줄이고 코어 할당을 최대 11% 줄였다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; }
+    .title { font-size: 19px; font-weight: 700; }
+    .bt { font-size: 15px; font-weight: 700; text-anchor: middle; }
+    .bl { font-size: 14px; text-anchor: middle; }
+    .bn { font-size: 12px; fill: #4B5563; text-anchor: middle; }
+    .al { font-size: 12px; fill: #374151; text-anchor: middle; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="899" height="419" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">CPU 스로틀링 사례 — 증상에서 장기 해법까지 한 장</text>
+
+  <!-- row 1: symptom -> analysis -> bottleneck -->
+  <rect x="32" y="64" width="256" height="112" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="160" y="92" class="bt">① 증상</text>
+  <text x="160" y="118" class="bl">몇 ms 요청이 100ms 넘게 걸림</text>
+  <text x="160" y="142" class="bl">CPU 사용률을 올리지 못함</text>
+  <text x="160" y="164" class="bn">스로틀링에 대비해 여유분을 더 얹음</text>
+
+  <rect x="322" y="64" width="256" height="112" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="450" y="92" class="bt">② 분석</text>
+  <text x="450" y="118" class="bl">cpu.stat의 스로틀링 횟수</text>
+  <text x="450" y="142" class="bl">재현: 161주기 중 150번 정지</text>
+  <text x="450" y="164" class="bn">원문 부록의 벤치마크</text>
+
+  <rect x="612" y="64" width="256" height="112" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="740" y="92" class="bt">③ 병목</text>
+  <text x="740" y="118" class="bl">100ms마다 받는 quota를</text>
+  <text x="740" y="142" class="bl">스레드들이 앞에서 다 써 버림</text>
+  <text x="740" y="164" class="bn">→ 남은 시간 동안 컨테이너 정지</text>
+
+  <!-- row 1 arrows -->
+  <g stroke="#374151" stroke-width="2">
+    <line x1="290" y1="120" x2="313" y2="120"/>
+    <line x1="580" y1="120" x2="603" y2="120"/>
+  </g>
+  <g fill="#374151">
+    <polygon points="321,120 312,115 312,125"/>
+    <polygon points="611,120 602,115 602,125"/>
+  </g>
+  <text x="305" y="110" class="al">측정</text>
+  <text x="595" y="110" class="al">원인</text>
+
+  <!-- bus from bottleneck to the two fixes -->
+  <g stroke="#374151" stroke-width="2" fill="none">
+    <polyline points="740,177 740,204 160,204 160,223"/>
+    <line x1="450" y1="204" x2="450" y2="223"/>
+  </g>
+  <g fill="#374151">
+    <polygon points="160,231 155,222 165,222"/>
+    <polygon points="450,231 445,222 455,222"/>
+  </g>
+  <text x="600" y="197" class="al">해법은 두 갈래</text>
+
+  <!-- row 2: short-term / long-term -> result -->
+  <rect x="32" y="232" width="256" height="120" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+  <text x="160" y="260" class="bt">④ 단기 — 임시 처방</text>
+  <text x="160" y="286" class="bl">CPU를 더 할당 (quota↑)</text>
+  <text x="160" y="310" class="bl">스레드 수 = 할당 코어 수</text>
+  <text x="160" y="338" class="bn">바로 듣지만 규모가 크면 비쌈</text>
+
+  <rect x="322" y="232" width="256" height="120" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="450" y="260" class="bt">⑤ 장기 — 구조 변경</text>
+  <text x="450" y="286" class="bl">quota 대신 cpuset (코어 고정)</text>
+  <text x="450" y="310" class="bl">가까운 코어끼리 묶어 배정</text>
+  <text x="450" y="338" class="bn">토폴로지(소켓·코어)를 읽고 배정</text>
+
+  <rect x="612" y="232" width="256" height="120" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="740" y="260" class="bt">⑥ 결과</text>
+  <text x="740" y="286" class="bl">스로틀링 사라짐 · P99 약 50%↓</text>
+  <text x="740" y="310" class="bl">코어 할당 최대 11% 절감</text>
+  <text x="740" y="338" class="bn">대가: P50 조금↑ · 버스트 불가</text>
+
+  <line x1="580" y1="292" x2="603" y2="292" stroke="#374151" stroke-width="2"/>
+  <polygon points="611,292 602,287 602,297" fill="#374151"/>
+  <text x="595" y="282" class="al">적용</text>
+
+  <text x="32" y="386" class="note">단기·장기 구분은 이 문서의 정리다. 원문은 "CPU를 더 주면 해결되지만 규모가 크면 비싸다"고만 쓴다.</text>
+  <text x="32" y="405" class="note">P99 약 50%는 원문이 보여 준 프로덕션 DB 클러스터 한 곳의 값이고, 11%는 fleet 전체의 코어 할당 절감이다.</text>
+</svg>

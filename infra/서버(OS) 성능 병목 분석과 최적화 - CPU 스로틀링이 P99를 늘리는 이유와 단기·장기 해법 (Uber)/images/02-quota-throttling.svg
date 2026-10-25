@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="#1F2937" viewBox="0 0 900 420" width="900" height="420" role="img" aria-label="CFS quota 예시: 2코어 한도 컨테이너의 스레드 8개가 25ms 만에 200ms quota를 다 쓰고 남은 75ms 동안 정지한다. 30ms에 도착한 요청은 다음 주기까지 70ms를 기다린다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; }
+    .title { font-size: 19px; font-weight: 700; }
+    .sub { font-size: 14px; fill: #374151; }
+    .per { font-size: 13px; font-weight: 700; fill: #374151; text-anchor: middle; }
+    .lane { font-size: 12px; fill: #4B5563; text-anchor: end; }
+    .tick { font-size: 12px; fill: #4B5563; text-anchor: middle; }
+    .thr { font-size: 15px; font-weight: 700; fill: #B91C1C; text-anchor: middle; }
+    .thr2 { font-size: 13px; fill: #7F1D1D; text-anchor: middle; }
+    .req { font-size: 13px; text-anchor: end; }
+    .rl { font-size: 12px; fill: #92400E; text-anchor: middle; }
+    .rs { font-size: 12px; fill: #166534; }
+    .lg { font-size: 12px; fill: #374151; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="899" height="419" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">CFS quota — 주기 앞에서 다 쓰면 나머지 시간은 멈춘다</text>
+  <text x="32" y="68" class="sub">예시: 한도 2코어 = 100ms마다 CPU 시간 200ms. 스레드 8개가 코어 8개에서 동시에 돈다.</text>
+
+  <text x="320" y="96" class="per">주기 1 (100ms)</text>
+  <text x="660" y="96" class="per">주기 2 (100ms)</text>
+
+  <!-- throttled blocks (whole container stopped) -->
+  <rect x="235" y="106" width="255" height="162" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <rect x="575" y="106" width="255" height="162" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="362" y="182" class="thr">스로틀링</text>
+  <text x="362" y="204" class="thr2">quota 소진 → 75ms 정지</text>
+  <text x="702" y="182" class="thr">스로틀링</text>
+  <text x="702" y="204" class="thr2">quota 소진 → 75ms 정지</text>
+
+  <!-- running segments: 8 threads x 25ms = 200ms -->
+  <g fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2">
+    <rect x="150" y="110" width="85" height="14"/><rect x="490" y="110" width="85" height="14"/>
+    <rect x="150" y="130" width="85" height="14"/><rect x="490" y="130" width="85" height="14"/>
+    <rect x="150" y="150" width="85" height="14"/><rect x="490" y="150" width="85" height="14"/>
+    <rect x="150" y="170" width="85" height="14"/><rect x="490" y="170" width="85" height="14"/>
+    <rect x="150" y="190" width="85" height="14"/><rect x="490" y="190" width="85" height="14"/>
+    <rect x="150" y="210" width="85" height="14"/><rect x="490" y="210" width="85" height="14"/>
+    <rect x="150" y="230" width="85" height="14"/><rect x="490" y="230" width="85" height="14"/>
+    <rect x="150" y="250" width="85" height="14"/><rect x="490" y="250" width="85" height="14"/>
+  </g>
+  <text x="140" y="121" class="lane">스레드 1</text>
+  <text x="140" y="141" class="lane">스레드 2</text>
+  <text x="140" y="161" class="lane">스레드 3</text>
+  <text x="140" y="181" class="lane">스레드 4</text>
+  <text x="140" y="201" class="lane">스레드 5</text>
+  <text x="140" y="221" class="lane">스레드 6</text>
+  <text x="140" y="241" class="lane">스레드 7</text>
+  <text x="140" y="261" class="lane">스레드 8</text>
+
+  <!-- time axis -->
+  <line x1="150" y1="282" x2="836" y2="282" stroke="#374151" stroke-width="2"/>
+  <polygon points="846,282 836,277 836,287" fill="#374151"/>
+  <g stroke="#374151" stroke-width="1.5">
+    <line x1="150" y1="277" x2="150" y2="287"/>
+    <line x1="235" y1="277" x2="235" y2="287"/>
+    <line x1="490" y1="277" x2="490" y2="287"/>
+    <line x1="575" y1="277" x2="575" y2="287"/>
+    <line x1="830" y1="277" x2="830" y2="287"/>
+  </g>
+  <text x="150" y="302" class="tick">0</text>
+  <text x="235" y="302" class="tick">25ms</text>
+  <text x="490" y="302" class="tick">100ms</text>
+  <text x="575" y="302" class="tick">125ms</text>
+  <text x="826" y="302" class="tick">200ms</text>
+
+  <!-- a request that arrives during throttling -->
+  <text x="140" y="344" class="req">요청</text>
+  <text x="252" y="324" class="rl">도착 (30ms)</text>
+  <circle cx="252" cy="339" r="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  <line x1="260" y1="339" x2="480" y2="339" stroke="#D97706" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="489,339 480,334 480,344" fill="#D97706"/>
+  <text x="370" y="331" class="rl">70ms 대기</text>
+  <rect x="491" y="332" width="20" height="14" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+  <text x="518" y="344" class="rs">다음 주기에야 처리 시작</text>
+
+  <!-- legend -->
+  <rect x="150" y="364" width="18" height="12" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="174" y="375" class="lg">실행</text>
+  <rect x="220" y="364" width="18" height="12" fill="#FEE2E2" stroke="#DC2626"/>
+  <text x="244" y="375" class="lg">스로틀링 (컨테이너 전체 정지)</text>
+
+  <text x="32" y="404" class="note">수치는 설명용 예시다. 원문 부록 실험은 스레드(고루틴) 32개로 돌렸고, 대부분의 주기에서 이렇게 멈췄다 (→ 3절).</text>
+</svg>

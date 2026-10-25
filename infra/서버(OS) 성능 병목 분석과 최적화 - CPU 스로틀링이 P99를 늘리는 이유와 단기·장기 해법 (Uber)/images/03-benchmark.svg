@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="#1F2937" viewBox="0 0 900 412" width="900" height="412" role="img" aria-label="Uber 부록 실험: 같은 2코어 quota에서 quota만 걸면 sleep 10ms의 96.7%가 96에서 117ms 걸리고 161주기 중 150번 스로틀링됐다. cpuset으로 코어 0과 1에 묶자 97.7%가 19에서 22ms로 줄고 스로틀링은 154주기 중 13번이 됐다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; }
+    .title { font-size: 19px; font-weight: 700; }
+    .sub { font-size: 14px; fill: #374151; }
+    .hred { font-size: 15px; font-weight: 700; fill: #B91C1C; }
+    .hgreen { font-size: 15px; font-weight: 700; fill: #15803D; }
+    .cap { font-size: 13px; fill: #374151; }
+    .tick { font-size: 12px; fill: #4B5563; text-anchor: middle; }
+    .mk { font-size: 12px; fill: #6B7280; }
+    .bl { font-size: 13px; font-weight: 700; }
+    .bl-end { font-size: 13px; font-weight: 700; text-anchor: end; }
+    .vred { font-size: 14px; font-weight: 700; fill: #B91C1C; }
+    .vgreen { font-size: 14px; font-weight: 700; fill: #15803D; }
+    .val { font-size: 13px; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="899" height="411" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">부록 실험 — 같은 2코어 quota, 코어를 둘로 묶자 정지가 사라졌다</text>
+  <text x="32" y="66" class="sub">고루틴 32개가 CPU를 계속 태우는 동안, sleep(10ms)가 실제로 걸린 시간을 쟀다.</text>
+
+  <!-- ===== left panel: quota only ===== -->
+  <rect x="32" y="84" width="400" height="262" rx="10" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="52" y="112" class="hred">quota만 (100ms마다 200ms)</text>
+  <text x="52" y="142" class="cap">sleep(10ms) 한 번이 실제로 걸린 시간</text>
+
+  <line x1="90.3" y1="154" x2="90.3" y2="204" stroke="#9CA3AF" stroke-dasharray="4 3"/>
+  <text x="96" y="164" class="mk">목표 10ms</text>
+  <rect x="334" y="172" width="59.5" height="24" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="326" y="189" class="bl-end">96.7%가 96–117ms</text>
+
+  <line x1="62" y1="204" x2="402" y2="204" stroke="#374151" stroke-width="1.5"/>
+  <g stroke="#374151" stroke-width="1.5">
+    <line x1="62" y1="200" x2="62" y2="208"/>
+    <line x1="203.7" y1="200" x2="203.7" y2="208"/>
+    <line x1="345.3" y1="200" x2="345.3" y2="208"/>
+  </g>
+  <text x="62" y="224" class="tick">0</text>
+  <text x="203.7" y="224" class="tick">50ms</text>
+  <text x="345.3" y="224" class="tick">100ms</text>
+
+  <text x="52" y="256" class="vred">→ 거의 매번 약 100ms</text>
+
+  <text x="52" y="284" class="cap">스로틀링 걸린 주기</text>
+  <rect x="62" y="294" width="340" height="18" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <rect x="62" y="294" width="316.8" height="18" fill="#FEE2E2" stroke="#DC2626"/>
+  <text x="62" y="332" class="val">161주기 중 150번 (93%)</text>
+
+  <!-- ===== right panel: quota + cpuset ===== -->
+  <rect x="468" y="84" width="400" height="262" rx="10" fill="#FFFFFF" stroke="#D1D5DB"/>
+  <text x="488" y="112" class="hgreen">quota + cpuset (코어 0-1)</text>
+  <text x="488" y="142" class="cap">sleep(10ms) 한 번이 실제로 걸린 시간</text>
+
+  <line x1="526.3" y1="154" x2="526.3" y2="204" stroke="#9CA3AF" stroke-dasharray="4 3"/>
+  <text x="532" y="164" class="mk">목표 10ms</text>
+  <rect x="551.8" y="172" width="8.5" height="24" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+  <text x="568" y="189" class="bl">97.7%가 19–22ms</text>
+
+  <line x1="498" y1="204" x2="838" y2="204" stroke="#374151" stroke-width="1.5"/>
+  <g stroke="#374151" stroke-width="1.5">
+    <line x1="498" y1="200" x2="498" y2="208"/>
+    <line x1="639.7" y1="200" x2="639.7" y2="208"/>
+    <line x1="781.3" y1="200" x2="781.3" y2="208"/>
+  </g>
+  <text x="498" y="224" class="tick">0</text>
+  <text x="639.7" y="224" class="tick">50ms</text>
+  <text x="781.3" y="224" class="tick">100ms</text>
+
+  <text x="488" y="256" class="vgreen">→ 약 20ms, 100ms 정지 없음</text>
+
+  <text x="488" y="284" class="cap">스로틀링 걸린 주기</text>
+  <rect x="498" y="294" width="340" height="18" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <rect x="498" y="294" width="28.7" height="18" fill="#FEE2E2" stroke="#DC2626"/>
+  <text x="498" y="332" class="val">154주기 중 13번 (8%)</text>
+
+  <text x="32" y="372" class="note">출력값은 원문 부록 그대로다. 막대는 히스토그램에서 표본이 가장 많이 몰린 구간 하나만 그렸다.</text>
+  <text x="32" y="391" class="note">오른쪽 주기 수는 누적 출력(315−161, 163−150)으로 계산했다. 원문 본문은 "160주기 중 13번"이라고 썼다.</text>
+</svg>
