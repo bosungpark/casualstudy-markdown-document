@@ -1,0 +1,73 @@
+<svg fill="#1F2937" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" width="900" height="480" role="img" aria-label="문자열 암호화는 배포된 바이너리에 암호문만 남겨 strings나 grep 같은 정적 분석으로 비밀을 긁어가지 못하게 하지만, 런타임에 복호화된 평문은 메모리에 남아 메모리 덤프에는 취약하다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; }
+    .title { font-size: 19px; font-weight: 700; }
+    .col { font-size: 14px; font-weight: 700; fill: #4B5563; text-anchor: middle; }
+    .bt { font-size: 14px; font-weight: 700; }
+    .code { font-family: 'Menlo', 'Consolas', monospace; font-size: 13px; }
+    .bs { font-size: 12px; fill: #4B5563; }
+    .tool { font-size: 14px; font-weight: 600; text-anchor: middle; }
+    .rt { font-size: 14px; font-weight: 700; }
+    .rs { font-size: 12px; fill: #374151; }
+    .lbl { font-size: 12px; font-weight: 700; fill: #374151; }
+    .lblc { font-size: 12px; font-weight: 700; fill: #374151; text-anchor: middle; }
+    .cost { font-size: 13px; font-weight: 600; fill: #92400E; text-anchor: middle; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+  <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/>
+    </marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="899" height="479" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">문자열 암호화 — 정적 분석은 막지만, 런타임에는 평문이 된다</text>
+
+  <text x="195" y="76" class="col">배포 상태 — 실행하지 않고 읽는다</text>
+  <text x="695" y="76" class="col">실행 중 — 메모리를 본다</text>
+
+  <!-- row 1: where the string lives -->
+  <rect x="60" y="92" width="270" height="80" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="78" y="120" class="bt">배포된 바이너리</text>
+  <text x="78" y="148" class="code">"k9#Qz…"</text>
+  <text x="160" y="148" class="bs">API 키 · 설정값의 암호문</text>
+
+  <rect x="560" y="92" width="270" height="80" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="578" y="120" class="bt">실행 중 메모리</text>
+  <text x="578" y="148" class="code">"my-api-key"</text>
+  <text x="690" y="148" class="bs">복호화된 평문</text>
+
+  <line x1="330" y1="132" x2="554" y2="132" stroke="#6B7280" stroke-width="1.8" marker-end="url(#ag)"/>
+  <text x="442" y="122" class="lblc">런타임에만 복호화</text>
+
+  <!-- row 2: what reads it -->
+  <rect x="60" y="228" width="270" height="48" rx="8" fill="#FFFFFF" stroke="#9CA3AF"/>
+  <text x="195" y="257" class="tool">strings · grep으로 훑기</text>
+  <rect x="560" y="228" width="270" height="48" rx="8" fill="#FFFFFF" stroke="#9CA3AF"/>
+  <text x="695" y="257" class="tool">메모리 덤프</text>
+
+  <line x1="195" y1="228" x2="195" y2="178" stroke="#6B7280" stroke-width="1.8" marker-end="url(#ag)"/>
+  <text x="207" y="208" class="lbl">읽는다</text>
+  <line x1="695" y1="228" x2="695" y2="178" stroke="#6B7280" stroke-width="1.8" marker-end="url(#ag)"/>
+  <text x="707" y="208" class="lbl">읽는다</text>
+
+  <g fill="#9CA3AF">
+    <polygon points="187,284 203,284 195,298"/>
+    <polygon points="687,284 703,284 695,298"/>
+  </g>
+
+  <!-- row 3: result -->
+  <rect x="60" y="306" width="270" height="62" rx="8" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="78" y="332" class="rt" fill="#166534">✓ 암호문만 보인다</text>
+  <text x="78" y="354" class="rs">하드코딩된 비밀을 긁어가지 못한다</text>
+
+  <rect x="560" y="306" width="270" height="62" rx="8" fill="#FEE2E2" stroke="#DC2626"/>
+  <text x="578" y="332" class="rt" fill="#991B1B">✗ 평문이 보인다</text>
+  <text x="578" y="354" class="rs">메모리 덤프에는 취약하다</text>
+
+  <!-- cost -->
+  <rect x="60" y="392" width="770" height="42" rx="8" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="445" y="418" class="cost">대가: 키 관리 오버헤드 · 타이트한 루프에서는 복호화 비용이 성능에 영향</text>
+
+  <text x="32" y="462" class="note">그래서 문자열 암호화는 비밀 관리의 대체재가 아니라 지연 장치다. 문자열 값은 그림을 위한 예다.</text>
+</svg>

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" role="img" aria-label="심볼 리네이밍은 배포 산출물의 이름을 a, b 같은 무의미한 이름으로 바꾸고 서드파티 네임스페이스는 화이트리스트로 제외한다. 빌드 때 함께 만든 심볼 맵을 안전하게 보관해 두면 팀은 프로덕션 스택 트레이스를 원래 이름으로 역매핑할 수 있다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; fill: #1F2937; }
+    .title { font-size: 19px; font-weight: 700; }
+    .bt { font-size: 14px; font-weight: 700; }
+    .btc { font-size: 14px; font-weight: 700; text-anchor: middle; }
+    .code { font-family: 'Menlo', 'Consolas', monospace; font-size: 13px; }
+    .codec { font-family: 'Menlo', 'Consolas', monospace; font-size: 12px; text-anchor: middle; }
+    .bs { font-size: 12px; fill: #4B5563; }
+    .bsc { font-size: 12px; fill: #4B5563; text-anchor: middle; }
+    .lbl { font-size: 12px; font-weight: 700; fill: #374151; }
+    .lblc { font-size: 12px; font-weight: 700; fill: #374151; text-anchor: middle; }
+    .keep { font-size: 12px; font-weight: 700; fill: #1D4ED8; text-anchor: middle; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+  <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/>
+    </marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/>
+    </marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="899" height="429" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">심볼 리네이밍 — 공격자에게선 이름을 지우고, 팀은 심볼 맵으로 되찾는다</text>
+
+  <!-- top row -->
+  <rect x="40" y="80" width="250" height="124" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="58" y="106" class="bt">원본 코드</text>
+  <text x="58" y="134" class="code">calculateLicenseKey()</text>
+  <text x="58" y="158" class="code">userToken</text>
+  <text x="58" y="184" class="bs">서드파티 라이브러리 이름</text>
+
+  <rect x="350" y="94" width="190" height="96" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="445" y="124" class="btc">난독화 빌드</text>
+  <text x="445" y="150" class="bsc">서드파티 네임스페이스는</text>
+  <text x="445" y="168" class="bsc">화이트리스트로 제외</text>
+
+  <rect x="600" y="80" width="260" height="124" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="618" y="106" class="bt">배포 산출물 — 공격자가 보는 것</text>
+  <text x="618" y="134" class="code">a()</text>
+  <text x="618" y="158" class="code">b</text>
+  <text x="618" y="184" class="bs">서드파티 라이브러리 이름 (그대로)</text>
+
+  <line x1="290" y1="142" x2="344" y2="142" stroke="#6B7280" stroke-width="1.8" marker-end="url(#ag)"/>
+  <line x1="540" y1="142" x2="594" y2="142" stroke="#6B7280" stroke-width="1.8" marker-end="url(#ag)"/>
+
+  <!-- bottom row -->
+  <rect x="40" y="262" width="250" height="96" rx="8" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="58" y="290" class="bt">팀이 읽는 것</text>
+  <text x="58" y="316" class="code">at calculateLicenseKey()</text>
+  <text x="58" y="342" class="bs">버그를 추적할 수 있다</text>
+
+  <rect x="350" y="262" width="190" height="96" rx="8" fill="#DBEAFE" stroke="#2563EB"/>
+  <text x="445" y="290" class="btc">심볼 맵</text>
+  <text x="445" y="316" class="codec">a ↔ calculateLicenseKey</text>
+  <text x="445" y="338" class="codec">b ↔ userToken</text>
+  <text x="445" y="378" class="keep">안전하게 보관</text>
+
+  <rect x="600" y="262" width="260" height="96" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="618" y="290" class="bt">프로덕션 스택 트레이스</text>
+  <text x="618" y="316" class="code">at a()</text>
+  <text x="618" y="342" class="bs">이름만 봐서는 알 수 없다</text>
+
+  <!-- vertical arrows -->
+  <line x1="445" y1="190" x2="445" y2="256" stroke="#6B7280" stroke-width="1.8" marker-end="url(#ag)"/>
+  <text x="456" y="228" class="lbl">빌드 때 함께 생성</text>
+  <line x1="730" y1="204" x2="730" y2="256" stroke="#6B7280" stroke-width="1.8" marker-end="url(#ag)"/>
+  <text x="741" y="235" class="lbl">에러 발생 시</text>
+
+  <!-- reverse mapping -->
+  <line x1="600" y1="310" x2="546" y2="310" stroke="#2563EB" stroke-width="1.8" marker-end="url(#ab)"/>
+  <line x1="350" y1="310" x2="296" y2="310" stroke="#2563EB" stroke-width="1.8" marker-end="url(#ab)"/>
+  <text x="323" y="302" class="lblc">역매핑</text>
+  <text x="573" y="302" class="lblc">조회</text>
+
+  <text x="32" y="410" class="note">리네이밍의 성능 영향은 ≈ 0이다. 대가는 화이트리스트 관리와 심볼 맵 보관이다.</text>
+</svg>

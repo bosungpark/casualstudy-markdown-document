@@ -1,0 +1,127 @@
+<svg fill="#1F2937" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 566" width="900" height="566" role="img" aria-label="제어 흐름 계열 난독화는 동작을 바꾸지 않고 따라가야 할 흐름만 늘린다: 코드를 쪼개 재배열하고 junk code와 간접 분기로 잇고, 항상 참인 조건 뒤에 실행되지 않는 더미 코드를 두고, 단순 연산을 여러 단계로 쪼갠다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; }
+    .title { font-size: 19px; font-weight: 700; }
+    .pt { font-size: 16px; font-weight: 700; }
+    .ps { font-size: 12px; fill: #6B7280; }
+    .h { font-size: 14px; font-weight: 700; }
+    .blk { font-size: 14px; font-weight: 700; text-anchor: middle; }
+    .junk { font-size: 12px; fill: #1D4ED8; text-anchor: middle; }
+    .num { font-size: 12px; font-weight: 700; fill: #FFFFFF; text-anchor: middle; }
+    .bs { font-size: 12px; fill: #4B5563; }
+    .bc { font-size: 13px; text-anchor: middle; }
+    .bcb { font-size: 13px; font-weight: 700; text-anchor: middle; }
+    .lbl { font-size: 12px; font-weight: 700; fill: #374151; }
+    .lblc { font-size: 12px; font-weight: 700; fill: #374151; text-anchor: middle; }
+    .lg { font-size: 12px; fill: #374151; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/>
+    </marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/>
+    </marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="899" height="565" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">제어 흐름 계열 — 동작은 같고, 따라가야 할 흐름만 늘어난다</text>
+
+  <!-- ===== Left: original ===== -->
+  <rect x="30" y="60" width="210" height="460" rx="10" fill="#F9FAFB" stroke="#D1D5DB"/>
+  <text x="50" y="90" class="pt">원래 흐름</text>
+  <text x="50" y="108" class="ps">배치 순서 = 실행 순서</text>
+
+  <g fill="#FFFFFF" stroke="#9CA3AF">
+    <rect x="75" y="130" width="120" height="44" rx="6"/>
+    <rect x="75" y="206" width="120" height="44" rx="6"/>
+    <rect x="75" y="282" width="120" height="44" rx="6"/>
+  </g>
+  <text x="135" y="157" class="blk">A</text>
+  <text x="135" y="233" class="blk">B</text>
+  <text x="135" y="309" class="blk">C</text>
+  <g fill="#9CA3AF">
+    <polygon points="127,182 143,182 135,196"/>
+    <polygon points="127,258 143,258 135,272"/>
+  </g>
+  <text x="50" y="362" class="bs">위에서 아래로 읽으면</text>
+  <text x="50" y="380" class="bs">로직이 보인다</text>
+
+  <rect x="50" y="430" width="14" height="14" rx="3" fill="#FFFFFF" stroke="#9CA3AF"/>
+  <text x="72" y="442" class="lg">원래 코드</text>
+  <rect x="50" y="456" width="14" height="14" rx="3" fill="#EFF6FF" stroke="#2563EB" stroke-dasharray="3 2"/>
+  <text x="72" y="468" class="lg">난독화가 넣은 것</text>
+
+  <!-- ===== Right: obfuscated ===== -->
+  <rect x="260" y="60" width="610" height="460" rx="10" fill="#F9FAFB" stroke="#D1D5DB"/>
+
+  <!-- strip 1: split, reorder, junk, indirect branch -->
+  <text x="280" y="84" class="h">⑤ 컨트롤 플로우 난독화 — 쪼개고, 섞고, 간접 분기로 잇는다</text>
+
+  <!-- blocks: x = 282,380,478,576,674,772 ; w=82 -->
+  <rect x="282" y="180" width="82" height="36" rx="6" fill="#FFFFFF" stroke="#9CA3AF"/>
+  <text x="323" y="204" class="blk">B2</text>
+  <rect x="380" y="180" width="82" height="36" rx="6" fill="#EFF6FF" stroke="#2563EB" stroke-dasharray="4 3"/>
+  <text x="421" y="203" class="junk">junk</text>
+  <rect x="478" y="180" width="82" height="36" rx="6" fill="#FFFFFF" stroke="#9CA3AF"/>
+  <text x="519" y="204" class="blk">A</text>
+  <rect x="576" y="180" width="82" height="36" rx="6" fill="#FFFFFF" stroke="#9CA3AF"/>
+  <text x="617" y="204" class="blk">C</text>
+  <rect x="674" y="180" width="82" height="36" rx="6" fill="#EFF6FF" stroke="#2563EB" stroke-dasharray="4 3"/>
+  <text x="715" y="203" class="junk">junk</text>
+  <rect x="772" y="180" width="82" height="36" rx="6" fill="#FFFFFF" stroke="#9CA3AF"/>
+  <text x="813" y="204" class="blk">B1</text>
+
+  <!-- execution arcs (indirect branches) -->
+  <g fill="none" stroke="#2563EB" stroke-width="1.8">
+    <path d="M519,180 Q660,96 800,177" marker-end="url(#ab)"/>
+    <path d="M826,180 Q568,30 310,177" marker-end="url(#ab)"/>
+    <path d="M336,180 Q476,96 617,177" marker-end="url(#ab)"/>
+  </g>
+  <g fill="#2563EB">
+    <circle cx="660" cy="138" r="10"/>
+    <circle cx="568" cy="104" r="10"/>
+    <circle cx="476" cy="138" r="10"/>
+  </g>
+  <text x="660" y="142" class="num">1</text>
+  <text x="568" y="108" class="num">2</text>
+  <text x="476" y="142" class="num">3</text>
+
+  <text x="282" y="240" class="bs">배치 순서 ≠ 실행 순서. 화살표(간접 분기)의 목적지는 실행 중에 계산된다.</text>
+
+  <line x1="276" y1="258" x2="854" y2="258" stroke="#E5E7EB"/>
+
+  <!-- strip 2: opaque predicate + dummy code -->
+  <text x="280" y="284" class="h">⑥ opaque predicate · ⑧ 더미 코드 주입</text>
+
+  <polygon points="280,340 360,306 440,340 360,374" fill="#EFF6FF" stroke="#2563EB"/>
+  <text x="360" y="345" class="bcb">항상 참인 조건</text>
+
+  <line x1="440" y1="340" x2="494" y2="340" stroke="#6B7280" stroke-width="1.8" marker-end="url(#ag)"/>
+  <text x="467" y="332" class="lblc">참</text>
+  <rect x="500" y="318" width="140" height="44" rx="6" fill="#FFFFFF" stroke="#9CA3AF"/>
+  <text x="570" y="345" class="bcb">진짜 로직</text>
+
+  <path d="M360,374 V396 H494" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#ag)"/>
+  <text x="372" y="414" class="lbl" fill="#6B7280">거짓 — 실행 안 됨</text>
+  <rect x="500" y="376" width="140" height="40" rx="6" fill="#EFF6FF" stroke="#2563EB" stroke-dasharray="4 3"/>
+  <text x="570" y="401" class="bcb">⑧ 더미 코드</text>
+
+  <text x="660" y="334" class="bs">공격자에겐 조건이 동적으로 보여</text>
+  <text x="660" y="352" class="bs">왜 이 분기를 타는지 헷갈린다</text>
+  <text x="660" y="392" class="bs">그럴듯하지만 실제로는 안 쓰인다</text>
+  <text x="660" y="410" class="bs">라이선스 · 인증 루틴에 특히 효과적</text>
+
+  <line x1="276" y1="432" x2="854" y2="432" stroke="#E5E7EB"/>
+
+  <!-- strip 3: instruction pattern transformation -->
+  <text x="280" y="458" class="h">⑦ 명령어 패턴 변환</text>
+  <rect x="282" y="470" width="170" height="36" rx="6" fill="#FFFFFF" stroke="#9CA3AF"/>
+  <text x="367" y="493" class="bc">단순 연산 하나</text>
+  <line x1="452" y1="488" x2="506" y2="488" stroke="#6B7280" stroke-width="1.8" marker-end="url(#ag)"/>
+  <rect x="512" y="470" width="342" height="36" rx="6" fill="#EFF6FF" stroke="#2563EB" stroke-dasharray="4 3"/>
+  <text x="683" y="493" class="bc">여러 단계 연산 + 간접 분기 (비정형 패턴)</text>
+
+  <text x="32" y="546" class="note">⑥과 ⑧을 한 그림에 묶은 것은 이해를 돕기 위한 예다(내 해석). 블록 이름 · 배치 · 개수도 예시다.</text>
+</svg>

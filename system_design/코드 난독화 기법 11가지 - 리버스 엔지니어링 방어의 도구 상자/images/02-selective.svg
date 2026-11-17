@@ -1,0 +1,83 @@
+<svg fill="#1F2937" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" role="img" aria-label="난독화를 모든 함수에 바르면 앱 전체가 느려지고 디버깅이 어려워지지만, 라이선스·인증·과금 같은 민감 함수에만 바르면 비용이 고가치 경로에만 들어 비용 대비 효과가 크다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; }
+    .title { font-size: 19px; font-weight: 700; }
+    .pt { font-size: 16px; font-weight: 700; }
+    .ps { font-size: 12px; fill: #6B7280; }
+    .blk { font-size: 13px; font-weight: 600; text-anchor: middle; }
+    .rt { font-size: 14px; font-weight: 700; text-anchor: middle; }
+    .rs { font-size: 12px; fill: #374151; text-anchor: middle; }
+    .lg { font-size: 12px; fill: #374151; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="899" height="429" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">어디에 바르나 — 코드 전체가 아니라 민감한 함수에만</text>
+
+  <!-- ===== Panel A: everywhere ===== -->
+  <rect x="30" y="60" width="405" height="306" rx="10" fill="#F9FAFB" stroke="#D1D5DB"/>
+  <text x="50" y="90" class="pt">전체에 바르기 (안티패턴)</text>
+  <text x="50" y="108" class="ps">모든 함수에 같은 강도로</text>
+
+  <g fill="#DBEAFE" stroke="#2563EB">
+    <rect x="61" y="124" width="78" height="36" rx="6"/>
+    <rect x="149" y="124" width="78" height="36" rx="6"/>
+    <rect x="237" y="124" width="78" height="36" rx="6"/>
+    <rect x="325" y="124" width="78" height="36" rx="6"/>
+    <rect x="61" y="170" width="78" height="36" rx="6"/>
+    <rect x="149" y="170" width="78" height="36" rx="6"/>
+    <rect x="237" y="170" width="78" height="36" rx="6"/>
+    <rect x="325" y="170" width="78" height="36" rx="6"/>
+    <rect x="61" y="216" width="78" height="36" rx="6"/>
+    <rect x="149" y="216" width="78" height="36" rx="6"/>
+    <rect x="237" y="216" width="78" height="36" rx="6"/>
+    <rect x="325" y="216" width="78" height="36" rx="6"/>
+  </g>
+  <text x="100" y="147" class="blk">라이선스</text>
+  <text x="276" y="193" class="blk">인증</text>
+  <text x="188" y="239" class="blk">과금</text>
+
+  <polygon points="224,262 240,262 232,276" fill="#9CA3AF"/>
+
+  <rect x="61" y="282" width="342" height="62" rx="8" fill="#FEE2E2" stroke="#DC2626"/>
+  <text x="232" y="308" class="rt" fill="#991B1B">앱 전체가 느려지고 커진다</text>
+  <text x="232" y="330" class="rs">프로덕션 스택 트레이스도 못 읽는다</text>
+
+  <!-- ===== Panel B: selective ===== -->
+  <rect x="465" y="60" width="405" height="306" rx="10" fill="#F9FAFB" stroke="#D1D5DB"/>
+  <text x="485" y="90" class="pt">선택 적용 (정석)</text>
+  <text x="485" y="108" class="ps">라이선스 · 인증 · 과금 같은 민감 함수에만</text>
+
+  <g fill="#F3F4F6" stroke="#D1D5DB">
+    <rect x="584" y="124" width="78" height="36" rx="6"/>
+    <rect x="672" y="124" width="78" height="36" rx="6"/>
+    <rect x="760" y="124" width="78" height="36" rx="6"/>
+    <rect x="496" y="170" width="78" height="36" rx="6"/>
+    <rect x="584" y="170" width="78" height="36" rx="6"/>
+    <rect x="760" y="170" width="78" height="36" rx="6"/>
+    <rect x="496" y="216" width="78" height="36" rx="6"/>
+    <rect x="672" y="216" width="78" height="36" rx="6"/>
+    <rect x="760" y="216" width="78" height="36" rx="6"/>
+  </g>
+  <g fill="#DBEAFE" stroke="#2563EB" stroke-width="1.8">
+    <rect x="496" y="124" width="78" height="36" rx="6"/>
+    <rect x="672" y="170" width="78" height="36" rx="6"/>
+    <rect x="584" y="216" width="78" height="36" rx="6"/>
+  </g>
+  <text x="535" y="147" class="blk">라이선스</text>
+  <text x="711" y="193" class="blk">인증</text>
+  <text x="623" y="239" class="blk">과금</text>
+
+  <polygon points="659,262 675,262 667,276" fill="#9CA3AF"/>
+
+  <rect x="496" y="282" width="342" height="62" rx="8" fill="#DCFCE7" stroke="#16A34A"/>
+  <text x="667" y="308" class="rt" fill="#166534">비용은 고가치 경로에만 든다</text>
+  <text x="667" y="330" class="rs">나머지는 성능 · 디버깅 가능성을 그대로 지킨다</text>
+
+  <!-- legend -->
+  <rect x="32" y="382" width="14" height="14" rx="3" fill="#DBEAFE" stroke="#2563EB"/>
+  <text x="54" y="394" class="lg">난독화 적용</text>
+  <rect x="140" y="382" width="14" height="14" rx="3" fill="#F3F4F6" stroke="#D1D5DB"/>
+  <text x="162" y="394" class="lg">적용 안 함</text>
+  <text x="32" y="416" class="note">블록 하나는 함수 하나다. 개수와 위치는 그림을 위한 예다.</text>
+</svg>

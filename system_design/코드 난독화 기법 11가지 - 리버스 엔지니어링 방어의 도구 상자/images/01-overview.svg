@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" role="img" aria-label="공격자가 보는 네 가지(이름, 데이터, 실행 흐름, 런타임)마다 다른 난독화 계열이 붙는다: 이름은 Layout, 데이터는 Data, 실행 흐름은 Control-flow가 읽기를 방해하고, 런타임은 Preventive가 분석·변조 행위를 방해한다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; fill: #1F2937; }
+    .title { font-size: 19px; font-weight: 700; }
+    .col { font-size: 14px; font-weight: 700; fill: #4B5563; text-anchor: middle; }
+    .at { font-size: 15px; font-weight: 700; }
+    .as { font-size: 12px; fill: #4B5563; }
+    .ft { font-size: 14px; font-weight: 700; }
+    .fs { font-size: 13px; }
+    .cutb { font-size: 12px; font-weight: 700; fill: #1D4ED8; text-anchor: middle; }
+    .cuto { font-size: 12px; font-weight: 700; fill: #B45309; text-anchor: middle; }
+    .br { font-size: 12px; font-weight: 700; fill: #6B7280; text-anchor: middle; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+  <defs>
+    <marker id="pb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/>
+    </marker>
+    <marker id="pa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#D97706"/>
+    </marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="899" height="519" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">코드 난독화 — 공격자가 보는 네 가지를 각각 비싸게 만든다</text>
+
+  <text x="199" y="74" class="col">공격자가 보는 것</text>
+  <text x="650" y="74" class="col">난독화 계열 — 기법 번호</text>
+
+  <!-- brackets: static / dynamic -->
+  <g stroke="#9CA3AF" stroke-width="1.5" fill="none">
+    <path d="M58,92 H50 V358 H58"/>
+    <path d="M58,380 H50 V454 H58"/>
+  </g>
+  <text x="40" y="225" class="br" transform="rotate(-90 40 225)">정적 분석 — 코드를 읽는다</text>
+  <text x="40" y="417" class="br" transform="rotate(-90 40 417)">동적 분석</text>
+
+  <!-- row 1: names -->
+  <rect x="64" y="88" width="270" height="82" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="82" y="120" class="at">이름</text>
+  <text x="82" y="144" class="as">함수 · 변수 이름, 디버그 심볼, 메타데이터</text>
+  <rect x="430" y="88" width="440" height="82" rx="8" fill="#DBEAFE" stroke="#2563EB"/>
+  <text x="448" y="120" class="ft">Layout (레이아웃)</text>
+  <text x="448" y="144" class="fs">① 심볼 리네이밍 · ② 메타데이터 제거</text>
+
+  <!-- row 2: data -->
+  <rect x="64" y="184" width="270" height="82" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="82" y="216" class="at">데이터</text>
+  <text x="82" y="240" class="as">하드코딩된 API 키 · 설정값, 이름 문자열</text>
+  <rect x="430" y="184" width="440" height="82" rx="8" fill="#DBEAFE" stroke="#2563EB"/>
+  <text x="448" y="216" class="ft">Data (데이터)</text>
+  <text x="448" y="240" class="fs">③ 문자열 암호화 · ④ 리플렉션 난독화</text>
+
+  <!-- row 3: control flow -->
+  <rect x="64" y="280" width="270" height="82" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="82" y="312" class="at">실행 흐름</text>
+  <text x="82" y="336" class="as">분기 순서, 명령어 패턴</text>
+  <rect x="430" y="280" width="440" height="82" rx="8" fill="#DBEAFE" stroke="#2563EB"/>
+  <text x="448" y="306" class="ft">Control-flow (제어 흐름)</text>
+  <text x="448" y="328" class="fs">⑤ 컨트롤 플로우 난독화 · ⑥ opaque predicate</text>
+  <text x="448" y="348" class="fs">⑦ 명령어 패턴 변환 · ⑧ 더미 코드 주입</text>
+
+  <!-- row 4: runtime -->
+  <rect x="64" y="376" width="270" height="82" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="82" y="408" class="at">런타임</text>
+  <text x="82" y="432" class="as">디버거 관찰, 배포 후 코드 변조, 실행 환경</text>
+  <rect x="430" y="376" width="440" height="82" rx="8" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="448" y="402" class="ft">Preventive (예방)</text>
+  <text x="448" y="424" class="fs">⑨ anti-debugging · ⑩ anti-tampering</text>
+  <text x="448" y="444" class="fs">⑪ 루팅 · 탈옥 탐지</text>
+
+  <!-- connectors -->
+  <g stroke-width="2">
+    <line x1="430" y1="129" x2="340" y2="129" stroke="#2563EB" marker-end="url(#pb)"/>
+    <line x1="430" y1="225" x2="340" y2="225" stroke="#2563EB" marker-end="url(#pb)"/>
+    <line x1="430" y1="321" x2="340" y2="321" stroke="#2563EB" marker-end="url(#pb)"/>
+    <line x1="430" y1="417" x2="340" y2="417" stroke="#D97706" marker-end="url(#pa)"/>
+  </g>
+  <text x="385" y="121" class="cutb">읽기 방해</text>
+  <text x="385" y="217" class="cutb">읽기 방해</text>
+  <text x="385" y="313" class="cutb">읽기 방해</text>
+  <text x="385" y="409" class="cuto">행위 방해</text>
+
+  <text x="32" y="494" class="note">4계열 분류는 이 문서가 붙인 것이다. ⑧ 더미 코드를 Control-flow에 둔 이유는 4절에 있다(내 해석).</text>
+</svg>

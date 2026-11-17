@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450" width="900" height="450" role="img" aria-label="Preventive 계열은 코드를 숨기지 않고 실행 중에 행위를 감지한다: 디버거를 붙이면 anti-debugging이 종료 등 대응을 트리거하고, 배포 후 코드를 고치면 anti-tampering이 체크섬·해시·서명 검증으로 변조를 탐지하고, 루팅·탈옥 기기나 후킹 프레임워크는 루팅·탈옥 탐지가 실행 환경 무결성을 검증한다">
+  <style>
+    text { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; fill: #1F2937; }
+    .title { font-size: 19px; font-weight: 700; }
+    .col { font-size: 14px; font-weight: 700; fill: #4B5563; text-anchor: middle; }
+    .bt { font-size: 14px; font-weight: 700; }
+    .bs { font-size: 12px; fill: #4B5563; }
+    .det { font-size: 12px; font-weight: 700; fill: #B45309; text-anchor: middle; }
+    .cost { font-size: 13px; font-weight: 600; fill: #374151; text-anchor: middle; }
+    .note { font-size: 12px; fill: #6B7280; }
+  </style>
+  <defs>
+    <marker id="pa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#D97706"/>
+    </marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/>
+    </marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="899" height="449" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <text x="32" y="40" class="title">Preventive 계열 — 코드를 숨기지 않고, 분석 · 변조 행위를 막는다</text>
+
+  <text x="165" y="76" class="col">공격자가 하는 일</text>
+  <text x="480" y="76" class="col">앱 안의 런타임 검사</text>
+  <text x="765" y="76" class="col">결과</text>
+
+  <!-- row 1: anti-debug -->
+  <rect x="40" y="92" width="250" height="70" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="58" y="122" class="bt">디버거를 붙인다</text>
+  <text x="58" y="144" class="bs">실행하며 관찰 (동적 분석)</text>
+  <rect x="360" y="92" width="240" height="70" rx="8" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="378" y="122" class="bt">⑨ anti-debugging</text>
+  <text x="378" y="144" class="bs">디버거가 붙었는지 확인</text>
+  <rect x="670" y="92" width="190" height="70" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="688" y="122" class="bt">종료 등</text>
+  <text x="688" y="144" class="bs">대응을 트리거</text>
+
+  <!-- row 2: anti-tamper -->
+  <rect x="40" y="178" width="250" height="70" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="58" y="208" class="bt">배포 후 코드를 고친다</text>
+  <text x="58" y="230" class="bs">코드 변조</text>
+  <rect x="360" y="178" width="240" height="70" rx="8" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="378" y="208" class="bt">⑩ anti-tampering</text>
+  <text x="378" y="230" class="bs">체크섬 · 해시 · 서명 검증</text>
+  <rect x="670" y="178" width="190" height="70" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="688" y="208" class="bt">변조 탐지</text>
+  <text x="688" y="230" class="bs">값이 맞지 않으면 걸린다</text>
+
+  <!-- row 3: root / jailbreak -->
+  <rect x="40" y="264" width="250" height="70" rx="8" fill="#FEF2F2" stroke="#DC2626"/>
+  <text x="58" y="294" class="bt">루팅 · 탈옥 기기에서 실행</text>
+  <text x="58" y="316" class="bs">후킹 프레임워크 · 샌드박스 위반</text>
+  <rect x="360" y="264" width="240" height="70" rx="8" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="378" y="294" class="bt">⑪ 루팅 · 탈옥 탐지</text>
+  <text x="378" y="316" class="bs">후킹 · 샌드박스 위반 흔적 검사</text>
+  <rect x="670" y="264" width="190" height="70" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="688" y="294" class="bt">실행 환경</text>
+  <text x="688" y="316" class="bs">무결성 검증</text>
+
+  <!-- arrows -->
+  <g stroke="#D97706" stroke-width="2">
+    <line x1="290" y1="127" x2="354" y2="127" marker-end="url(#pa)"/>
+    <line x1="290" y1="213" x2="354" y2="213" marker-end="url(#pa)"/>
+    <line x1="290" y1="299" x2="354" y2="299" marker-end="url(#pa)"/>
+  </g>
+  <text x="322" y="119" class="det">감지</text>
+  <text x="322" y="205" class="det">감지</text>
+  <text x="322" y="291" class="det">감지</text>
+  <g stroke="#6B7280" stroke-width="1.8">
+    <line x1="600" y1="127" x2="664" y2="127" marker-end="url(#ag)"/>
+    <line x1="600" y1="213" x2="664" y2="213" marker-end="url(#ag)"/>
+    <line x1="600" y1="299" x2="664" y2="299" marker-end="url(#ag)"/>
+  </g>
+
+  <!-- cost -->
+  <rect x="40" y="358" width="820" height="40" rx="8" fill="#F3F4F6" stroke="#9CA3AF"/>
+  <text x="450" y="383" class="cost">대가: 검사가 실행 내내 돈다 — 성능 영향 "런타임 상시"</text>
+
+  <text x="32" y="428" class="note">세 기법은 코드를 읽기 어렵게 만들지 않는다. 행위 자체를 방해하거나 알아챈다.</text>
+</svg>
