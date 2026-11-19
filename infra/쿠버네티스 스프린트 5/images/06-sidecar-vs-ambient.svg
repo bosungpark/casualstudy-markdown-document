@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="470" viewBox="0 0 900 470" role="img" aria-label="사이드카 모드는 파드마다 L4와 L7 프록시를 두고, Ambient 모드는 노드마다 L4 프록시 ztunnel을 두고 L7이 필요할 때만 waypoint를 둔다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="468" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">데이터 플레인 — 사이드카는 파드마다, Ambient는 노드마다 L4 + 필요할 때 L7</text>
+<rect x="30" y="58" width="410" height="296" rx="12" fill="none" stroke="#E5E7EB" stroke-width="1.5"/>
+<text x="48" y="86" font-size="15" font-weight="700">사이드카 모드 (기본값)</text>
+<rect x="50" y="102" width="370" height="236" rx="10" fill="#F9FAFB" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="64" y="122" font-size="12" fill="#4B5563">노드</text>
+<rect x="64" y="132" width="342" height="56" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<rect x="76" y="142" width="90" height="36" rx="6" fill="white" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="110" y="165" font-size="13" font-weight="700">앱</text>
+<rect x="176" y="142" width="218" height="36" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="188" y="165" font-size="13">Envoy 사이드카 · L4+L7</text>
+<rect x="64" y="196" width="342" height="56" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<rect x="76" y="206" width="90" height="36" rx="6" fill="white" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="110" y="229" font-size="13" font-weight="700">앱</text>
+<rect x="176" y="206" width="218" height="36" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="188" y="229" font-size="13">Envoy 사이드카 · L4+L7</text>
+<rect x="64" y="260" width="342" height="56" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<rect x="76" y="270" width="90" height="36" rx="6" fill="white" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="110" y="293" font-size="13" font-weight="700">앱</text>
+<rect x="176" y="270" width="218" height="36" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="188" y="293" font-size="13">Envoy 사이드카 · L4+L7</text>
+<rect x="460" y="58" width="410" height="296" rx="12" fill="none" stroke="#E5E7EB" stroke-width="1.5"/>
+<text x="478" y="86" font-size="15" font-weight="700">Ambient 모드</text>
+<rect x="480" y="102" width="370" height="236" rx="10" fill="#F9FAFB" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="494" y="122" font-size="12" fill="#4B5563">노드</text>
+<rect x="494" y="132" width="104" height="50" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="524" y="162" font-size="13" font-weight="700">앱 파드</text>
+<rect x="608" y="132" width="104" height="50" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="638" y="162" font-size="13" font-weight="700">앱 파드</text>
+<rect x="722" y="132" width="104" height="50" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="752" y="162" font-size="13" font-weight="700">앱 파드</text>
+<line x1="546" y1="182" x2="546" y2="198" stroke="#6B7280" stroke-width="2"/>
+<polygon points="546,206 541,197 551,197" fill="#6B7280"/>
+<text x="555" y="199" font-size="12">가로챔</text>
+<line x1="660" y1="182" x2="660" y2="198" stroke="#6B7280" stroke-width="2"/>
+<polygon points="660,206 655,197 665,197" fill="#6B7280"/>
+<line x1="774" y1="182" x2="774" y2="198" stroke="#6B7280" stroke-width="2"/>
+<polygon points="774,206 769,197 779,197" fill="#6B7280"/>
+<rect x="494" y="206" width="332" height="52" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="506" y="228" font-size="13" font-weight="700">ztunnel · 노드당 1개 (DaemonSet)</text>
+<text x="506" y="248" font-size="12">L4: mTLS · L4 정책 · TCP 지표</text>
+<rect x="494" y="272" width="332" height="52" rx="8" fill="white" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="506" y="294" font-size="13" font-weight="700">waypoint (선택) · 서비스·네임스페이스 단위</text>
+<text x="506" y="314" font-size="12">L7: 라우팅 · L7 정책 · HTTP 지표</text>
+<text x="30" y="386" font-size="14">사이드카: 파드마다 Envoy가 L4·L7을 모두 처리한다 → 파드 수만큼 CPU·메모리를 예약한다.</text>
+<text x="30" y="412" font-size="14">Ambient: L4는 노드의 ztunnel이, L7은 필요할 때 둔 waypoint가 처리한다 → ztunnel이 노드의 공유 지점이 된다.</text>
+<text x="28" y="448" font-size="12" fill="#6B7280">점선 = 선택 구성. waypoint는 강의가 말한 "Ambient 모드를 위한 새 리소스"에 해당한다(보충). Ambient 쪽은 실습에서 실행하지 않았다.</text>
+</svg>

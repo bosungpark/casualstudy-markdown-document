@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="444" viewBox="0 0 900 444" role="img" aria-label="앱 사이 요청은 보내는 쪽과 받는 쪽 사이드카를 모두 거치고, 받는 앱은 호출자 대신 사이드카 주소를 본다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="442" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">요청 경로 — 앱 사이에 사이드카 두 개가 끼고, 받는 앱은 사이드카를 본다</text>
+<rect x="30" y="60" width="380" height="230" rx="12" fill="#F9FAFB" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="46" y="84" font-size="14" font-weight="700" fill="#4B5563">Pod A (curl)</text>
+<rect x="50" y="100" width="150" height="62" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="65" y="126" font-size="14" font-weight="700">앱 A</text>
+<text x="65" y="148" font-size="13">평소처럼 호출</text>
+<rect x="240" y="100" width="150" height="62" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="255" y="126" font-size="14" font-weight="700">istio-proxy A</text>
+<text x="255" y="148" font-size="13">15001에서 받음</text>
+<rect x="50" y="206" width="150" height="62" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="65" y="232" font-size="14" font-weight="700">iptables</text>
+<text x="65" y="254" font-size="13">나가는 TCP → 15001</text>
+<line x1="125" y1="162" x2="125" y2="198" stroke="#6B7280" stroke-width="2"/>
+<polygon points="125,206 120,197 130,197" fill="#6B7280"/>
+<text x="133" y="188" font-size="12">① 호출</text>
+<path d="M200 237 H315 V171" fill="none" stroke="#6B7280" stroke-width="2"/>
+<polygon points="315,162 310,171 320,171" fill="#6B7280"/>
+<text x="212" y="228" font-size="12">② 가로챔</text>
+<rect x="490" y="60" width="380" height="230" rx="12" fill="#F9FAFB" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="506" y="84" font-size="14" font-weight="700" fill="#4B5563">Pod B (httpbin)</text>
+<rect x="510" y="100" width="150" height="62" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="525" y="126" font-size="14" font-weight="700">istio-proxy B</text>
+<text x="525" y="148" font-size="13">15006에서 받음</text>
+<rect x="700" y="100" width="150" height="62" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="715" y="126" font-size="14" font-weight="700">앱 B</text>
+<text x="715" y="148" font-size="13">요청 처리</text>
+<rect x="510" y="206" width="150" height="62" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="525" y="232" font-size="14" font-weight="700">iptables</text>
+<text x="525" y="254" font-size="13">들어오는 TCP → 15006</text>
+<path d="M390 131 H450 V237 H501" fill="none" stroke="#6B7280" stroke-width="2"/>
+<polygon points="510,237 501,232 501,242" fill="#6B7280"/>
+<text x="458" y="180" font-size="12">③</text>
+<text x="456" y="198" font-size="12">전송</text>
+<line x1="585" y1="206" x2="585" y2="171" stroke="#6B7280" stroke-width="2"/>
+<polygon points="585,162 580,171 590,171" fill="#6B7280"/>
+<text x="593" y="190" font-size="12">④</text>
+<line x1="660" y1="131" x2="691" y2="131" stroke="#6B7280" stroke-width="2"/>
+<polygon points="700,131 691,126 691,136" fill="#6B7280"/>
+<text x="672" y="121" font-size="12">⑤</text>
+<line x1="775" y1="162" x2="775" y2="310" stroke="#D97706" stroke-width="1.5" stroke-dasharray="5 4"/>
+<rect x="30" y="310" width="420" height="62" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="45" y="336" font-size="14" font-weight="700">호출자 신원은 헤더로 온다</text>
+<text x="45" y="358" font-size="13">X-Forwarded-Client-Cert: … URI=spiffe://…/sa/curl</text>
+<rect x="470" y="310" width="400" height="62" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="485" y="336" font-size="14" font-weight="700">앱 B가 보는 호출자 주소: 127.0.0.6</text>
+<text x="485" y="358" font-size="13">Pod A의 IP가 아니라 같은 파드의 사이드카다</text>
+<text x="30" y="404" font-size="14" font-weight="700">앱 코드는 그대로다. 양쪽 iptables가 요청을 사이드카로 돌리고, 사이드카 사이에서 Istio 기능이 적용된다.</text>
+<text x="28" y="430" font-size="12" fill="#6B7280">①~⑤는 요청이 지나는 순서다. 포트 15001·15006과 주소 127.0.0.6은 실습(Istio 1.31.4, 사이드카 방식)에서 확인한 값이다.</text>
+</svg>

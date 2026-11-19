@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500" role="img" aria-label="Kiali 그래프가 비는 세 지점: 모니터의 release 라벨, Kiali의 Prometheus 주소, 트래픽과 조회 기간" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="498" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">Kiali 그래프가 비는 이유 — 데이터가 지나는 세 지점</text>
+<rect x="30" y="66" width="270" height="54" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="45" y="89" font-size="14" font-weight="700">사이드카·istiod 메트릭</text>
+<text x="45" y="109" font-size="12">:15020/stats/prometheus · :15014/metrics</text>
+<line x1="165" y1="120" x2="165" y2="158" stroke="#6B7280" stroke-width="2"/>
+<polygon points="165,166 160,157 170,157" fill="#6B7280"/>
+<text x="176" y="148" font-size="13" font-weight="700">① 수집</text>
+<rect x="30" y="166" width="270" height="54" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="45" y="189" font-size="14" font-weight="700">Prometheus</text>
+<text x="45" y="209" font-size="12">스프린트 4에서 설치한 것</text>
+<line x1="165" y1="220" x2="165" y2="258" stroke="#6B7280" stroke-width="2"/>
+<polygon points="165,266 160,257 170,257" fill="#6B7280"/>
+<text x="176" y="248" font-size="13" font-weight="700">② 질의</text>
+<rect x="30" y="266" width="270" height="54" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="45" y="289" font-size="14" font-weight="700">Kiali</text>
+<text x="45" y="309" font-size="12">istio-system의 샘플 매니페스트</text>
+<line x1="165" y1="320" x2="165" y2="358" stroke="#6B7280" stroke-width="2"/>
+<polygon points="165,366 160,357 170,357" fill="#6B7280"/>
+<text x="176" y="348" font-size="13" font-weight="700">③ 표시</text>
+<rect x="30" y="366" width="270" height="54" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="45" y="389" font-size="14" font-weight="700">트래픽 그래프</text>
+<text x="45" y="409" font-size="12">게이트웨이 → productpage → …</text>
+<line x1="244" y1="143" x2="340" y2="143" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="340" y="106" width="530" height="74" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+<text x="356" y="128" font-size="13" font-weight="700" fill="#DC2626">막힘: 샘플 모니터의 라벨이 release: istio</text>
+<text x="356" y="149" font-size="13">Prometheus는 release: monitoring 모니터만 고른다 (스프린트 4 설정)</text>
+<text x="356" y="170" font-size="13" fill="#16A34A">고침: 사본에서 라벨을 release: monitoring으로 바꾼다</text>
+<line x1="244" y1="243" x2="340" y2="243" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="340" y="206" width="530" height="74" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+<text x="356" y="228" font-size="13" font-weight="700" fill="#DC2626">막힘: Kiali의 Prometheus 주소가 기본값</text>
+<text x="356" y="249" font-size="13">prometheus.istio-system:9090 — 이 클러스터에 없는 Service</text>
+<text x="356" y="270" font-size="13" fill="#16A34A">고침: url: http://monitoring-prometheus.monitoring:9090 한 줄 추가</text>
+<line x1="244" y1="343" x2="340" y2="343" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="340" y="306" width="530" height="74" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="356" y="328" font-size="13" font-weight="700" fill="#D97706">주의: 트래픽이 없거나 조회 기간 밖</text>
+<text x="356" y="349" font-size="13">Kiali는 조회 기간 안의 요청 수로 선을 그린다</text>
+<text x="356" y="370" font-size="13" fill="#16A34A">고침: 트래픽을 보내고 조회 기간을 늘린다</text>
+<text x="30" y="452" font-size="14" font-weight="700">세 연결이 모두 이어져야 그래프가 나온다. 빈 화면이면 ①부터 차례로 확인한다.</text>
+<text x="28" y="480" font-size="12" fill="#6B7280">①·②는 실습에서 실제로 막혔던 지점이다. ③의 기본 조회 기간(강의: 최근 1분)은 화면에서 직접 확인하지 않았다.</text>
+</svg>

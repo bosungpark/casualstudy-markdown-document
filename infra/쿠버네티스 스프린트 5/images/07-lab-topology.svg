@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" role="img" aria-label="실습 구성: 30011은 Istio API 게이트웨이, 30012는 Gateway API 게이트웨이로 같은 productpage에 들어가고, Kiali는 Prometheus에 모인 Istio 메트릭으로 그래프를 그린다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="648" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">실습 구성 — 포트로 두 API를 나눠 같은 Bookinfo에 들어간다</text>
+<text x="30" y="92" font-size="13" font-weight="700" fill="#4B5563">내 PC 127.0.0.1</text>
+<rect x="200" y="56" width="670" height="524" rx="12" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="216" y="80" font-size="14" font-weight="700" fill="#4B5563">kind 클러스터 sprint5-istio (노드 3개)</text>
+<rect x="30" y="108" width="140" height="48" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="44" y="128" font-size="14" font-weight="700">:30011</text>
+<text x="44" y="147" font-size="12">Istio API</text>
+<rect x="30" y="196" width="140" height="48" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="44" y="216" font-size="14" font-weight="700">:30012</text>
+<text x="44" y="235" font-size="12">Gateway API</text>
+<rect x="30" y="405" width="140" height="48" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="44" y="425" font-size="14" font-weight="700">:30020</text>
+<text x="44" y="444" font-size="12">Kiali</text>
+<rect x="30" y="507" width="140" height="48" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="44" y="527" font-size="14" font-weight="700">:30090</text>
+<text x="44" y="546" font-size="12">Prometheus</text>
+<line x1="170" y1="132" x2="208" y2="132" stroke="#6B7280" stroke-width="2"/>
+<polygon points="216,132 207,127 207,137" fill="#6B7280"/>
+<line x1="170" y1="220" x2="208" y2="220" stroke="#6B7280" stroke-width="2"/>
+<polygon points="216,220 207,215 207,225" fill="#6B7280"/>
+<line x1="170" y1="429" x2="208" y2="429" stroke="#6B7280" stroke-width="2"/>
+<polygon points="216,429 207,424 207,434" fill="#6B7280"/>
+<line x1="170" y1="531" x2="208" y2="531" stroke="#6B7280" stroke-width="2"/>
+<polygon points="216,531 207,526 207,536" fill="#6B7280"/>
+<rect x="216" y="96" width="250" height="72" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="230" y="118" font-size="13" font-weight="700">istio-ingressgateway</text>
+<text x="230" y="138" font-size="12">istio-system · 공용 게이트웨이 1개</text>
+<text x="230" y="157" font-size="12">Gateway + VirtualService로 설정</text>
+<rect x="216" y="184" width="250" height="72" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="230" y="206" font-size="13" font-weight="700">bookinfo-gateway-istio</text>
+<text x="230" y="226" font-size="12">default · Gateway 리소스당 파드 1개</text>
+<text x="230" y="245" font-size="12">Gateway + HTTPRoute로 설정</text>
+<path d="M466 132 H490 V162 H512" fill="none" stroke="#2563EB" stroke-width="2"/>
+<polygon points="520,162 511,157 511,167" fill="#2563EB"/>
+<path d="M466 220 H490 V180 H512" fill="none" stroke="#2563EB" stroke-width="2"/>
+<polygon points="520,180 511,175 511,185" fill="#2563EB"/>
+<text x="520" y="128" font-size="13" font-weight="700" fill="#4B5563">Bookinfo (default)</text>
+<rect x="520" y="146" width="130" height="50" rx="8" fill="white" stroke="#6B7280" stroke-width="1.5"/>
+<text x="534" y="176" font-size="13" font-weight="700">productpage</text>
+<rect x="700" y="96" width="150" height="40" rx="8" fill="white" stroke="#6B7280" stroke-width="1.5"/>
+<text x="714" y="121" font-size="13" font-weight="700">details</text>
+<rect x="700" y="152" width="150" height="58" rx="8" fill="white" stroke="#6B7280" stroke-width="1.5"/>
+<text x="714" y="175" font-size="13" font-weight="700">reviews v1·v2·v3</text>
+<text x="714" y="196" font-size="12">v1은 별점 없음</text>
+<rect x="700" y="236" width="150" height="40" rx="8" fill="white" stroke="#6B7280" stroke-width="1.5"/>
+<text x="714" y="261" font-size="13" font-weight="700">ratings</text>
+<path d="M650 158 H675 V116 H692" fill="none" stroke="#6B7280" stroke-width="2"/>
+<polygon points="700,116 691,111 691,121" fill="#6B7280"/>
+<line x1="650" y1="181" x2="692" y2="181" stroke="#6B7280" stroke-width="2"/>
+<polygon points="700,181 691,176 691,186" fill="#6B7280"/>
+<line x1="740" y1="210" x2="740" y2="228" stroke="#6B7280" stroke-width="2"/>
+<polygon points="740,236 735,227 745,227" fill="#6B7280"/>
+<text x="750" y="228" font-size="12">v2·v3만</text>
+<rect x="216" y="296" width="250" height="58" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="230" y="320" font-size="13" font-weight="700">istiod</text>
+<text x="230" y="341" font-size="12">리소스를 읽어 프록시에 설정 주입</text>
+<line x1="341" y1="296" x2="341" y2="264" stroke="#2563EB" stroke-width="2"/>
+<polygon points="341,256 336,265 346,265" fill="#2563EB"/>
+<text x="350" y="284" font-size="12">설정 주입 (게이트웨이·사이드카)</text>
+<rect x="520" y="296" width="260" height="58" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="534" y="320" font-size="13" font-weight="700">istio-cni-node (DaemonSet)</text>
+<text x="534" y="341" font-size="12">6단계에서 추가 · 노드마다 1개</text>
+<rect x="216" y="400" width="250" height="58" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="230" y="424" font-size="13" font-weight="700">Kiali</text>
+<text x="230" y="445" font-size="12">istio-system · 트래픽 그래프</text>
+<line x1="341" y1="458" x2="341" y2="492" stroke="#6B7280" stroke-width="2"/>
+<polygon points="341,500 336,491 346,491" fill="#6B7280"/>
+<text x="350" y="483" font-size="12">질의</text>
+<line x1="830" y1="276" x2="830" y2="492" stroke="#16A34A" stroke-width="2"/>
+<polygon points="830,500 825,491 835,491" fill="#16A34A"/>
+<text x="820" y="420" font-size="12" text-anchor="end">메트릭 수집</text>
+<text x="820" y="438" font-size="12" text-anchor="end">(모든 사이드카·istiod)</text>
+<rect x="216" y="500" width="634" height="62" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="230" y="524" font-size="13" font-weight="700">Prometheus (monitoring · 스프린트 4에서 설치)</text>
+<text x="230" y="545" font-size="12">PodMonitor → 사이드카 :15020 · ServiceMonitor → istiod :15014</text>
+<text x="30" y="608" font-size="14" font-weight="700">같은 productpage에 두 길로 들어가고, Kiali는 Prometheus에 모인 메트릭으로 이 흐름을 그린다.</text>
+<text x="28" y="634" font-size="12" fill="#6B7280">포트 번호는 실습에서 고정한 NodePort다(강의도 Istio API에 30011을 썼다). 회색 점선 상자(istio-cni-node)는 6단계에서 추가된다.</text>
+</svg>

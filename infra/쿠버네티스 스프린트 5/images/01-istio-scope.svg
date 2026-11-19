@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="470" viewBox="0 0 900 470" role="img" aria-label="로드밸런서와 인그레스는 클러스터로 들어오는 트래픽만 다루고, 파드 사이 트래픽은 Istio가 관측하고 제어한다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="468" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">트래픽 관리 범위 — 들어오는 길목은 LB·Ingress, 파드 사이는 Istio</text>
+<text x="30" y="68" font-size="14" font-weight="700" fill="#4B5563">① 클러스터로 들어오는 트래픽</text>
+<rect x="30" y="80" width="140" height="96" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="45" y="110" font-size="14" font-weight="700">외부 사용자</text>
+<text x="45" y="134" font-size="13">도메인으로 요청</text>
+<line x1="170" y1="128" x2="206" y2="128" stroke="#6B7280" stroke-width="2"/>
+<polygon points="214,128 205,123 205,133" fill="#6B7280"/>
+<rect x="214" y="80" width="296" height="96" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="229" y="106" font-size="14" font-weight="700">로드밸런서 · L4</text>
+<text x="229" y="130" font-size="13">IP·포트만 보고 노드로 나눈다</text>
+<text x="229" y="154" font-size="13">IP 차단 · 요청량 제한 · 노드 IP 숨김</text>
+<line x1="510" y1="128" x2="546" y2="128" stroke="#6B7280" stroke-width="2"/>
+<polygon points="554,128 545,123 545,133" fill="#6B7280"/>
+<rect x="554" y="80" width="316" height="96" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="569" y="106" font-size="14" font-weight="700">인그레스 게이트웨이 · L7</text>
+<text x="569" y="130" font-size="13">도메인·경로·헤더를 보고 서비스로 나눈다</text>
+<text x="569" y="154" font-size="13">인증서 통합 관리 · HTTPS 리다이렉트</text>
+<rect x="30" y="214" width="840" height="176" rx="12" fill="#DBEAFE" fill-opacity="0.45" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="48" y="240" font-size="14" font-weight="700" fill="#1D4ED8">② 클러스터 안 파드 사이 트래픽 — Istio가 관측·제어하는 범위</text>
+<line x1="710" y1="176" x2="710" y2="254" stroke="#6B7280" stroke-width="2"/>
+<polygon points="710,262 705,253 715,253" fill="#6B7280"/>
+<text x="718" y="204" font-size="12">서비스로 전달</text>
+<text x="48" y="276" font-size="13">Istio 전에는 이 화살표들이</text>
+<text x="48" y="298" font-size="13">보이지 않고 제어할 수도 없다</text>
+<rect x="645" y="262" width="130" height="44" rx="8" fill="white" stroke="#2563EB" stroke-width="1.5"/>
+<text x="660" y="289" font-size="13" font-weight="700">productpage</text>
+<rect x="420" y="262" width="130" height="44" rx="8" fill="white" stroke="#2563EB" stroke-width="1.5"/>
+<text x="435" y="289" font-size="13" font-weight="700">details</text>
+<line x1="645" y1="284" x2="558" y2="284" stroke="#2563EB" stroke-width="2"/>
+<polygon points="550,284 559,279 559,289" fill="#2563EB"/>
+<rect x="420" y="330" width="130" height="44" rx="8" fill="white" stroke="#2563EB" stroke-width="1.5"/>
+<text x="435" y="357" font-size="13" font-weight="700">reviews</text>
+<path d="M680 306 V352 H558" fill="none" stroke="#2563EB" stroke-width="2"/>
+<polygon points="550,352 559,347 559,357" fill="#2563EB"/>
+<rect x="215" y="330" width="130" height="44" rx="8" fill="white" stroke="#2563EB" stroke-width="1.5"/>
+<text x="230" y="357" font-size="13" font-weight="700">ratings</text>
+<line x1="420" y1="352" x2="353" y2="352" stroke="#2563EB" stroke-width="2"/>
+<polygon points="345,352 354,347 354,357" fill="#2563EB"/>
+<rect x="60" y="330" width="110" height="44" rx="8" fill="white" stroke="#2563EB" stroke-width="1.5"/>
+<text x="75" y="357" font-size="13" font-weight="700">DB</text>
+<line x1="215" y1="352" x2="178" y2="352" stroke="#2563EB" stroke-width="2"/>
+<polygon points="170,352 179,347 179,357" fill="#2563EB"/>
+<text x="30" y="424" font-size="15" font-weight="700">LB·Ingress는 들어오는 트래픽까지만 다룬다. 그 뒤의 파드 사이 호출은 Istio가 맡는다.</text>
+<text x="28" y="454" font-size="12" fill="#6B7280">productpage 등은 실습 Bookinfo의 이름이고 DB는 강의의 '데이터베이스' 예시다. L4는 IP·포트, L7은 HTTP 헤더·메서드를 본다.</text>
+</svg>

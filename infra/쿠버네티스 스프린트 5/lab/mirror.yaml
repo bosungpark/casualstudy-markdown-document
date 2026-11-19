@@ -1,0 +1,33 @@
+# 강의 5의 미러링 예시: 사용자 응답은 v1만 만들고, v2에는 같은 요청의 복사본만 보낸다.
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: reviews
+spec:
+  host: reviews
+  subsets:
+    - name: v1
+      labels:
+        version: v1
+    - name: v2
+      labels:
+        version: v2
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: reviews
+spec:
+  hosts:
+    - reviews
+  http:
+    - route:
+        - destination:
+            host: reviews
+            subset: v1
+          weight: 100
+      mirror:
+        host: reviews
+        subset: v2
+      mirrorPercentage:
+        value: 100.0

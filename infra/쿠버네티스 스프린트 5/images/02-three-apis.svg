@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="574" viewBox="0 0 900 574" role="img" aria-label="Ingress API, Istio API, Gateway API는 트래픽 흐름은 같고 게이트웨이 정의, 라우팅, 세부 제어, 대상, 설정 반영을 담는 리소스가 다르다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="572" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">세 가지 API — 트래픽 흐름은 같고, 설정을 담는 리소스가 다르다</text>
+<!-- 헤더 -->
+<rect x="30" y="58" width="260" height="54" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="44" y="82" font-size="16" font-weight="700">Ingress API</text>
+<text x="44" y="102" font-size="12" fill="#4B5563">쿠버네티스 기본 리소스</text>
+<rect x="320" y="58" width="260" height="54" rx="10" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="334" y="82" font-size="16" font-weight="700">Istio API</text>
+<text x="334" y="102" font-size="12" fill="#4B5563">Istio와 함께 설치되는 CRD · 강의의 메인</text>
+<rect x="610" y="58" width="260" height="54" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="624" y="82" font-size="16" font-weight="700">Gateway API</text>
+<text x="624" y="102" font-size="12" fill="#4B5563">쿠버네티스 차세대 표준 (CRD)</text>
+<!-- 1행: 게이트웨이 정의 -->
+<rect x="30" y="124" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="44" y="143" font-size="12" fill="#6B7280">게이트웨이 정의</text>
+<text x="44" y="164" font-size="14" font-weight="700">IngressClass</text>
+<text x="44" y="182" font-size="13">어느 컨트롤러(NGINX)가 처리할지</text>
+<rect x="320" y="124" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="334" y="143" font-size="12" fill="#6B7280">게이트웨이 정의</text>
+<text x="334" y="164" font-size="14" font-weight="700">Gateway (Istio)</text>
+<text x="334" y="182" font-size="13">공용 게이트웨이의 호스트·포트</text>
+<rect x="610" y="124" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="624" y="143" font-size="12" fill="#6B7280">게이트웨이 정의</text>
+<text x="624" y="164" font-size="14" font-weight="700">GatewayClass + Gateway</text>
+<text x="624" y="182" font-size="13">Gateway마다 파드를 새로 만든다</text>
+<!-- 2행: 라우팅 -->
+<rect x="30" y="200" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="44" y="219" font-size="12" fill="#6B7280">라우팅</text>
+<text x="44" y="240" font-size="14" font-weight="700">Ingress</text>
+<text x="44" y="258" font-size="13">host·path → Service</text>
+<rect x="320" y="200" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="334" y="219" font-size="12" fill="#6B7280">라우팅</text>
+<text x="334" y="240" font-size="14" font-weight="700">VirtualService</text>
+<text x="334" y="258" font-size="13">match → route</text>
+<rect x="610" y="200" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="624" y="219" font-size="12" fill="#6B7280">라우팅</text>
+<text x="624" y="240" font-size="14" font-weight="700">HTTPRoute</text>
+<text x="624" y="258" font-size="13">matches → backendRefs</text>
+<!-- 3행: 세부 제어 -->
+<rect x="30" y="276" width="260" height="66" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="44" y="295" font-size="12" fill="#92400E">세부 제어</text>
+<text x="44" y="316" font-size="14" font-weight="700">어노테이션</text>
+<text x="44" y="334" font-size="13">구현체마다 다른 키-값</text>
+<rect x="320" y="276" width="260" height="66" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+<text x="334" y="295" font-size="12" fill="#1D4ED8">세부 제어</text>
+<text x="334" y="316" font-size="14" font-weight="700">VirtualService 필드</text>
+<text x="334" y="334" font-size="13">미러링·재시도·타임아웃 등</text>
+<rect x="610" y="276" width="260" height="66" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="624" y="295" font-size="12" fill="#166534">세부 제어</text>
+<text x="624" y="316" font-size="14" font-weight="700">표준 필드 (weight 등)</text>
+<text x="624" y="334" font-size="13">구현체가 바뀌어도 그대로</text>
+<!-- 4행: 트래픽 대상 -->
+<rect x="30" y="352" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="44" y="371" font-size="12" fill="#6B7280">트래픽 대상</text>
+<text x="44" y="392" font-size="14" font-weight="700">Service</text>
+<text x="44" y="410" font-size="13">Service가 고른 파드</text>
+<rect x="320" y="352" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="334" y="371" font-size="12" fill="#6B7280">트래픽 대상</text>
+<text x="334" y="392" font-size="14" font-weight="700">DestinationRule + Service</text>
+<text x="334" y="410" font-size="13">host·subset(버전 묶음)</text>
+<rect x="610" y="352" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="624" y="371" font-size="12" fill="#6B7280">트래픽 대상</text>
+<text x="624" y="392" font-size="14" font-weight="700">Service</text>
+<text x="624" y="410" font-size="13">backendRefs의 Service</text>
+<!-- 5행: 설정 반영 -->
+<rect x="30" y="428" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="44" y="447" font-size="12" fill="#6B7280">설정 반영</text>
+<text x="44" y="468" font-size="14" font-weight="700">NGINX 파드가 직접 조회</text>
+<text x="44" y="486" font-size="13">API 서버에서 Ingress를 읽는다</text>
+<rect x="320" y="428" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="334" y="447" font-size="12" fill="#6B7280">설정 반영</text>
+<text x="334" y="468" font-size="14" font-weight="700">istiod가 주입</text>
+<text x="334" y="486" font-size="13">리소스를 읽어 게이트웨이에 전달</text>
+<rect x="610" y="428" width="260" height="66" rx="8" fill="white" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="624" y="447" font-size="12" fill="#6B7280">설정 반영</text>
+<text x="624" y="468" font-size="14" font-weight="700">istiod가 주입</text>
+<text x="624" y="486" font-size="13">게이트웨이 파드도 직접 만든다</text>
+<text x="30" y="528" font-size="15" font-weight="700">사용자가 보는 결과는 같다. 다른 것은 확장 방식 · 기능 범위 · 학습 비용이다.</text>
+<text x="28" y="556" font-size="12" fill="#6B7280">세로로 읽으면 한 API, 가로로 읽으면 같은 역할의 리소스다. 색: 주황 = 구현체 종속, 파랑 = 강의의 메인, 초록 = 표준.</text>
+</svg>

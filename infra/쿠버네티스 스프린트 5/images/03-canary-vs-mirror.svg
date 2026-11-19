@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="406" viewBox="0 0 900 406" role="img" aria-label="카나리는 실제 사용자 일부를 v2로 보내 오류가 사용자에게 가고, 미러링은 요청 복사본만 v2로 보내고 응답은 버린다" fill="#1F2937" font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect x="1" y="1" width="898" height="404" rx="14" fill="white" stroke="#E5E7EB"/>
+<text x="28" y="38" font-size="19" font-weight="700">운영 검증 — 카나리는 실제 사용자를 보내고, 미러링은 복사본만 보낸다</text>
+<!-- 왼쪽 패널: NGINX 카나리 -->
+<rect x="30" y="58" width="405" height="270" rx="12" fill="white" stroke="#E5E7EB" stroke-width="1.5"/>
+<text x="48" y="86" font-size="15" font-weight="700">Ingress(NGINX) 카나리 10%</text>
+<rect x="48" y="146" width="96" height="60" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="62" y="171" font-size="14" font-weight="700">사용자</text>
+<text x="62" y="193" font-size="13">요청 100</text>
+<line x1="144" y1="176" x2="162" y2="176" stroke="#6B7280" stroke-width="2"/>
+<polygon points="170,176 161,171 161,181" fill="#6B7280"/>
+<rect x="170" y="146" width="90" height="60" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="182" y="181" font-size="13" font-weight="700">게이트웨이</text>
+<path d="M260 160 H280 V131 H322" fill="none" stroke="#6B7280" stroke-width="2"/>
+<polygon points="330,131 321,126 321,136" fill="#6B7280"/>
+<text x="286" y="123" font-size="12" font-weight="700">90%</text>
+<path d="M260 192 H280 V241 H322" fill="none" stroke="#DC2626" stroke-width="2"/>
+<polygon points="330,241 321,236 321,246" fill="#DC2626"/>
+<text x="286" y="233" font-size="12" font-weight="700" fill="#DC2626">10%</text>
+<rect x="330" y="106" width="90" height="50" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="344" y="127" font-size="14" font-weight="700">v1</text>
+<text x="344" y="146" font-size="12">응답 반환</text>
+<rect x="330" y="216" width="90" height="50" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+<text x="344" y="237" font-size="14" font-weight="700">v2</text>
+<text x="344" y="256" font-size="12" fill="#DC2626">오류 응답</text>
+<text x="48" y="304" font-size="14" font-weight="700" fill="#DC2626">v2가 틀리면 사용자 10%가 오류를 받는다</text>
+<!-- 오른쪽 패널: Istio 미러링 -->
+<rect x="465" y="58" width="405" height="270" rx="12" fill="white" stroke="#E5E7EB" stroke-width="1.5"/>
+<text x="483" y="86" font-size="15" font-weight="700">Istio 미러링 100%</text>
+<rect x="483" y="146" width="96" height="60" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="497" y="171" font-size="14" font-weight="700">사용자</text>
+<text x="497" y="193" font-size="13">요청 100</text>
+<line x1="579" y1="176" x2="597" y2="176" stroke="#6B7280" stroke-width="2"/>
+<polygon points="605,176 596,171 596,181" fill="#6B7280"/>
+<rect x="605" y="146" width="90" height="60" rx="10" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="617" y="181" font-size="13" font-weight="700">게이트웨이</text>
+<path d="M695 160 H715 V131 H757" fill="none" stroke="#6B7280" stroke-width="2"/>
+<polygon points="765,131 756,126 756,136" fill="#6B7280"/>
+<text x="721" y="123" font-size="12" font-weight="700">100%</text>
+<path d="M695 192 H715 V241 H757" fill="none" stroke="#16A34A" stroke-width="2" stroke-dasharray="6 4"/>
+<polygon points="765,241 756,236 756,246" fill="#16A34A"/>
+<text x="721" y="233" font-size="12" font-weight="700" fill="#16A34A">복사</text>
+<rect x="765" y="106" width="90" height="50" rx="8" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="779" y="127" font-size="14" font-weight="700">v1</text>
+<text x="779" y="146" font-size="12">응답 반환</text>
+<rect x="765" y="216" width="90" height="50" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+<text x="779" y="237" font-size="14" font-weight="700">v2</text>
+<text x="779" y="256" font-size="12" fill="#16A34A">응답 버림</text>
+<text x="483" y="304" font-size="14" font-weight="700" fill="#16A34A">v2 응답은 버리고 로그·지표로 검증한다</text>
+<text x="30" y="360" font-size="15" font-weight="700">둘 다 v2를 운영 트래픽으로 시험한다. 차이는 v2의 응답이 사용자에게 가느냐다.</text>
+<text x="28" y="390" font-size="12" fill="#6B7280">v2에 버그가 있다고 가정한 그림이다. 점선은 복사본을 뜻한다. 미러링은 쓰기 요청도 복사하므로 v2의 부작용은 따로 막는다(내 해석).</text>
+</svg>

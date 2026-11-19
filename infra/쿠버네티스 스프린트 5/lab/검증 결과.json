@@ -1,0 +1,150 @@
+{
+  "started": "2026-11-14 13:29:01 KST",
+  "finished": "2026-11-14 13:38:08 KST",
+  "platform": "Darwin arm64",
+  "docker": "27.4.0",
+  "versions": {
+    "kind": "0.30.0",
+    "kubernetes": "1.34.0",
+    "istio": "1.31.4",
+    "gateway_api": "v1.6.0",
+    "kube_prometheus_stack": "77.6.0"
+  },
+  "passed": 19,
+  "total": 19,
+  "results": [
+    {
+      "step": "1 기본 설치",
+      "action": "istioctl install --set profile=default",
+      "expected": "istiod·istio-ingressgateway, Istio CRD",
+      "observed": "Deployment ['istio-ingressgateway', 'istiod'], *.istio.io CRD 15개",
+      "passed": true
+    },
+    {
+      "step": "2 사이드카 주입",
+      "action": "라벨 후 Bookinfo 배포",
+      "expected": "파드 6개, istio-init·istio-proxy·앱 컨테이너",
+      "observed": "파드 6개, initContainers ['istio-init', 'istio-proxy'], containers ['productpage'], istio-proxy restartPolicy=Always",
+      "passed": true
+    },
+    {
+      "step": "2 istio-init 권한",
+      "action": "productpage의 istio-init securityContext 조회",
+      "expected": "NET_ADMIN·NET_RAW, root, 쓰기 가능",
+      "observed": "add=['NET_ADMIN', 'NET_RAW'], runAsUser=0, privileged=False, readOnlyRootFilesystem=False; istio-proxy requests={'cpu': '100m', 'memory': '128Mi'}",
+      "passed": true
+    },
+    {
+      "step": "2 iptables 위치",
+      "action": "lab.py rules productpage",
+      "expected": "파드 네임스페이스에만 15001·15006 REDIRECT",
+      "observed": "파드 안 ISTIO 규칙 18개 (15001:True, 15006:True), 노드 0개",
+      "passed": true
+    },
+    {
+      "step": "3 Istio API 접속",
+      "action": "Gateway·VirtualService 적용 후 NodePort 30011로 변경",
+      "expected": "변경 전 실패, 후 200, match 밖 404",
+      "observed": "변경 전 0, 변경 후 200 (True), / 404",
+      "passed": true
+    },
+    {
+      "step": "3 GatewayClass 자동 생성",
+      "action": "Gateway API CRD 설치",
+      "expected": "CRD 전 리소스 없음, 후 istio·istio-remote",
+      "observed": "CRD 전 없음=True, 후 {'istio': 'istio.io/gateway-controller', 'istio-remote': 'istio.io/unmanaged-gateway'}",
+      "passed": true
+    },
+    {
+      "step": "3 Gateway API 접속",
+      "action": "Gateway·HTTPRoute 적용 후 NodePort 30012로 변경",
+      "expected": "게이트웨이 파드 자동 생성, 200",
+      "observed": "Deployment bookinfo-gateway-istio(istio-proxy), Programmed=False (AddressNotAssigned), 30012 200, kubectl get gateway → gateway.networking.k8s.io/v1",
+      "passed": true
+    },
+    {
+      "step": "3 Programmed 상태",
+      "action": "Gateway에 service-type=NodePort 주석",
+      "expected": "Programmed=True, NodePort 유지",
+      "observed": "Programmed=True, ports=[(15021, 32585), (80, 30012)], 30012 200",
+      "passed": true
+    },
+    {
+      "step": "4 Kiali 원본",
+      "action": "samples/addons/kiali.yaml 그대로 설치",
+      "expected": "기본 주소의 Prometheus를 찾지 못함",
+      "observed": "로그 'prometheus.istio-system … no such host'=True, 그래프 엣지 0개",
+      "passed": true
+    },
+    {
+      "step": "4 Kiali 주소 수정",
+      "action": "사본에 url 한 줄 추가 후 재적용",
+      "expected": "연결되지만 Istio 메트릭이 없어 그래프 빔",
+      "observed": "연결=True, 그래프 엣지 0개",
+      "passed": true
+    },
+    {
+      "step": "5 샘플 모니터 원본",
+      "action": "prometheus-operator.yaml 그대로 적용(release: istio)",
+      "expected": "Prometheus가 선택하지 않음",
+      "observed": "envoy-stats 대상 0개",
+      "passed": true
+    },
+    {
+      "step": "5 모니터 라벨 수정",
+      "action": "release: monitoring으로 수정",
+      "expected": "사이드카 8개·istiod 수집",
+      "observed": "envoy-stats UP 8개, istiod UP True",
+      "passed": true
+    },
+    {
+      "step": "5 Kiali 그래프",
+      "action": "두 게이트웨이로 트래픽 전송",
+      "expected": "게이트웨이 2개 → productpage → details·reviews → ratings",
+      "observed": "엣지 8개, 기대 엣지 포함=True",
+      "passed": true
+    },
+    {
+      "step": "6 CNI 설치",
+      "action": "istioctl install -f lab/istio-cni.yaml",
+      "expected": "노드마다 istio-cni-node 1개",
+      "observed": "DaemonSet ready 3/3 (노드 3개), 30011 유지=True",
+      "passed": true
+    },
+    {
+      "step": "6 init 컨테이너 교체",
+      "action": "Bookinfo 재배포 후 조회",
+      "expected": "istio-validation, 추가 권한 없음, root 아님, 읽기 전용",
+      "observed": "initContainers ['istio-validation', 'istio-proxy'], add=None, runAsUser=1337, readOnlyRootFilesystem=True, 30011 200 / 30012 200",
+      "passed": true
+    },
+    {
+      "step": "6 같은 핵심 규칙, 다른 설치자",
+      "action": "lab.py rules productpage (CNI 방식)",
+      "expected": "init 방식의 규칙이 모두 있음, 노드에는 없음",
+      "observed": "init 18개 → CNI 20개, 빠진 규칙 0개, 추가 ['-A ISTIO_OUTPUT -p tcp -m tcp --dport 15020 -j RETURN', '-A ISTIO_OUTPUT -p udp -m udp --dport 15020 -j RETURN'], 노드 0개",
+      "passed": true
+    },
+    {
+      "step": "더 해보기 호출자 주소",
+      "action": "curl 파드에서 사이드카 있는/없는 httpbin 호출",
+      "expected": "사이드카 쪽은 127.0.0.6, 신원은 XFCC",
+      "observed": "curl IP 10.244.1.35, 메시 httpbin이 본 주소 127.0.0.6:53949, 비메시 10.244.1.35:45122, XFCC URI=…spiffe://cluster.local/ns/default/sa/curl",
+      "passed": true
+    },
+    {
+      "step": "더 해보기 미러링",
+      "action": "lab/mirror.yaml 적용 후 페이지 20회",
+      "expected": "사용자는 v1만(별점 0), v2에도 같은 수의 요청",
+      "observed": "별점 아이콘 0개, 요청 증가 {'reviews-v1': 20.0, 'reviews-v2': 20.0, 'reviews-v3': 0.0}",
+      "passed": true
+    },
+    {
+      "step": "정리 reset",
+      "action": "python3 lab.py reset",
+      "expected": "Istio·CRD·라벨 제거, Prometheus 유지",
+      "observed": "남은 CRD 0개, istio-system 존재=False, 라벨=None, Prometheus 200",
+      "passed": true
+    }
+  ]
+}

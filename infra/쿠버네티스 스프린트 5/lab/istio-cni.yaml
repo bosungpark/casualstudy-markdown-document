@@ -1,0 +1,9 @@
+# Istio 공식 문서 "Install the Istio CNI node agent"의 IstioOperator 예시와 같다.
+# profile을 적지 않으면 default 프로필 위에 cni 컴포넌트만 켠다.
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  components:
+    cni:
+      namespace: istio-system
+      enabled: true
